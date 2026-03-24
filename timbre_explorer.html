@@ -1,0 +1,494 @@
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="header-label">声音设计入门 · Sound Design Fundamentals</div>
+  <h1>音色是什么？<br><span>听见差异，理解原理</span></h1>
+  <p class="header-sub">用耳朵听，用眼睛看。交互探索波形音色差异与音色分类体系。</p>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="switchTab('wave')">① 波形与音色</button>
+  <button class="nav-btn" onclick="switchTab('timbre')">② 音色分类</button>
+  <button class="nav-btn" onclick="switchTab('envelope')">③ 时间包络</button>
+</nav>
+
+<!-- ══════════ TAB 1: 波形 ══════════ -->
+<section class="section active" id="tab-wave">
+  <div class="section-title">波形 = 频谱结构 = 音色</div>
+  <p class="section-desc">四种基础波形，频谱结构不同，音色截然不同。点击卡片播放，用耳朵感受差异。</p>
+
+  <div class="wave-grid">
+    <!-- 正弦波 -->
+    <div class="wave-card" data-wave="sine">
+      <div class="wave-name">SINE WAVE</div>
+      <div class="wave-title">正弦波</div>
+      <div class="wave-en">Sine Wave</div>
+      <svg class="wave-svg" viewBox="0 0 200 56" preserveAspectRatio="none">
+        <path d="M0,28 C25,4 50,4 100,28 C150,52 175,52 200,28" stroke="#5ee7ff" stroke-width="2" fill="none" opacity="0.9"/>
+      </svg>
+      <div class="wave-tags">
+        <span class="wave-tag">只含基频</span>
+        <span class="wave-tag">无泛音</span>
+        <span class="wave-tag">最纯净</span>
+      </div>
+      <div class="wave-desc">频谱最简单，只有一个频率成分。听起来像"哔"的纯音，是所有复杂波形的基础单元。</div>
+      <button class="play-btn" onclick="playWave('sine', this)">
+        <span class="play-icon">▶</span>
+        <span class="btn-text">点击播放</span>
+      </button>
+    </div>
+
+    <!-- 方波 -->
+    <div class="wave-card" data-wave="square">
+      <div class="wave-name">SQUARE WAVE</div>
+      <div class="wave-title">方波</div>
+      <div class="wave-en">Square Wave</div>
+      <svg class="wave-svg" viewBox="0 0 200 56" preserveAspectRatio="none">
+        <path d="M0,42 L0,14 L50,14 L50,42 L100,42 L100,14 L150,14 L150,42 L200,42 L200,14" stroke="#ff8c5e" stroke-width="2" fill="none" opacity="0.9"/>
+      </svg>
+      <div class="wave-tags">
+        <span class="wave-tag">奇次谐波</span>
+        <span class="wave-tag">空洞感</span>
+        <span class="wave-tag">复古游戏感</span>
+      </div>
+      <div class="wave-desc">只含奇次谐波（1、3、5…倍频）。有特殊的"空洞"质感，是早期游戏机、8-bit音乐的标志性音色。</div>
+      <button class="play-btn" onclick="playWave('square', this)">
+        <span class="play-icon">▶</span>
+        <span class="btn-text">点击播放</span>
+      </button>
+    </div>
+
+    <!-- 锯齿波 -->
+    <div class="wave-card" data-wave="saw">
+      <div class="wave-name">SAW WAVE</div>
+      <div class="wave-title">锯齿波</div>
+      <div class="wave-en">Sawtooth Wave</div>
+      <svg class="wave-svg" viewBox="0 0 200 56" preserveAspectRatio="none">
+        <path d="M0,42 L50,14 L50,42 L100,14 L100,42 L150,14 L150,42 L200,14" stroke="#ffe45e" stroke-width="2" fill="none" opacity="0.9"/>
+      </svg>
+      <div class="wave-tags">
+        <span class="wave-tag">所有谐波</span>
+        <span class="wave-tag">最丰富</span>
+        <span class="wave-tag">明亮/厚实</span>
+      </div>
+      <div class="wave-desc">含所有谐波（奇次+偶次）。频谱最丰富，听起来最"厚"最"亮"。合成器铅音、Pad的首选起点。</div>
+      <button class="play-btn" onclick="playWave('saw', this)">
+        <span class="play-icon">▶</span>
+        <span class="btn-text">点击播放</span>
+      </button>
+    </div>
+
+    <!-- 三角波 -->
+    <div class="wave-card" data-wave="tri">
+      <div class="wave-name">TRIANGLE WAVE</div>
+      <div class="wave-title">三角波</div>
+      <div class="wave-en">Triangle Wave</div>
+      <svg class="wave-svg" viewBox="0 0 200 56" preserveAspectRatio="none">
+        <path d="M0,42 L50,14 L100,42 L150,14 L200,42" stroke="#7eff9e" stroke-width="2" fill="none" opacity="0.9"/>
+      </svg>
+      <div class="wave-tags">
+        <span class="wave-tag">奇次谐波</span>
+        <span class="wave-tag">衰减更快</span>
+        <span class="wave-tag">柔和</span>
+      </div>
+      <div class="wave-desc">和方波一样只含奇次谐波，但高次谐波衰减更快，所以比方波更柔和，接近于笛子的纯净感。</div>
+      <button class="play-btn" onclick="playWave('tri', this)">
+        <span class="play-icon">▶</span>
+        <span class="btn-text">点击播放</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 频谱面板 -->
+  <div class="spectrum-panel">
+    <div class="spectrum-title">HARMONIC SPECTRUM · 谐波频谱对比</div>
+    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap: 24px;">
+      <div>
+        <div style="font-size:12px; color:var(--sine); margin-bottom:10px; font-family:'Space Mono',monospace;">正弦波</div>
+        <div class="spectrum-bars" id="spec-sine">
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:70px; background:var(--sine);"></div><div class="spec-label">1</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--sine);"></div><div class="spec-label">2</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--sine);"></div><div class="spec-label">3</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--sine);"></div><div class="spec-label">4</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--sine);"></div><div class="spec-label">5</div></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:8px; line-height:1.5;">只有基频，极简</div>
+      </div>
+      <div>
+        <div style="font-size:12px; color:var(--square); margin-bottom:10px; font-family:'Space Mono',monospace;">方波</div>
+        <div class="spectrum-bars">
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:70px; background:var(--square);"></div><div class="spec-label">1</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--square);"></div><div class="spec-label">2</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:23px; background:var(--square);"></div><div class="spec-label">3</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--square);"></div><div class="spec-label">4</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:14px; background:var(--square);"></div><div class="spec-label">5</div></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:8px; line-height:1.5;">奇次谐波（1,3,5…）</div>
+      </div>
+      <div>
+        <div style="font-size:12px; color:var(--saw); margin-bottom:10px; font-family:'Space Mono',monospace;">锯齿波</div>
+        <div class="spectrum-bars">
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:70px; background:var(--saw);"></div><div class="spec-label">1</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:35px; background:var(--saw);"></div><div class="spec-label">2</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:23px; background:var(--saw);"></div><div class="spec-label">3</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:17px; background:var(--saw);"></div><div class="spec-label">4</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:14px; background:var(--saw);"></div><div class="spec-label">5</div></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:8px; line-height:1.5;">所有谐波，最丰富</div>
+      </div>
+      <div>
+        <div style="font-size:12px; color:var(--tri); margin-bottom:10px; font-family:'Space Mono',monospace;">三角波</div>
+        <div class="spectrum-bars">
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:70px; background:var(--tri);"></div><div class="spec-label">1</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--tri);"></div><div class="spec-label">2</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:8px; background:var(--tri);"></div><div class="spec-label">3</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:0px; background:var(--tri);"></div><div class="spec-label">4</div></div>
+          <div class="spec-bar-wrap"><div class="spec-bar" style="height:3px; background:var(--tri);"></div><div class="spec-label">5</div></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:8px; line-height:1.5;">奇次谐波，快速衰减</div>
+      </div>
+    </div>
+    <div class="spectrum-note">▲ 横轴为谐波次数（1=基频），纵轴为能量。谐波越丰富，音色越"厚"越"亮"。</div>
+  </div>
+
+  <div class="compare-row">
+    <div class="compare-item">
+      <div class="compare-wave" style="color:var(--sine)">正弦波</div>
+      <div class="compare-attr">音色：纯净、单薄<br>感知：像"哔"声<br>用途：Sub Bass、效果音</div>
+    </div>
+    <div class="compare-item">
+      <div class="compare-wave" style="color:var(--square)">方波</div>
+      <div class="compare-attr">音色：空洞、有特质<br>感知：复古、像木管<br>用途：8-bit、Lead</div>
+    </div>
+    <div class="compare-item">
+      <div class="compare-wave" style="color:var(--saw)">锯齿波</div>
+      <div class="compare-attr">音色：明亮、厚实<br>感知：弦乐感、合唱感<br>用途：Pad、Lead、Bass</div>
+    </div>
+    <div class="compare-item">
+      <div class="compare-wave" style="color:var(--tri)">三角波</div>
+      <div class="compare-attr">音色：柔和、纯净<br>感知：像笛子<br>用途：旋律、Arp</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TAB 2: 音色分类 ══════════ -->
+<section class="section" id="tab-timbre">
+  <div class="section-title">音色的六种感知分类</div>
+  <p class="section-desc">不按合成方式，不按乐器名称——只按你听到它时的感受，和它在作品里做什么。点击展开每一类。</p>
+
+  <div class="timbre-grid">
+
+    <div class="timbre-card" onclick="toggleTimbre(this)">
+      <div class="timbre-header">
+        <div class="timbre-icon" style="background:rgba(255,100,100,0.12);">⚡</div>
+        <div class="timbre-info">
+          <div class="timbre-type">TYPE 01 · TRANSIENT</div>
+          <div class="timbre-name">瞬态型</div>
+        </div>
+        <div class="timbre-toggle">▾</div>
+      </div>
+      <div class="timbre-body">
+        <div class="timbre-content">
+          <div class="timbre-feature">
+            <div class="feature-label">特征</div>
+            <div class="feature-val">起音极快，短促衰减，几乎无持续段</div>
+          </div>
+          <div class="timbre-feature">
+            <div class="feature-label">ADSR</div>
+            <div class="feature-val">A极短 · D短 · S低/无 · R短</div>
+          </div>
+          <div class="timbre-examples">
+            <span class="example-tag">Kick</span>
+            <span class="example-tag">Snare</span>
+            <span class="example-tag">Pluck</span>
+            <span class="example-tag">Clave</span>
+            <span class="example-tag">Stab</span>
+            <span class="example-tag">Rim Shot</span>
+          </div>
+          <div class="timbre-use" style="border-color:#ff6464;">
+            节奏骨架、律动驱动、情绪冲击点。动作片配乐的打击感，靠这类音色支撑。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timbre-card" onclick="toggleTimbre(this)">
+      <div class="timbre-header">
+        <div class="timbre-icon" style="background:rgba(94,180,255,0.12);">〜</div>
+        <div class="timbre-info">
+          <div class="timbre-type">TYPE 02 · SUSTAINED</div>
+          <div class="timbre-name">持续型</div>
+        </div>
+        <div class="timbre-toggle">▾</div>
+      </div>
+      <div class="timbre-body">
+        <div class="timbre-content">
+          <div class="timbre-feature">
+            <div class="feature-label">特征</div>
+            <div class="feature-val">慢起音或中速起音，长时间稳定维持</div>
+          </div>
+          <div class="timbre-feature">
+            <div class="feature-label">ADSR</div>
+            <div class="feature-val">A慢 · D短/无 · S高 · R长</div>
+          </div>
+          <div class="timbre-examples">
+            <span class="example-tag">弦乐 Pad</span>
+            <span class="example-tag">合唱音色</span>
+            <span class="example-tag">管风琴</span>
+            <span class="example-tag">Drone</span>
+            <span class="example-tag">管乐长音</span>
+          </div>
+          <div class="timbre-use" style="border-color:#5eb4ff;">
+            和声铺底、情绪氛围烘托、场景过渡。游戏里的环境层音效大量使用这类。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timbre-card" onclick="toggleTimbre(this)">
+      <div class="timbre-header">
+        <div class="timbre-icon" style="background:rgba(160,120,255,0.12);">⋯</div>
+        <div class="timbre-info">
+          <div class="timbre-type">TYPE 03 · TEXTURAL</div>
+          <div class="timbre-name">粒状/质感型</div>
+        </div>
+        <div class="timbre-toggle">▾</div>
+      </div>
+      <div class="timbre-body">
+        <div class="timbre-content">
+          <div class="timbre-feature">
+            <div class="feature-label">特征</div>
+            <div class="feature-val">噪声比例高，频谱复杂不规则，有机质感</div>
+          </div>
+          <div class="timbre-feature">
+            <div class="feature-label">声源</div>
+            <div class="feature-val">非谐波为主，噪声成分主导</div>
+          </div>
+          <div class="timbre-examples">
+            <span class="example-tag">磁带噪声</span>
+            <span class="example-tag">雨声纹理</span>
+            <span class="example-tag">Granular层</span>
+            <span class="example-tag">弓弦摩擦</span>
+          </div>
+          <div class="timbre-use" style="border-color:#a078ff;">
+            填充频谱空白，增加真实感。好的声音设计里最难被察觉、却最不可或缺的一层。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timbre-card" onclick="toggleTimbre(this)">
+      <div class="timbre-header">
+        <div class="timbre-icon" style="background:rgba(255,80,80,0.15);">💥</div>
+        <div class="timbre-info">
+          <div class="timbre-type">TYPE 04 · IMPACT</div>
+          <div class="timbre-name">冲击/爆发型</div>
+        </div>
+        <div class="timbre-toggle">▾</div>
+      </div>
+      <div class="timbre-body">
+        <div class="timbre-content">
+          <div class="timbre-feature">
+            <div class="feature-label">特征</div>
+            <div class="feature-val">极快起音，能量集中，强烈低频瞬态</div>
+          </div>
+          <div class="timbre-feature">
+            <div class="feature-label">差异</div>
+            <div class="feature-val">比瞬态型能量更大，低频成分更突出</div>
+          </div>
+          <div class="timbre-examples">
+            <span class="example-tag">Boom</span>
+            <span class="example-tag">Slam</span>
+            <span class="example-tag">爆炸底端</span>
+            <span class="example-tag">Riser冲击</span>
+          </div>
+          <div class="timbre-use" style="border-color:#ff5050;">
+            配合视觉冲击点（Hit Point）。Trailer音乐每一个大"锤"，都是这类音色的精确落点。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timbre-card" onclick="toggleTimbre(this)">
+      <div class="timbre-header">
+        <div class="timbre-icon" style="background:rgba(255,220,80,0.12);">🔔</div>
+        <div class="timbre-info">
+          <div class="timbre-type">TYPE 05 · RESONANT</div>
+          <div class="timbre-name">谐鸣/共鸣型</div>
+        </div>
+        <div class="timbre-toggle">▾</div>
+      </div>
+      <div class="timbre-body">
+        <div class="timbre-content">
+          <div class="timbre-feature">
+            <div class="feature-label">特征</div>
+            <div class="feature-val">起音快，指数型衰减，音高感清晰，泛音悦耳</div>
+          </div>
+          <div class="timbre-feature">
+            <div class="feature-label">ADSR</div>
+            <div class="feature-val">A快 · D长(指数) · S低 · R自然</div>
+          </div>
+          <div class="timbre-examples">
+            <span class="example-tag">钟声</span>
+            <span class="example-tag">马林巴</span>
+            <span class="example-tag">颤音琴</span>
+            <span class="example-tag">管钟</span>
+          </div>
+          <div class="timbre-use" style="border-color:#ffdc50;">
+            旋律装饰音、场景标志性音色、UI音效（通知音、成就解锁音）。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="timbre-card" onclick="toggleTimbre(this)">
+      <div class="timbre-header">
+        <div class="timbre-icon" style="background:rgba(80,255,180,0.12);">◎</div>
+        <div class="timbre-info">
+          <div class="timbre-type">TYPE 06 · MODULATED</div>
+          <div class="timbre-name">调制型</div>
+        </div>
+        <div class="timbre-toggle">▾</div>
+      </div>
+      <div class="timbre-body">
+        <div class="timbre-content">
+          <div class="timbre-feature">
+            <div class="feature-label">特征</div>
+            <div class="feature-val">频谱或响度随时间周期性变化，有内在运动感</div>
+          </div>
+          <div class="timbre-feature">
+            <div class="feature-label">机制</div>
+            <div class="feature-val">LFO调制频率/响度/滤波截止频率</div>
+          </div>
+          <div class="timbre-examples">
+            <span class="example-tag">Leslie旋转</span>
+            <span class="example-tag">Wobble Bass</span>
+            <span class="example-tag">Flanger音色</span>
+            <span class="example-tag">颤音</span>
+          </div>
+          <div class="timbre-use" style="border-color:#50ffb4;">
+            Dubstep低音、迷幻摇滚、影视中表现角色意识扭曲/迷幻状态的音效。
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════ TAB 3: 时间包络 ══════════ -->
+<section class="section" id="tab-envelope">
+  <div class="section-title">时间包络：同样的波形，不同的音色</div>
+  <p class="section-desc">把钢琴音频反转——起音变成尾音，瞬态感变成弦乐渐入感。频谱没变，但音色感受完全不同。ADSR是塑造音色的时间维度。</p>
+
+  <div class="envelope-demo">
+    <div class="env-panel">
+      <div class="env-title">打击型包络</div>
+      <div class="env-sub">钢琴、Pluck、鼓 · 快起音，快衰减</div>
+      <svg class="env-svg" viewBox="0 0 200 80" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ff8c5e"/>
+            <stop offset="100%" stop-color="#ff8c5e" stop-opacity="0.2"/>
+          </linearGradient>
+        </defs>
+        <path d="M10,70 L25,10 L45,40 L180,65 L190,68" stroke="url(#g1)" stroke-width="2.5" fill="none"/>
+        <path d="M10,70 L25,10 L45,40 L180,65 L190,68 L190,70 Z" fill="url(#g1)" opacity="0.15"/>
+        <text x="18" y="75" fill="#ff8c5e" font-size="8" font-family="monospace">A</text>
+        <text x="34" y="75" fill="#ff8c5e" font-size="8" font-family="monospace">D</text>
+        <text x="90" y="75" fill="#888" font-size="8" font-family="monospace">S</text>
+        <text x="182" y="75" fill="#888" font-size="8" font-family="monospace">R</text>
+      </svg>
+      <div class="env-tags">
+        <span class="env-tag">A: 极短</span>
+        <span class="env-tag">D: 短</span>
+        <span class="env-tag">S: 低</span>
+        <span class="env-tag">R: 短</span>
+      </div>
+    </div>
+
+    <div class="env-panel">
+      <div class="env-title">弦乐型包络</div>
+      <div class="env-sub">弦乐 Pad、Choir · 慢起音，长持续</div>
+      <svg class="env-svg" viewBox="0 0 200 80" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#5ee7ff"/>
+            <stop offset="100%" stop-color="#5ee7ff" stop-opacity="0.2"/>
+          </linearGradient>
+        </defs>
+        <path d="M10,70 C30,70 60,10 80,12 L140,12 C155,12 165,40 180,42 L190,45" stroke="url(#g2)" stroke-width="2.5" fill="none"/>
+        <path d="M10,70 C30,70 60,10 80,12 L140,12 C155,12 165,40 180,42 L190,45 L190,70 Z" fill="url(#g2)" opacity="0.15"/>
+        <text x="40" y="75" fill="#5ee7ff" font-size="8" font-family="monospace">A</text>
+        <text x="75" y="75" fill="#888" font-size="8" font-family="monospace">D</text>
+        <text x="110" y="75" fill="#5ee7ff" font-size="8" font-family="monospace">S</text>
+        <text x="175" y="75" fill="#888" font-size="8" font-family="monospace">R</text>
+      </svg>
+      <div class="env-tags">
+        <span class="env-tag">A: 慢</span>
+        <span class="env-tag">D: 短/无</span>
+        <span class="env-tag">S: 高</span>
+        <span class="env-tag">R: 长</span>
+      </div>
+    </div>
+
+    <div class="env-panel">
+      <div class="env-title">钟声型包络</div>
+      <div class="env-sub">马林巴、钟、颤音琴 · 快起音，指数衰减</div>
+      <svg class="env-svg" viewBox="0 0 200 80" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g3" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffe45e"/>
+            <stop offset="100%" stop-color="#ffe45e" stop-opacity="0.1"/>
+          </linearGradient>
+        </defs>
+        <path d="M10,70 L22,8 C40,8 70,30 100,50 C130,62 160,67 190,69" stroke="url(#g3)" stroke-width="2.5" fill="none"/>
+        <path d="M10,70 L22,8 C40,8 70,30 100,50 C130,62 160,67 190,69 L190,70 Z" fill="url(#g3)" opacity="0.15"/>
+        <text x="15" y="75" fill="#ffe45e" font-size="8" font-family="monospace">A</text>
+        <text x="50" y="75" fill="#ffe45e" font-size="8" font-family="monospace">D(指数)</text>
+        <text x="155" y="75" fill="#888" font-size="8" font-family="monospace">R</text>
+      </svg>
+      <div class="env-tags">
+        <span class="env-tag">A: 极短</span>
+        <span class="env-tag">D: 长指数</span>
+        <span class="env-tag">S: 极低</span>
+        <span class="env-tag">R: 自然</span>
+      </div>
+    </div>
+
+    <div class="env-panel">
+      <div class="env-title">反转包络</div>
+      <div class="env-sub">Reverse Piano · 渐入感，飘忽感</div>
+      <svg class="env-svg" viewBox="0 0 200 80" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="g4" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#7eff9e" stop-opacity="0.1"/>
+            <stop offset="60%" stop-color="#7eff9e"/>
+            <stop offset="100%" stop-color="#7eff9e" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+        <path d="M10,69 C40,67 70,50 100,30 C130,12 150,10 165,10 L175,10 L190,70" stroke="url(#g4)" stroke-width="2.5" fill="none"/>
+        <path d="M10,69 C40,67 70,50 100,30 C130,12 150,10 165,10 L175,10 L190,70 Z" fill="url(#g4)" opacity="0.12"/>
+        <text x="10" y="75" fill="#888" font-size="8" font-family="monospace">渐入</text>
+        <text x="155" y="75" fill="#7eff9e" font-size="8" font-family="monospace">峰值</text>
+      </svg>
+      <div class="env-tags">
+        <span class="env-tag">慢渐入</span>
+        <span class="env-tag">无冲击</span>
+        <span class="env-tag">飘忽感</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <div class="insight-label">CORE INSIGHT · 核心洞见</div>
+    <div class="insight-text">
+      把钢琴音频<em>反转播放</em>：Attack 变成 Release，Release 变成 Attack。<br>
+      频谱结构完全没有改变，但音色从"打击感"变成了"弦乐渐入感"。<br><br>
+      这说明：<em>时间包络对音色感知的影响</em>，不亚于频谱本身。<br>
+      同样的"材料"，不同的"时间形状"，就是不同的音色。
+    </div>
+  </div>
+</section>
