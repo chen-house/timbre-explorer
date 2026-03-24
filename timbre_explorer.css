@@ -1,0 +1,511 @@
+:root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a26;
+    --border: rgba(255,255,255,0.08);
+    --accent1: #c8f0ff;
+    --accent2: #ffd6a0;
+    --accent3: #b8ffd6;
+    --accent4: #ffc8e8;
+    --text: #e8e8f0;
+    --text-dim: #8888aa;
+    --sine: #5ee7ff;
+    --square: #ff8c5e;
+    --saw: #ffe45e;
+    --tri: #7eff9e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(94,231,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1px;
+  }
+  h1 span { color: var(--accent1); }
+  .header-sub {
+    margin-top: 16px;
+    color: var(--text-dim);
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  /* ── NAV TABS ── */
+  .nav {
+    display: flex;
+    gap: 0;
+    padding: 0 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-btn {
+    padding: 18px 28px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+    top: 1px;
+  }
+  .nav-btn.active {
+    color: var(--accent1);
+    border-bottom-color: var(--accent1);
+  }
+  .nav-btn:hover:not(.active) { color: var(--text); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 48px 40px; max-width: 1100px; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+    max-width: 600px;
+  }
+
+  /* ── WAVEFORM CARDS ── */
+  .wave-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .wave-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .wave-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .wave-card[data-wave="sine"]::before   { background: radial-gradient(circle at 50% 0%, rgba(94,231,255,0.12), transparent 70%); }
+  .wave-card[data-wave="square"]::before { background: radial-gradient(circle at 50% 0%, rgba(255,140,94,0.12), transparent 70%); }
+  .wave-card[data-wave="saw"]::before    { background: radial-gradient(circle at 50% 0%, rgba(255,228,94,0.12), transparent 70%); }
+  .wave-card[data-wave="tri"]::before    { background: radial-gradient(circle at 50% 0%, rgba(126,255,158,0.12), transparent 70%); }
+
+  .wave-card:hover::before,
+  .wave-card.playing::before { opacity: 1; }
+
+  .wave-card.playing {
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-2px);
+  }
+
+  .wave-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .wave-card[data-wave="sine"]   .wave-name { color: var(--sine); }
+  .wave-card[data-wave="square"] .wave-name { color: var(--square); }
+  .wave-card[data-wave="saw"]    .wave-name { color: var(--saw); }
+  .wave-card[data-wave="tri"]    .wave-name { color: var(--tri); }
+
+  .wave-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .wave-en {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  /* SVG波形图 */
+  .wave-svg {
+    width: 100%;
+    height: 56px;
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+
+  .wave-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .wave-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-dim);
+  }
+
+  .wave-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .play-btn {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .play-btn:hover { background: rgba(255,255,255,0.1); }
+  .wave-card.playing .play-btn {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .play-icon { font-size: 14px; }
+
+  /* 频谱可视化 */
+  .spectrum-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .spectrum-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .spectrum-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 80px;
+  }
+  .spec-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+  }
+  .spec-bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    min-height: 3px;
+  }
+  .spec-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+  .spectrum-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* 对比信息栏 */
+  .compare-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .compare-item {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .compare-wave {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .compare-attr {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  /* ── 音色分类 ── */
+  .timbre-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+
+  .timbre-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .timbre-card:hover { border-color: rgba(255,255,255,0.18); transform: translateY(-1px); }
+
+  .timbre-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .timbre-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .timbre-info { flex: 1; }
+  .timbre-type {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 2px;
+  }
+  .timbre-name {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 17px;
+    font-weight: 600;
+  }
+  .timbre-toggle {
+    font-size: 18px;
+    color: var(--text-dim);
+    transition: transform 0.25s;
+  }
+  .timbre-card.open .timbre-toggle { transform: rotate(180deg); }
+
+  .timbre-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .timbre-card.open .timbre-body { max-height: 500px; }
+
+  .timbre-content {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .timbre-feature {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .feature-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    min-width: 48px;
+    padding-top: 2px;
+  }
+  .feature-val {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .timbre-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .example-tag {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .timbre-use {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border-left: 2px solid;
+    border-radius: 0 6px 6px 0;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  /* ADSR 可视化 */
+  .adsr-viz {
+    margin-top: 12px;
+    height: 40px;
+    position: relative;
+  }
+  .adsr-svg { width: 100%; height: 100%; }
+
+  /* ── ENVELOPE 页 ── */
+  .envelope-demo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 700px) {
+    .envelope-demo { grid-template-columns: 1fr; }
+    .compare-row { grid-template-columns: 1fr 1fr; }
+    .section { padding: 32px 20px; }
+    .nav { padding: 0 16px; }
+    header { padding: 40px 20px 32px; }
+  }
+
+  .env-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .env-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .env-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; }
+  .env-svg { width: 100%; height: 80px; }
+
+  .env-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .env-tag {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .insight-box {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-top: 24px;
+  }
+  .insight-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .insight-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .insight-text em { color: var(--accent2); font-style: normal; }
+
+  /* playing pulse */
+  @keyframes pulse-ring {
+    0%   { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+  .pulse {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    position: relative;
+  }
+  .pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse-ring 1s ease-out infinite;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
