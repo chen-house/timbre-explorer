@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音色是什么 — 声音的"面孔"</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #f8f6f1;
+    --surface: #ffffff;
+    --surface2: #f2efe8;
+    --text: #1a1814;
+    --text-muted: #6b6660;
+    --text-light: #a09890;
+    --accent: #c0622a;
+    --accent-light: #f5e8df;
+    --accent2: #3a6ea8;
+    --accent2-light: #e0ecf8;
+    --accent3: #3d7a4f;
+    --accent3-light: #e2f0e6;
+    --border: rgba(0,0,0,0.08);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: var(--text);
+    color: #f8f6f1;
+    padding: 64px 40px 56px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #a09880;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .hero h1 em { color: #e8a070; font-style: normal; }
+  .hero-sub {
+    font-size: 16px;
+    color: #c0b8b0;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── Layout ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Sections ── */
+  .section {
+    margin-top: 64px;
+  }
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 10px;
+  }
+  .section h2 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .section p { color: var(--text-muted); margin-bottom: 12px; }
+  .section p strong { color: var(--text); font-weight: 500; }
+
+  /* ── Callout box ── */
+  .callout {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .callout p { color: var(--text); margin: 0; }
+
+  /* ── Dimension cards (what makes up timbre) ── */
+  .dim-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+  }
+  .dim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+  }
+  .dim-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .dim-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .dim-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── Waveform + spectrum explainer ── */
+  .wave-demo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 24px 0;
+  }
+  .wave-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .wave-tab {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .wave-tab.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .wave-canvases { position: relative; }
+  canvas.wave-canvas {
+    width: 100%;
+    height: 100px;
+    display: block;
+    border-radius: 8px;
+    background: var(--surface2);
+    margin-bottom: 8px;
+  }
+  .wave-label {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .play-wave-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: var(--text);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s;
+  }
+  .play-wave-btn:hover { opacity: 0.8; }
+  .play-wave-btn.playing { background: var(--accent); }
+
+  /* ── Timbre category cards ── */
+  .timbre-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s;
+  }
+  .timbre-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+
+  .timbre-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .timbre-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .timbre-title-block h3 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .timbre-tagline { font-size: 12px; color: var(--text-light); }
+
+  .timbre-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .timbre-body { grid-template-columns: 1fr; } }
+
+  .timbre-desc { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+  .timbre-desc strong { color: var(--text); }
+
+  .timbre-right {}
+
+  .adsr-mini {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 40px;
+    margin-bottom: 12px;
+  }
+  .adsr-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+  }
+  .adsr-fill {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    background: var(--accent);
+    opacity: 0.3;
+    transition: height 0.3s;
+  }
+  .adsr-letter { font-size: 9px; color: var(--text-light); }
+
+  /* ── Audio play button ── */
+  .sound-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .sound-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .sound-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sound-btn.playing {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .sound-btn .icon { font-size: 12px; }
+
+  /* Waveform visualizer per card */
+  .mini-canvas {
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+    background: var(--surface2);
+    display: block;
+    margin-top: 12px;
+  }
+
+  /* ── Examples strip ── */
+  .examples-list {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .example-chip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+
+  /* scene references */
+  .scene-ref {
+    font-size: 12px;
+    color: var(--text-light);
+    font-style: italic;
+    margin-top: 10px;
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+  }
+
+  /* ── Color themes per category ── */
+  .cat-percussive .timbre-badge { background: #fde8da; }
+  .cat-percussive .adsr-fill { background: #c0622a; }
+  .cat-percussive .sound-btn.playing { background: #c0622a; border-color: #c0622a; }
+  .cat-percussive .timbre-card { border-top: 3px solid #c0622a; }
+
+  .cat-sustained .timbre-badge { background: #dcedf8; }
+  .cat-sustained .adsr-fill { background: #3a6ea8; }
+  .cat-sustained .sound-btn.playing { background: #3a6ea8; border-color: #3a6ea8; }
+  .cat-sustained .timbre-card { border-top: 3px solid #3a6ea8; }
+
+  .cat-resonant .timbre-badge { background: #e4f0e6; }
+  .cat-resonant .adsr-fill { background: #3d7a4f; }
+  .cat-resonant .sound-btn.playing { background: #3d7a4f; border-color: #3d7a4f; }
+  .cat-resonant .timbre-card { border-top: 3px solid #3d7a4f; }
+
+  .cat-noisy .timbre-badge { background: #f0e8f8; }
+  .cat-noisy .adsr-fill { background: #7c4faa; }
+  .cat-noisy .sound-btn.playing { background: #7c4faa; border-color: #7c4faa; }
+  .cat-noisy .timbre-card { border-top: 3px solid #7c4faa; }
+
+  .cat-modulated .timbre-badge { background: #f8f0da; }
+  .cat-modulated .adsr-fill { background: #a07820; }
+  .cat-modulated .sound-btn.playing { background: #a07820; border-color: #a07820; }
+  .cat-modulated .timbre-card { border-top: 3px solid #a07820; }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 40px 24px;
+    font-size: 12px;
+    color: var(--text-light);
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Spectrum viz ── */
+  #spectrum-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin: 24px 0;
+  }
+  #spectrum-canvas {
+    width: 100%;
+    height: 120px;
+    display: block;
+    border-radius: 8px;
+    background: #1a1814;
+    margin-top: 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <p class="hero-eyebrow">声音科普 · Timbre</p>
+  <h1>音色<br>声音的<em>面孔</em></h1>
+  <p class="hero-sub">为什么钢琴和吉他弹同一个音，听起来完全不同？<br>这个问题的答案，就是音色。</p>
+</div>
+
+<div class="content">
+
+  <!-- Section 1: What is timbre -->
+  <div class="section">
+    <p class="section-label">第一部分</p>
+    <h2>什么是音色</h2>
+    <p>
+      想象你蒙上眼睛，有人在你面前说了一个字——你立刻就能判断说话的是妈妈还是朋友。他们的音量一样，说的音调也一样，但你就是能分辨出来。这个让声音"长得不一样"的东西，就叫做<strong>音色</strong>（英文：Timbre，读作 /ˈtæmbər/）。
+    </p>
+    <p>
+      美国声学协会给音色下了一个学术定义：音色是"在响度和音调相同的情况下，让两个声音听起来不同的那种属性"。简单说，<strong>剥掉音量、剥掉音高，剩下的就是音色</strong>。
+    </p>
+    <div class="callout">
+      <p>一个帮助记忆的类比：如果把一段声音比作一个人——<strong>音高</strong>是他的身高，<strong>响度</strong>是他说话的音量，那么<strong>音色</strong>就是他的长相、声线、气质，是让你认出他的全部特征。</p>
+    </div>
+  </div>
+
+  <!-- Section 2: What makes up timbre -->
+  <div class="section">
+    <p class="section-label">第二部分</p>
+    <h2>音色由什么构成</h2>
+    <p>
+      音色不是一个单一的参数，而是由几个维度共同决定的"整体印象"。就像一个人的外貌是由脸型、肤色、眼睛形状等共同决定一样。
+    </p>
+    <div class="dim-grid">
+      <div class="dim-card">
+        <span class="dim-icon">〰</span>
+        <div class="dim-name">频谱结构</div>
+        <div class="dim-desc">声音由哪些频率成分组成、各自有多强。这是音色最核心的物理基础。</div>
+      </div>
+      <div class="dim-card">
+        <span class="dim-icon">◢</span>
+        <div class="dim-name">时间包络</div>
+        <div class="dim-desc">声音如何"生长"和"消亡"——起音快慢、持续多久、如何衰减。</div>
+      </div>
+      <div class="dim-card">
+        <span class="dim-icon">◎</span>
+        <div class="dim-name">谐波分布</div>
+        <div class="dim-desc">泛音是否丰富、以哪种规律排列。决定音色是"圆润"还是"尖锐"。</div>
+      </div>
+      <div class="dim-card">
+        <span class="dim-icon">∿</span>
+        <div class="dim-name">噪声成分</div>
+        <div class="dim-desc">纯粹的乐音之外，有多少摩擦、气息、随机噪声。</div>
+      </div>
+      <div class="dim-card">
+        <span class="dim-icon">⟳</span>
+        <div class="dim-name">动态调制</div>
+        <div class="dim-desc">声音是静止的还是在颤抖、摇曳？弦乐的颤音让它"活"起来。</div>
+      </div>
+    </div>
+
+    <!-- Interactive waveform explainer -->
+    <div class="wave-demo">
+      <p style="font-size:13px;font-weight:500;margin-bottom:14px;color:var(--text)">
+        互动：听听不同波形的音色差异
+      </p>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">
+        相同的音高（440Hz，钢琴中央A），只改变波形——就能听出完全不同的音色。这正说明了<strong>频谱结构</strong>的重要性。
+      </p>
+      <div class="wave-tabs">
+        <button class="wave-tab active" onclick="selectWave('sine',this)">正弦波</button>
+        <button class="wave-tab" onclick="selectWave('sawtooth',this)">锯齿波</button>
+        <button class="wave-tab" onclick="selectWave('square',this)">方波</button>
+        <button class="wave-tab" onclick="selectWave('triangle',this)">三角波</button>
+      </div>
+      <canvas id="waveform-canvas" class="wave-canvas"></canvas>
+      <p class="wave-label" id="wave-desc">正弦波：只有基频，无泛音。音色纯净、空洞，接近口哨声。</p>
+      <canvas id="spectrum-canvas-wave" class="wave-canvas"></canvas>
+      <p class="wave-label">↑ 频谱分布（横轴=频率，竖轴=能量）</p>
+      <button class="play-wave-btn" id="play-wave-btn" onclick="playWave()">
+        <span id="play-wave-icon">▶</span> 播放此波形
+      </button>
+    </div>
+  </div>
+
+  <!-- Section 3: Categories -->
+  <div class="section">
+    <p class="section-label">第三部分</p>
+    <h2>音色是如何分类的</h2>
+    <p>
+      声学心理学研究发现，人耳对音色的感知主要依赖两个维度：<strong>时间包络的形状</strong>（声音如何开始和结束）和<strong>频谱的丰富程度</strong>（音色的"质地"）。基于这两个维度，加上实际制作中的使用场景，我们可以把音色分为五大类。
+    </p>
+    <p>
+      以下每类音色都有真实音频演示——点击按钮即可听到，同时看到对应的实时波形。
+    </p>
+
+    <!-- CAT 1: PERCUSSIVE -->
+    <div class="cat-percussive">
+      <div class="timbre-card" id="card-percussive">
+        <div class="timbre-header">
+          <div class="timbre-badge">🥁</div>
+          <div class="timbre-title-block">
+            <h3>瞬态型音色</h3>
+            <p class="timbre-tagline">Percussive · Transient</p>
+          </div>
+        </div>
+        <div class="timbre-body">
+          <div>
+            <p class="timbre-desc">
+              <strong>特征：</strong>起音极快、衰减短促、几乎没有持续段。就像打了一下就消失了。
+            </p>
+            <p class="timbre-desc">
+              <strong>为什么听起来是这样：</strong>时间包络的 Attack 极短（通常不到10毫秒），能量集中在最初的一瞬，之后快速衰减归零。这种"脉冲"式的能量释放，让大脑感知为冲击和打击感。
+            </p>
+            <div class="examples-list">
+              <span class="example-chip">底鼓 Kick</span>
+              <span class="example-chip">军鼓 Snare</span>
+              <span class="example-chip">踩镲 Hihat</span>
+              <span class="example-chip">拨弦 Pluck</span>
+              <span class="example-chip">拍手声</span>
+              <span class="example-chip">木鱼</span>
+            </div>
+            <p class="scene-ref">
+              🎬 《星球大战》中光剑的"嗡嗡"碰撞音；《速度与激情》的引擎轰鸣起步；日常生活里的门铃声、键盘敲击声，都是瞬态型音色的典型应用。流行音乐的鼓点驱动感，正是靠它建立的。
+            </p>
+          </div>
+          <div class="timbre-right">
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:6px;">ADSR 包络示意</p>
+            <div class="adsr-mini" id="adsr-percussive">
+              <div class="adsr-bar"><div class="adsr-fill" style="height:36px"></div><span class="adsr-letter">A</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:28px"></div><span class="adsr-letter">D</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:4px"></div><span class="adsr-letter">S</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:4px"></div><span class="adsr-letter">R</span></div>
+            </div>
+            <div class="sound-row">
+              <button class="sound-btn" onclick="playSound('kick',this)"><span class="icon">▶</span> 底鼓</button>
+              <button class="sound-btn" onclick="playSound('snare',this)"><span class="icon">▶</span> 军鼓</button>
+              <button class="sound-btn" onclick="playSound('hihat',this)"><span class="icon">▶</span> 踩镲</button>
+              <button class="sound-btn" onclick="playSound('pluck',this)"><span class="icon">▶</span> 拨弦</button>
+            </div>
+            <canvas class="mini-canvas" id="canvas-percussive"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT 2: SUSTAINED -->
+    <div class="cat-sustained">
+      <div class="timbre-card" id="card-sustained">
+        <div class="timbre-header">
+          <div class="timbre-badge">🎻</div>
+          <div class="timbre-title-block">
+            <h3>持续型音色</h3>
+            <p class="timbre-tagline">Sustained · Tonal</p>
+          </div>
+        </div>
+        <div class="timbre-body">
+          <div>
+            <p class="timbre-desc">
+              <strong>特征：</strong>起音较慢或中速，有稳定的持续段，可以维持很长时间。像一口气托住的声音。
+            </p>
+            <p class="timbre-desc">
+              <strong>为什么听起来是这样：</strong>有稳定的 Sustain 阶段，频谱在持续过程中相对稳定。这类音色的谐波丰富，往往含有颤音（Vibrato）使其更具生命感。弦乐、人声、风琴都属于此类。
+            </p>
+            <div class="examples-list">
+              <span class="example-chip">小提琴长弓</span>
+              <span class="example-chip">大提琴</span>
+              <span class="example-chip">长笛</span>
+              <span class="example-chip">风琴 Organ</span>
+              <span class="example-chip">合唱 Choir</span>
+              <span class="example-chip">合成器 Pad</span>
+            </div>
+            <p class="scene-ref">
+              🎬 《辛德勒的名单》小提琴主题；《星际穿越》管风琴铺底；商场、电梯里无处不在的背景音乐，大多是持续型弦乐 Pad。电影配乐里，持续型音色是烘托情绪、撑起场景的"空气"。
+            </p>
+          </div>
+          <div class="timbre-right">
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:6px;">ADSR 包络示意</p>
+            <div class="adsr-mini">
+              <div class="adsr-bar"><div class="adsr-fill" style="height:20px;background:#3a6ea8"></div><span class="adsr-letter">A</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:14px;background:#3a6ea8"></div><span class="adsr-letter">D</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:32px;background:#3a6ea8"></div><span class="adsr-letter">S</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:16px;background:#3a6ea8"></div><span class="adsr-letter">R</span></div>
+            </div>
+            <div class="sound-row">
+              <button class="sound-btn" onclick="playSound('strings',this)"><span class="icon">▶</span> 弦乐 Pad</button>
+              <button class="sound-btn" onclick="playSound('organ',this)"><span class="icon">▶</span> 风琴</button>
+              <button class="sound-btn" onclick="playSound('flute',this)"><span class="icon">▶</span> 长笛感</button>
+            </div>
+            <canvas class="mini-canvas" id="canvas-sustained"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT 3: RESONANT -->
+    <div class="cat-resonant">
+      <div class="timbre-card" id="card-resonant">
+        <div class="timbre-header">
+          <div class="timbre-badge">🔔</div>
+          <div class="timbre-title-block">
+            <h3>谐鸣型音色</h3>
+            <p class="timbre-tagline">Resonant · Bell-like</p>
+          </div>
+        </div>
+        <div class="timbre-body">
+          <div>
+            <p class="timbre-desc">
+              <strong>特征：</strong>起音较快，然后像钟声一样缓慢衰减（指数型衰减），有清晰的音高感，泛音丰富。
+            </p>
+            <p class="timbre-desc">
+              <strong>为什么听起来是这样：</strong>金属、木质物体被敲击后，会按照共振特性产生一系列泛音，这些泛音的衰减速度不同，高频先消失，低频泛音慢慢留存，形成独特的"尾音感"。这种拖尾是谐鸣型音色的标志。
+            </p>
+            <div class="examples-list">
+              <span class="example-chip">三角铁</span>
+              <span class="example-chip">钟琴 Glockenspiel</span>
+              <span class="example-chip">马林巴</span>
+              <span class="example-chip">钢琴单音</span>
+              <span class="example-chip">寺庙钟声</span>
+              <span class="example-chip">音叉</span>
+            </div>
+            <p class="scene-ref">
+              🎬 古装剧、宫廷题材中反复出现的编钟声；手机短信通知音（叮的一声）；《魔戒》中精灵世界的空灵钟声；游戏《塞尔达传说》的金币拾取音效，都是谐鸣型音色的经典使用场景。
+            </p>
+          </div>
+          <div class="timbre-right">
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:6px;">ADSR 包络示意</p>
+            <div class="adsr-mini">
+              <div class="adsr-bar"><div class="adsr-fill" style="height:36px;background:#3d7a4f"></div><span class="adsr-letter">A</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:30px;background:#3d7a4f"></div><span class="adsr-letter">D</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:8px;background:#3d7a4f"></div><span class="adsr-letter">S</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:24px;background:#3d7a4f"></div><span class="adsr-letter">R</span></div>
+            </div>
+            <div class="sound-row">
+              <button class="sound-btn" onclick="playSound('bell',this)"><span class="icon">▶</span> 钟声</button>
+              <button class="sound-btn" onclick="playSound('marimba',this)"><span class="icon">▶</span> 马林巴</button>
+              <button class="sound-btn" onclick="playSound('temple',this)"><span class="icon">▶</span> 寺庙钟</button>
+            </div>
+            <canvas class="mini-canvas" id="canvas-resonant"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT 4: NOISY / TEXTURAL -->
+    <div class="cat-noisy">
+      <div class="timbre-card" id="card-noisy">
+        <div class="timbre-header">
+          <div class="timbre-badge">〰</div>
+          <div class="timbre-title-block">
+            <h3>质感型音色</h3>
+            <p class="timbre-tagline">Textural · Noisy</p>
+          </div>
+        </div>
+        <div class="timbre-body">
+          <div>
+            <p class="timbre-desc">
+              <strong>特征：</strong>噪声成分占主导，没有清晰的音高感，频谱宽广而复杂。像风声、沙沙声、摩擦声。
+            </p>
+            <p class="timbre-desc">
+              <strong>为什么听起来是这样：</strong>能量分布在宽泛的频率范围内，没有集中的谐波峰值，所以大脑无法提取出明确的音高。噪声并不意味着难听——白噪声有镇静效果，海浪声令人放松，关键在于噪声的频率分布和动态特征。
+            </p>
+            <div class="examples-list">
+              <span class="example-chip">白噪声</span>
+              <span class="example-chip">风声</span>
+              <span class="example-chip">海浪声</span>
+              <span class="example-chip">磁带噪底</span>
+              <span class="example-chip">弓弦摩擦</span>
+              <span class="example-chip">雨声</span>
+            </div>
+            <p class="scene-ref">
+              🎬 恐怖片中营造紧张感的弦乐弓弦摩擦（如《大提琴》般的刺耳音效）；睡眠 App 里的白噪声；《沙丘》中的沙漠风声设计；录音中若隐若现的磁带噪底，反而给声音带来了"温暖感"和年代感。
+            </p>
+          </div>
+          <div class="timbre-right">
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:6px;">ADSR 包络示意</p>
+            <div class="adsr-mini">
+              <div class="adsr-bar"><div class="adsr-fill" style="height:18px;background:#7c4faa"></div><span class="adsr-letter">A</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:10px;background:#7c4faa"></div><span class="adsr-letter">D</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:28px;background:#7c4faa"></div><span class="adsr-letter">S</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:14px;background:#7c4faa"></div><span class="adsr-letter">R</span></div>
+            </div>
+            <div class="sound-row">
+              <button class="sound-btn" onclick="playSound('white',this)"><span class="icon">▶</span> 白噪声</button>
+              <button class="sound-btn" onclick="playSound('pink',this)"><span class="icon">▶</span> 粉红噪声</button>
+              <button class="sound-btn" onclick="playSound('wind',this)"><span class="icon">▶</span> 风声感</button>
+            </div>
+            <canvas class="mini-canvas" id="canvas-noisy"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAT 5: MODULATED -->
+    <div class="cat-modulated">
+      <div class="timbre-card" id="card-modulated">
+        <div class="timbre-header">
+          <div class="timbre-badge">〜</div>
+          <div class="timbre-title-block">
+            <h3>调制型音色</h3>
+            <p class="timbre-tagline">Modulated · Animated</p>
+          </div>
+        </div>
+        <div class="timbre-body">
+          <div>
+            <p class="timbre-desc">
+              <strong>特征：</strong>音高或音量或音色本身在随时间周期性或随机地变化。声音是"活的"、"摇曳的"、"在呼吸的"。
+            </p>
+            <p class="timbre-desc">
+              <strong>为什么听起来是这样：</strong>当频率被周期性调制（颤音 Vibrato），或振幅被调制（颤幅 Tremolo），听感上就会产生动感。人声、弦乐天然含有这种微颤，这正是它们显得有"生命力"的原因。电子音乐里的 Wobble Bass，本质就是对滤波器截止频率的节奏性调制。
+            </p>
+            <div class="examples-list">
+              <span class="example-chip">颤音人声</span>
+              <span class="example-chip">Wobble Bass</span>
+              <span class="example-chip">莱斯利音箱效果</span>
+              <span class="example-chip">古琴泛音</span>
+              <span class="example-chip">Chorus 效果</span>
+            </div>
+            <p class="scene-ref">
+              🎬 Dubstep 音乐中标志性的"嗡嗡抖动"低音（Wobble Bass）；歌剧演员的颤音（Vibrato）；老式电影的莱斯利管风琴旋转音色；游戏配乐中表现魔法、幻术的闪烁音效。
+            </p>
+          </div>
+          <div class="timbre-right">
+            <p style="font-size:11px;color:var(--text-light);margin-bottom:6px;">ADSR 包络示意</p>
+            <div class="adsr-mini">
+              <div class="adsr-bar"><div class="adsr-fill" style="height:22px;background:#a07820"></div><span class="adsr-letter">A</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:16px;background:#a07820"></div><span class="adsr-letter">D</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:30px;background:#a07820"></div><span class="adsr-letter">S</span></div>
+              <div class="adsr-bar"><div class="adsr-fill" style="height:16px;background:#a07820"></div><span class="adsr-letter">R</span></div>
+            </div>
+            <div class="sound-row">
+              <button class="sound-btn" onclick="playSound('vibrato',this)"><span class="icon">▶</span> 颤音</button>
+              <button class="sound-btn" onclick="playSound('wobble',this)"><span class="icon">▶</span> Wobble</button>
+              <button class="sound-btn" onclick="playSound('tremolo',this)"><span class="icon">▶</span> 颤幅</button>
+            </div>
+            <canvas class="mini-canvas" id="canvas-modulated"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /section 3 -->
+
+  <!-- Section 4: Summary -->
+  <div class="section">
+    <p class="section-label">小结</p>
+    <h2>记住这张地图</h2>
+    <p>
+      五类音色并不是严格分离的——现实中的声音往往是混合体。一把真实的大提琴，同时具有<strong>持续型</strong>（长弓弦乐）、<strong>质感型</strong>（弓毛摩擦的气息感）和<strong>调制型</strong>（演奏家的颤音）特征。
+    </p>
+    <p>
+      声音设计师的工作，正是有意识地控制这些维度——强化某一特征，削弱另一特征——从而塑造出具有特定感情和用途的音色。下次你听到一段音效，不妨问自己：它的起音是快是慢？它干净还是含有噪声？它在摇曳还是静止？这就是读懂音色的开始。
+    </p>
+  </div>
+
+</div><!-- /content -->
+
+<footer>
+  <p>所有音频均由 Web Audio API 实时合成 · 无需加载外部文件</p>
+  <p style="margin-top:4px">理论参考：Grey (1977) · Wessel (1979) · McAdams & Giordano (2009)</p>
+</footer>
+
+<script>
+// ─── Audio Engine ───────────────────────────────────────────────
+let ctx = null;
+let activeNodes = [];
+let currentWaveType = 'sine';
+let waveOsc = null;
+let waveGain = null;
+let animFrame = null;
+let analyserWave = null;
+let miniAnalysers = {};
+let miniAnimFrames = {};
+
+function getCtx() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state === 'suspended') ctx.resume();
+  return ctx;
+}
+
+function stopAll() {
+  activeNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  activeNodes = [];
+  document.querySelectorAll('.sound-btn').forEach(b => {
+    b.classList.remove('playing');
+    b.querySelector('.icon').textContent = '▶';
+  });
+}
+
+// ─── Wave demo ──────────────────────────────────────────────────
+const waveDescs = {
+  sine:     '正弦波：只有基频，无泛音。音色纯净、空洞，接近口哨声或音叉。',
+  sawtooth: '锯齿波：含所有谐波（奇次＋偶次）。音色最丰富、最明亮，接近弦乐或铜管。',
+  square:   '方波：只含奇次谐波。有中空的"箱子感"，接近单簧管或复古游戏音效。',
+  triangle: '三角波：奇次谐波但衰减快。比方波更柔和，介于正弦与方波之间。'
+};
+
+function selectWave(type, btn) {
+  currentWaveType = type;
+  document.querySelectorAll('.wave-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('wave-desc').textContent = waveDescs[type];
+  drawStaticWave(type);
+  drawStaticSpectrum(type);
+  if (waveOsc) {
+    waveOsc.type = type;
+  }
+}
+
+function drawStaticWave(type) {
+  const canvas = document.getElementById('waveform-canvas');
+  const ctx2 = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * devicePixelRatio || 600;
+  canvas.height = canvas.offsetHeight * devicePixelRatio || 100;
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  const W = canvas.width, H = canvas.height;
+  ctx2.strokeStyle = '#c0622a';
+  ctx2.lineWidth = 2;
+  ctx2.beginPath();
+  const cycles = 3;
+  for (let x = 0; x < W; x++) {
+    const t = (x / W) * cycles * 2 * Math.PI;
+    let y;
+    if (type === 'sine') {
+      y = Math.sin(t);
+    } else if (type === 'sawtooth') {
+      y = 1 - 2 * ((t % (2*Math.PI)) / (2*Math.PI));
+    } else if (type === 'square') {
+      y = Math.sin(t) >= 0 ? 1 : -1;
+    } else {
+      const p = t % (2*Math.PI);
+      y = p < Math.PI ? -1 + 2*p/Math.PI : 3 - 2*p/Math.PI;
+    }
+    const py = H/2 - y * (H/2 - 10);
+    x === 0 ? ctx2.moveTo(x, py) : ctx2.lineTo(x, py);
+  }
+  ctx2.stroke();
+}
+
+function drawStaticSpectrum(type) {
+  const canvas = document.getElementById('spectrum-canvas-wave');
+  const ctx2 = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * devicePixelRatio || 600;
+  canvas.height = canvas.offsetHeight * devicePixelRatio || 100;
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  const W = canvas.width, H = canvas.height;
+  const harmonics = {
+    sine:     [[1, 1.0]],
+    sawtooth: [[1,1],[2,0.5],[3,0.33],[4,0.25],[5,0.2],[6,0.17],[7,0.14],[8,0.12]],
+    square:   [[1,1],[3,0.33],[5,0.2],[7,0.14],[9,0.11],[11,0.09]],
+    triangle: [[1,1],[3,0.11],[5,0.04],[7,0.02]]
+  };
+  const h = harmonics[type];
+  const maxH = h.length;
+  const barW = Math.min(40, W / (maxH * 3));
+  ctx2.fillStyle = '#3a6ea8';
+  h.forEach(([n, amp]) => {
+    const x = (n / (maxH + 2)) * W;
+    const barH = amp * (H - 10);
+    ctx2.globalAlpha = 0.8;
+    ctx2.fillRect(x - barW/2, H - barH, barW, barH);
+  });
+}
+
+function playWave() {
+  const ac = getCtx();
+  const btn = document.getElementById('play-wave-btn');
+  const icon = document.getElementById('play-wave-icon');
+
+  if (waveOsc) {
+    waveOsc.stop();
+    waveOsc = null;
+    waveGain.disconnect();
+    btn.classList.remove('playing');
+    icon.textContent = '▶';
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+    return;
+  }
+
+  analyserWave = ac.createAnalyser();
+  analyserWave.fftSize = 256;
+  waveGain = ac.createGain();
+  waveGain.gain.setValueAtTime(0.2, ac.currentTime);
+  waveOsc = ac.createOscillator();
+  waveOsc.type = currentWaveType;
+  waveOsc.frequency.value = 440;
+  waveOsc.connect(analyserWave);
+  analyserWave.connect(waveGain);
+  waveGain.connect(ac.destination);
+  waveOsc.start();
+  btn.classList.add('playing');
+  icon.textContent = '■';
+
+  const canvas = document.getElementById('waveform-canvas');
+  const ctx2 = canvas.getContext('2d');
+  const buf = new Uint8Array(analyserWave.frequencyBinCount);
+
+  function draw() {
+    animFrame = requestAnimationFrame(draw);
+    analyserWave.getByteTimeDomainData(buf);
+    canvas.width = canvas.offsetWidth * devicePixelRatio || 600;
+    canvas.height = 100 * devicePixelRatio || 100;
+    ctx2.clearRect(0, 0, canvas.width, canvas.height);
+    ctx2.strokeStyle = '#c0622a';
+    ctx2.lineWidth = 2;
+    ctx2.beginPath();
+    buf.forEach((v, i) => {
+      const x = (i / buf.length) * canvas.width;
+      const y = (v / 128) * canvas.height / 2;
+      i === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
+    });
+    ctx2.stroke();
+  }
+  draw();
+
+  waveOsc.onended = () => {
+    waveOsc = null;
+    btn.classList.remove('playing');
+    icon.textContent = '▶';
+    if (animFrame) { cancelAnimationFrame(animFrame); animFrame = null; }
+    drawStaticWave(currentWaveType);
+  };
+}
+
+// ─── Sound synths ────────────────────────────────────────────────
+function playSound(type, btn) {
+  const ac = getCtx();
+
+  // toggle off if same button playing
+  if (btn.classList.contains('playing')) {
+    stopAll();
+    stopMiniViz(getCategory(type));
+    return;
+  }
+  stopAll();
+
+  btn.classList.add('playing');
+  btn.querySelector('.icon').textContent = '■';
+
+  const analyser = ac.createAnalyser();
+  analyser.fftSize = 256;
+  analyser.connect(ac.destination);
+
+  const cat = getCategory(type);
+  startMiniViz(cat, analyser);
+
+  let dur = 1.5;
+
+  if (type === 'kick') {
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.connect(gain); gain.connect(analyser);
+    osc.frequency.setValueAtTime(150, ac.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.08);
+    gain.gain.setValueAtTime(1, ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.4);
+    osc.start(); osc.stop(ac.currentTime + 0.4);
+    activeNodes.push(osc); dur = 0.5;
+  }
+  else if (type === 'snare') {
+    const buf = ac.createBuffer(1, ac.sampleRate * 0.3, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    const f = ac.createBiquadFilter();
+    f.type = 'bandpass'; f.frequency.value = 3000; f.Q.value = 0.5;
+    const gain = ac.createGain();
+    src.connect(f); f.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0.8, ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.25);
+    src.start(); src.stop(ac.currentTime + 0.3);
+    activeNodes.push(src); dur = 0.4;
+  }
+  else if (type === 'hihat') {
+    const buf = ac.createBuffer(1, ac.sampleRate * 0.15, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1);
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    const f = ac.createBiquadFilter();
+    f.type = 'highpass'; f.frequency.value = 7000;
+    const gain = ac.createGain();
+    src.connect(f); f.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0.5, ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.1);
+    src.start(); src.stop(ac.currentTime + 0.15);
+    activeNodes.push(src); dur = 0.25;
+  }
+  else if (type === 'pluck') {
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = 'sawtooth'; osc.frequency.value = 330;
+    osc.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0.6, ac.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.6);
+    osc.start(); osc.stop(ac.currentTime + 0.65);
+    activeNodes.push(osc); dur = 0.8;
+  }
+  else if (type === 'strings') {
+    const osc = ac.createOscillator();
+    const osc2 = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.type = 'sawtooth'; osc.frequency.value = 220;
+    osc2.type = 'sawtooth'; osc2.frequency.value = 330;
+    // Vibrato
+    const vibLFO = ac.createOscillator();
+    const vibGain = ac.createGain();
+    vibLFO.frequency.value = 5; vibGain.gain.value = 3;
+    vibLFO.connect(vibGain); vibGain.connect(osc.frequency); vibGain.connect(osc2.frequency);
+    vibLFO.start();
+    // Filter for softness
+    const filt = ac.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 1200;
+    osc.connect(filt); osc2.connect(filt); filt.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.3, ac.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.3, ac.currentTime + 1.5);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2.0);
+    osc.start(); osc2.start(); osc.stop(ac.currentTime + 2); osc2.stop(ac.currentTime + 2); vibLFO.stop(ac.currentTime + 2);
+    activeNodes.push(osc, osc2, vibLFO); dur = 2.2;
+  }
+  else if (type === 'organ') {
+    const freqs = [130.8, 261.6, 392, 523.2];
+    freqs.forEach(f => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sine'; osc.frequency.value = f;
+      osc.connect(gain); gain.connect(analyser);
+      gain.gain.setValueAtTime(0, ac.currentTime);
+      gain.gain.linearRampToValueAtTime(0.08, ac.currentTime + 0.01);
+      gain.gain.setValueAtTime(0.08, ac.currentTime + 1.8);
+      gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2.0);
+      osc.start(); osc.stop(ac.currentTime + 2);
+      activeNodes.push(osc);
+    });
+    dur = 2.2;
+  }
+  else if (type === 'flute') {
+    const osc = ac.createOscillator();
+    const noiseGain = ac.createGain();
+    const buf = ac.createBuffer(1, ac.sampleRate, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random()*2-1;
+    const noise = ac.createBufferSource();
+    noise.buffer = buf; noise.loop = true;
+    const nf = ac.createBiquadFilter();
+    nf.type = 'bandpass'; nf.frequency.value = 880; nf.Q.value = 0.5;
+    noise.connect(nf); nf.connect(noiseGain);
+    noiseGain.gain.value = 0.02;
+    osc.type = 'sine'; osc.frequency.value = 440;
+    const gain = ac.createGain();
+    osc.connect(gain); noiseGain.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.25, ac.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.25, ac.currentTime + 1.5);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 1.8);
+    osc.start(); noise.start(); osc.stop(ac.currentTime + 2); noise.stop(ac.currentTime + 2);
+    activeNodes.push(osc, noise); dur = 2.1;
+  }
+  else if (type === 'bell') {
+    const partials = [[1,1],[2.756,0.7],[5.404,0.4],[8.933,0.25],[13.34,0.14]];
+    partials.forEach(([ratio, amp]) => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sine'; osc.frequency.value = 220 * ratio;
+      osc.connect(gain); gain.connect(analyser);
+      gain.gain.setValueAtTime(amp * 0.2, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 2.5 / ratio);
+      osc.start(); osc.stop(ac.currentTime + 3);
+      activeNodes.push(osc);
+    });
+    dur = 3;
+  }
+  else if (type === 'marimba') {
+    const partials = [[1,1],[4,0.3],[10,0.1]];
+    partials.forEach(([ratio, amp]) => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sine'; osc.frequency.value = 330 * ratio;
+      osc.connect(gain); gain.connect(analyser);
+      gain.gain.setValueAtTime(amp * 0.3, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.8 / Math.sqrt(ratio));
+      osc.start(); osc.stop(ac.currentTime + 1.2);
+      activeNodes.push(osc);
+    });
+    dur = 1.4;
+  }
+  else if (type === 'temple') {
+    const partials = [[1,1],[2.3,0.6],[4.1,0.3],[6.8,0.15]];
+    partials.forEach(([ratio, amp]) => {
+      const osc = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.type = 'sine'; osc.frequency.value = 110 * ratio;
+      osc.connect(gain); gain.connect(analyser);
+      gain.gain.setValueAtTime(amp * 0.25, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 4 / ratio);
+      osc.start(); osc.stop(ac.currentTime + 5);
+      activeNodes.push(osc);
+    });
+    dur = 5;
+  }
+  else if (type === 'white') {
+    const buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random()*2-1;
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    const gain = ac.createGain();
+    src.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.15, ac.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.15, ac.currentTime + 1.8);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2);
+    src.start(); src.stop(ac.currentTime + 2.1);
+    activeNodes.push(src); dur = 2.2;
+  }
+  else if (type === 'pink') {
+    // Pink noise via filtering white noise
+    const buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0;
+    for (let i = 0; i < d.length; i++) {
+      const w = Math.random()*2-1;
+      b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
+      b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
+      b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+      d[i] = (b0+b1+b2+b3+b4+b5+w*0.5362)*0.11;
+    }
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    const gain = ac.createGain();
+    src.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.6, ac.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.6, ac.currentTime + 1.8);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2);
+    src.start(); src.stop(ac.currentTime + 2.1);
+    activeNodes.push(src); dur = 2.2;
+  }
+  else if (type === 'wind') {
+    const buf = ac.createBuffer(1, ac.sampleRate * 2, ac.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = Math.random()*2-1;
+    const src = ac.createBufferSource();
+    src.buffer = buf;
+    const filt = ac.createBiquadFilter();
+    filt.type = 'bandpass'; filt.frequency.value = 600; filt.Q.value = 0.3;
+    const gain = ac.createGain();
+    src.connect(filt); filt.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.5, ac.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.5, ac.currentTime + 1.5);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2);
+    src.start(); src.stop(ac.currentTime + 2.1);
+    activeNodes.push(src); dur = 2.2;
+  }
+  else if (type === 'vibrato') {
+    const osc = ac.createOscillator();
+    const lfo = ac.createOscillator();
+    const lfoGain = ac.createGain();
+    lfo.frequency.value = 6; lfoGain.gain.value = 12;
+    lfo.connect(lfoGain); lfoGain.connect(osc.frequency);
+    osc.type = 'sawtooth'; osc.frequency.value = 440;
+    const filt = ac.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 1000;
+    const gain = ac.createGain();
+    osc.connect(filt); filt.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0, ac.currentTime);
+    gain.gain.linearRampToValueAtTime(0.2, ac.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.2, ac.currentTime + 1.8);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2.0);
+    osc.start(); lfo.start(); osc.stop(ac.currentTime + 2); lfo.stop(ac.currentTime + 2);
+    activeNodes.push(osc, lfo); dur = 2.2;
+  }
+  else if (type === 'wobble') {
+    const osc = ac.createOscillator();
+    osc.type = 'sawtooth'; osc.frequency.value = 55;
+    const filt = ac.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 200; filt.Q.value = 8;
+    const lfo = ac.createOscillator();
+    const lfoGain = ac.createGain();
+    lfo.frequency.value = 3; lfoGain.gain.value = 800;
+    lfo.connect(lfoGain); lfoGain.connect(filt.frequency);
+    const gain = ac.createGain();
+    osc.connect(filt); filt.connect(gain); gain.connect(analyser);
+    gain.gain.setValueAtTime(0.4, ac.currentTime);
+    gain.gain.setValueAtTime(0.4, ac.currentTime + 2.0);
+    gain.gain.linearRampToValueAtTime(0, ac.currentTime + 2.2);
+    osc.start(); lfo.start(); osc.stop(ac.currentTime + 2.3); lfo.stop(ac.currentTime + 2.3);
+    activeNodes.push(osc, lfo); dur = 2.4;
+  }
+  else if (type === 'tremolo') {
+    const osc = ac.createOscillator();
+    osc.type = 'sawtooth'; osc.frequency.value = 220;
+    const lfo = ac.createOscillator();
+    const lfoGain = ac.createGain();
+    lfo.frequency.value = 7; lfoGain.gain.value = 0.15;
+    const gain = ac.createGain();
+    gain.gain.value = 0.15;
+    lfo.connect(lfoGain); lfoGain.connect(gain.gain);
+    const filt = ac.createBiquadFilter();
+    filt.type = 'lowpass'; filt.frequency.value = 1500;
+    osc.connect(filt); filt.connect(gain); gain.connect(analyser);
+    osc.start(); lfo.start(); osc.stop(ac.currentTime + 2); lfo.stop(ac.currentTime + 2);
+    activeNodes.push(osc, lfo); dur = 2.2;
+  }
+
+  setTimeout(() => {
+    if (btn.classList.contains('playing')) {
+      btn.classList.remove('playing');
+      btn.querySelector('.icon').textContent = '▶';
+      stopMiniViz(cat);
+    }
+  }, dur * 1000 + 100);
+}
+
+function getCategory(type) {
+  const map = {
+    kick:'percussive', snare:'percussive', hihat:'percussive', pluck:'percussive',
+    strings:'sustained', organ:'sustained', flute:'sustained',
+    bell:'resonant', marimba:'resonant', temple:'resonant',
+    white:'noisy', pink:'noisy', wind:'noisy',
+    vibrato:'modulated', wobble:'modulated', tremolo:'modulated'
+  };
+  return map[type] || 'percussive';
+}
+
+function startMiniViz(cat, analyser) {
+  miniAnalysers[cat] = analyser;
+  const canvas = document.getElementById('canvas-' + cat);
+  if (!canvas) return;
+  const ctx2 = canvas.getContext('2d');
+  const buf = new Uint8Array(analyser.frequencyBinCount);
+
+  function draw() {
+    miniAnimFrames[cat] = requestAnimationFrame(draw);
+    analyser.getByteTimeDomainData(buf);
+    canvas.width = canvas.offsetWidth * devicePixelRatio || 400;
+    canvas.height = 60 * devicePixelRatio || 60;
+    ctx2.clearRect(0, 0, canvas.width, canvas.height);
+    const colors = {
+      percussive:'#c0622a', sustained:'#3a6ea8', resonant:'#3d7a4f',
+      noisy:'#7c4faa', modulated:'#a07820'
+    };
+    ctx2.strokeStyle = colors[cat] || '#c0622a';
+    ctx2.lineWidth = 1.5;
+    ctx2.beginPath();
+    buf.forEach((v, i) => {
+      const x = (i / buf.length) * canvas.width;
+      const y = (v / 128.0) * canvas.height / 2;
+      i === 0 ? ctx2.moveTo(x, y) : ctx2.lineTo(x, y);
+    });
+    ctx2.stroke();
+  }
+  draw();
+}
+
+function stopMiniViz(cat) {
+  if (miniAnimFrames[cat]) {
+    cancelAnimationFrame(miniAnimFrames[cat]);
+    miniAnimFrames[cat] = null;
+    const canvas = document.getElementById('canvas-' + cat);
+    if (canvas) {
+      const ctx2 = canvas.getContext('2d');
+      canvas.width = canvas.offsetWidth * devicePixelRatio || 400;
+      canvas.height = 60 * devicePixelRatio || 60;
+      ctx2.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+}
+
+// ─── Init ──────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  drawStaticWave('sine');
+  drawStaticSpectrum('sine');
+});
+
+window.addEventListener('resize', () => {
+  drawStaticWave(currentWaveType);
+  drawStaticSpectrum(currentWaveType);
+});
+</script>
+</body>
+</html>
