@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>氛围音色 · 互动指南</title>
+<style>
+:root{--bg:#0f0f11;--bg2:#18181c;--bg3:#222228;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);--text:#e8e6e0;--text2:#9a9890;--text3:#5a5856}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px;line-height:1.6}
+header{padding:44px 32px 28px;max-width:900px;margin:0 auto}
+header h1{font-size:26px;font-weight:500;margin-bottom:6px}
+header p{color:var(--text2);font-size:13px;max-width:520px}
+.tabs{display:flex;gap:4px;padding:0 32px;max-width:900px;margin:0 auto 28px;flex-wrap:wrap}
+.tab{padding:6px 15px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:13px;transition:all .15s}
+.tab:hover{background:var(--bg3);color:var(--text)}
+.tab.active{background:var(--bg3);color:var(--text);border-color:rgba(255,255,255,.22)}
+.section{display:none;max-width:900px;margin:0 auto;padding:0 32px 48px}
+.section.active{display:block}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.cat-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+.cat-title{font-size:17px;font-weight:500}
+.cat-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px;max-width:580px}
+.tip{background:var(--bg2);border-left:2px solid #7f77dd;border-radius:0 8px 8px 0;padding:11px 15px;margin-bottom:18px;font-size:13px;color:var(--text2)}
+.sound-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:18px}
+.sound-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:16px 18px;transition:border-color .2s}
+.sound-card:hover{border-color:var(--border2)}
+.sound-card.playing{border-color:var(--c,#7f77dd)}
+.card-name{font-size:14px;font-weight:500;margin-bottom:4px}
+.card-subtype{font-size:11px;font-weight:500;padding:1px 8px;border-radius:10px;display:inline-block;margin-bottom:5px}
+.card-eng{font-size:11px;color:var(--text3);font-family:"SF Mono",monospace;margin-bottom:7px}
+.card-desc{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:11px}
+.play-btn{display:flex;align-items:center;gap:7px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:7px 13px;color:var(--text2);cursor:pointer;font-size:12px;transition:all .15s;width:100%}
+.play-btn:hover{border-color:rgba(255,255,255,.26);color:var(--text)}
+.play-btn.on{border-color:var(--c,#7f77dd);color:var(--text);background:rgba(255,255,255,.04)}
+.play-btn svg{width:13px;height:13px;flex-shrink:0}
+.viz-wrap{margin-top:9px;height:48px;border-radius:7px;overflow:hidden;background:var(--bg3)}
+.viz-wrap canvas{width:100%;height:48px;display:block}
+.prog-wrap{margin-top:5px;height:2px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.prog{height:100%;width:0%;border-radius:2px;transition:width .25s linear}
+.info-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.info-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:13px 15px}
+.info-card h4{font-size:12px;font-weight:500;margin-bottom:3px}
+.info-card p{font-size:12px;color:var(--text2);line-height:1.5}
+.sec-label{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.compare-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.compare-tbl th{text-align:left;padding:9px 12px;font-weight:500;color:var(--text3);border-bottom:0.5px solid var(--border)}
+.compare-tbl td{padding:11px 12px;border-bottom:0.5px solid var(--border);color:var(--text2);vertical-align:middle}
+.compare-tbl tr:last-child td{border-bottom:none}
+.compare-tbl .tname{font-weight:500;color:var(--text);font-size:14px}
+.dots{display:flex;gap:3px;align-items:center}
+.df{width:7px;height:7px;border-radius:50%}
+.de{width:7px;height:7px;border-radius:50%;background:var(--bg3);border:0.5px solid var(--border2)}
+@media(max-width:600px){header,.tabs,.section{padding-left:16px;padding-right:16px}.sound-grid{grid-template-columns:1fr}.info-cards{grid-template-columns:1fr}.compare-tbl{font-size:11px}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>氛围音色 · 互动指南</h1>
+  <p>六大类型 · Pad / Drone / Atmos / Texture / Ambient Wash 专业术语详解 · 每个音色均标注子类型</p>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab(0)">自然环境音</button>
+  <button class="tab" onclick="switchTab(1)">气候与水声</button>
+  <button class="tab" onclick="switchTab(2)">城市与人造</button>
+  <button class="tab" onclick="switchTab(3)">乐器延音</button>
+  <button class="tab" onclick="switchTab(4)">合成器音色</button>
+  <button class="tab" onclick="switchTab(5)">采样处理</button>
+  <button class="tab" onclick="switchTab(6)">对比一览</button>
+</div>
+
+<div class="section active" id="sec0">
+  <div class="cat-header"><span class="cat-badge" style="background:#0f3d2c;color:#5dcaa5">自然环境音</span><span class="cat-title">Field Recording · Nature</span></div>
+  <p class="cat-desc">直接录制于自然界，是最古老也最本能的氛围素材。人脑会将这些声音与空间、温度、安全感自动关联——清晨林间的鸟鸣，就是天然的 Pad，无需任何处理。</p>
+  <div class="sound-grid" id="grid0"></div>
+  <div class="info-cards">
+    <div class="info-card"><h4>什么情况下用，会有什么效果</h4><p>当你需要听众"秒进场景"时使用。一段森林鸟鸣铺底，即使没有画面，听众也会在几秒内形成"我在树林里"的空间感。这是进化级别的响应：稳定的流水声激活副交感神经、降低皮质醇，主动触发放松。合成器无法复制这一效果，因为少了自然声音那种随机的、非周期性的"生命感"。</p></div>
+    <div class="info-card"><h4>具体作品中怎么用的</h4><p>《指环王》用夏尔的鸟鸣+溪流建立"安全家园"感，切换到魔多后完全消失——对比本身就是叙事。Lofi Hip-Hop 的夜晚虫鸣让枯燥的学习BGM有了"深夜书房"的沉浸感。冥想 APP 用它作为声音锚点，帮助大脑从城市模式切换到休息模式。</p></div>
+  </div>
+</div>
+
+<div class="section" id="sec1">
+  <div class="cat-header"><span class="cat-badge" style="background:#0c2a4a;color:#85b7eb">气候与水声</span><span class="cat-title">Weather &amp; Water</span></div>
+  <p class="cat-desc">雨声、雷声、海浪的频谱宽广、接近白噪声，天然具有掩蔽效果。咖啡馆让人专注的原因之一，正是背景雨声屏蔽了中频人声干扰。</p>
+  <div class="sound-grid" id="grid1"></div>
+  <div class="info-cards">
+    <div class="info-card"><h4>什么情况下用，会有什么效果</h4><p>当你想屏蔽外部干扰、让听众专注或入睡时，雨声是最高效的工具。原因在于雨声的频谱覆盖 20Hz–15kHz，和白噪声高度相似，能把周围的说话声、交通声"盖住"。雷声则相反——低频隆隆声会制造潜意识的紧张感，适合悬疑或恐怖内容的氛围铺垫。海浪的缓慢潮起潮落会同步人的呼吸节律，适合需要"减速"的冥想场景。</p></div>
+    <div class="info-card"><h4>具体作品中怎么用的</h4><p>Radiohead《Kid A》开场用极度处理过的雨声制造"失联感"，听众还没听到旋律就已经感到不安。《生化危机》每逢雨夜场景必然危机四伏——雨声同时掩盖了怪物脚步声，在叙事上也有意义。ASMR 创作者用雨声作为底层是因为它把听众的注意力锁定在近场，抑制思维游荡。</p></div>
+  </div>
+</div>
+
+<div class="section" id="sec2">
+  <div class="cat-header"><span class="cat-badge" style="background:#252520;color:#b4b2a9">城市与人造</span><span class="cat-title">Urban Soundscape</span></div>
+  <p class="cat-desc">工业文明制造的持续底噪构成现代人的"声音地景"（Soundscape）。加拿大作曲家 R. Murray Schafer 认为，城市背景噪声本身就是一种集体氛围音色。</p>
+  <div class="sound-grid" id="grid2"></div>
+  <div class="info-cards">
+    <div class="info-card"><h4>什么情况下用，会有什么效果</h4><p>当你想传递"都市疏离感""科幻工业感"或"当代现实感"时使用。空调嗡鸣、地铁隆隆这类声音已深植于城市人的日常记忆——放进音乐里，哪怕只有几秒，就能让听众感到"这就是我生活的地方"。这种辨认感会产生强烈的代入，也可以反向利用：在本该宁静的音乐里插入工业噪声，制造不适与撕裂感。</p></div>
+    <div class="info-card"><h4>具体作品中怎么用的</h4><p>Brian Eno 为希思罗机场创作《Music for Airports》时，刻意把飞机引擎的低频嗡鸣融入音乐——旅客焦虑时，音乐里那层"熟悉的机械声"反而产生了奇异的安慰效果。《银翼杀手 2049》的城市背景音始终有一层工业低频压着，让画面里哪怕安静的对话场景也充满压迫。</p></div>
+  </div>
+</div>
+
+<div class="section" id="sec3">
+  <div class="cat-header"><span class="cat-badge" style="background:#1c1a3d;color:#afa9ec">乐器延音与泛音</span><span class="cat-title">Sustain &amp; Overtone</span></div>
+  <p class="cat-desc">弦乐组长弓、管风琴持续音、西藏颂钵——通过极慢的演奏速度或物理共鸣，让单音拉伸成一片声音"云朵"。这是人类最早掌握的氛围音色技法。</p>
+  <div class="sound-grid" id="grid3"></div>
+  <div class="info-cards">
+    <div class="info-card"><h4>什么情况下用，会有什么效果</h4><p>当你需要"神圣感""古典庄重感"或"时间被拉长"的感受时，传统乐器的延音比合成器更有说服力——因为听众能辨认出乐器的物理质感，泛音里藏着"真实乐器的不完美"，这种不完美反而让人信服。颂钵在冥想中使用，是因为它的拍频颤动与 alpha 脑波（8–12Hz 放松状态）频率接近，能物理性地引导神经系统减速。</p></div>
+    <div class="info-card"><h4>具体作品中怎么用的</h4><p>汉斯·季默在《星际穿越》开场用管风琴的持续低音营造宇宙尺度感——那个音不解决、不结束，听众的大脑会一直处于"等待"状态，焦虑与敬畏同时产生。钢琴踏板泛音在后现代古典（如 Nils Frahm）中大量出现，踏板踩下后的混响云团就是一种天然的 Ambient Wash。</p></div>
+  </div>
+</div>
+
+<div class="section" id="sec4">
+  <div class="cat-header"><span class="cat-badge" style="background:#3a2500;color:#fac775">合成器氛围音色</span><span class="cat-title">Synthesizer Textures</span></div>
+  <p class="cat-desc">现代音乐中使用最广泛的氛围来源。以下五种是核心专业术语——每种下面标注了具体的子类型，帮助你在 DAW 中直接对应。</p>
+  <div class="tip">制作提示：Pad → Attack 拉至 2s+，加大量 Reverb；Drone → 单音固定，关掉所有调制；Texture → Granulator II / Portal；Ambient Wash → Shimmer Reverb + Infinite Reverb。</div>
+  <div class="sound-grid" id="grid4"></div>
+  <div class="info-cards">
+    <div class="info-card"><h4>什么情况下用哪种，效果有何不同</h4><p>需要托住旋律、不抢主角→用 Pad，它像沙发一样安静承托。需要制造张力却不想引入旋律→用 Drone，单频的"不动"本身就是压力。需要表达辽阔或虚空→用 Atmos，它没有音高，只有空间。想让音色有"可触摸的表面感"而非平滑→用 Texture，颗粒感带来真实的材质联想。想让整段声音边界消失、漂浮起来→用 Ambient Wash，混响把所有细节淹没，只剩漫射的光。</p></div>
+    <div class="info-card"><h4>具体作品中怎么用的</h4><p>游戏《Journey》里用 Pad 贯穿全程——玩家在沙漠中孤独行走，Pad 提供了情感上的"陪伴感"，尽管什么都没说。恐怖游戏《Amnesia》用 Drone 做背景：玩家感到不安，却找不到具体原因，这正是低频持续音的心理效果。Shoegaze 乐队 My Bloody Valentine 把吉他完全淹进混响，变成 Ambient Wash——人声从乐器中"溶出来"，失去边界，产生梦游感。</p></div>
+  </div>
+</div>
+
+<div class="section" id="sec5">
+  <div class="cat-header"><span class="cat-badge" style="background:#2d1020;color:#ed93b1">采样处理</span><span class="cat-title">Processed Samples</span></div>
+  <p class="cat-desc">对真实录音进行极端处理——反转、极速拉伸、混响堆叠——让声音失去原本面貌，变成全新的氛围材质。这是最具创造力的氛围制作方式。</p>
+  <div class="sound-grid" id="grid5"></div>
+  <div class="info-cards">
+    <div class="info-card"><h4>什么情况下用，会有什么效果</h4><p>当你想创造一种"似曾相识却说不清是什么"的陌生感时使用。反向混响让声音在到来之前就已经"泄露"，大脑的预期被颠覆，产生幽灵感。极限拉伸把一个普通声音变成绵延数分钟的氛围云团，时间感被彻底瓦解——听众不再感知节拍，只感知空间。场录处理则让日常声音获得叙事意义：一段工厂录音经过混响处理，瞬间变成"废土世界"的声音证据。</p></div>
+    <div class="info-card"><h4>具体作品中怎么用的</h4><p>电影《她》（Her）里科幻的温柔氛围，很大程度来自 Arcade Fire 用极限拉伸处理过的人声和钢琴采样——熟悉的声音被拉到辨认不出，但仍残留一丝"人味"，完美匹配 AI 主角的身份。《死亡搁浅》的荒野场景用场录风声叠加反向混响，让户外的孤独感变得有重量。Hauntology 音乐流派（Burial、The Caretaker）的核心技法就是：让旧录音"腐烂"，用噪声和失真唤起集体记忆的哀愁。</p></div>
+  </div>
+</div>
+
+<div class="section" id="sec6">
+  <p class="sec-label">五大合成器氛围术语 · 横向对比</p>
+  <div class="tip">点击每行右侧播放，注意频谱图形状——Drone 只有一条尖峰，Pad 低频宽胖，Texture 高频更亮，Atmos 全频均匀，Ambient Wash 中频漫射。</div>
+  <table class="compare-tbl">
+    <thead><tr><th style="width:14%">术语</th><th style="width:20%">质感</th><th style="width:26%">核心特征</th><th style="width:14%">低频量</th><th style="width:26%">播放</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="tname">Pad</td><td>柔软·包围·温暖</td><td>长 Attack，低通滤波，和弦持续</td>
+        <td><div class="dots"><div class="df" style="background:#7f77dd"></div><div class="df" style="background:#7f77dd"></div><div class="df" style="background:#7f77dd"></div><div class="de"></div><div class="de"></div></div></td>
+        <td><button class="play-btn" id="cbtn_pad" style="--c:#7f77dd"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polygon points="2,1 11,6.5 2,12"/></svg><span>播放 Pad</span></button></td>
+      </tr>
+      <tr>
+        <td class="tname">Drone</td><td>催眠·紧张·单调</td><td>单一低频，无和声变化，极简</td>
+        <td><div class="dots"><div class="df" style="background:#ef9f27"></div><div class="df" style="background:#ef9f27"></div><div class="df" style="background:#ef9f27"></div><div class="df" style="background:#ef9f27"></div><div class="de"></div></div></td>
+        <td><button class="play-btn" id="cbtn_droneS" style="--c:#ef9f27"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polygon points="2,1 11,6.5 2,12"/></svg><span>播放 Drone</span></button></td>
+      </tr>
+      <tr>
+        <td class="tname">Atmos</td><td>辽阔·宇宙·无重力</td><td>宽频平坦，极大空间混响，无音高</td>
+        <td><div class="dots"><div class="df" style="background:#378add"></div><div class="df" style="background:#378add"></div><div class="de"></div><div class="de"></div><div class="de"></div></div></td>
+        <td><button class="play-btn" id="cbtn_atmos" style="--c:#378add"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polygon points="2,1 11,6.5 2,12"/></svg><span>播放 Atmos</span></button></td>
+      </tr>
+      <tr>
+        <td class="tname">Texture</td><td>粗糙·颗粒·有摩擦感</td><td>颗粒合成，高频噪声层，可感知表面</td>
+        <td><div class="dots"><div class="df" style="background:#1d9e75"></div><div class="de"></div><div class="de"></div><div class="de"></div><div class="de"></div></div></td>
+        <td><button class="play-btn" id="cbtn_texture" style="--c:#1d9e75"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polygon points="2,1 11,6.5 2,12"/></svg><span>播放 Texture</span></button></td>
+      </tr>
+      <tr>
+        <td class="tname">Ambient Wash</td><td>模糊·浪潮·边界消融</td><td>混响叠加，音符轮廓消失，漂浮感</td>
+        <td><div class="dots"><div class="df" style="background:#d4537e"></div><div class="df" style="background:#d4537e"></div><div class="de"></div><div class="de"></div><div class="de"></div></div></td>
+        <td><button class="play-btn" id="cbtn_wash" style="--c:#d4537e"><svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polygon points="2,1 11,6.5 2,12"/></svg><span>播放 Wash</span></button></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="margin-top:14px">
+    <p class="sec-label" style="margin-bottom:8px">实时频谱（播放时更新）</p>
+    <canvas id="compareViz" width="860" height="90" style="width:100%;height:90px;background:var(--bg2);border-radius:10px;border:0.5px solid var(--border);display:block"></canvas>
+  </div>
+</div>
+
+<script>
+var ACX=null;
+function getACX(){if(!ACX)ACX=new(window.AudioContext||window.webkitAudioContext)();if(ACX.state==='suspended')ACX.resume();return ACX;}
+
+var curNodes=[],curBtn=null,curAnalyser=null,vizRAF=null,progRAF=null;
+var DUR=30;
+
+function mkNoise(ctx,type){
+  var len=ctx.sampleRate*4,buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);
+  if(type==='white'){for(var i=0;i<len;i++)d[i]=Math.random()*2-1;}
+  else if(type==='pink'){var b=[0,0,0,0,0,0];for(var i=0;i<len;i++){var w=Math.random()*2-1;b[0]=.99886*b[0]+w*.0555179;b[1]=.99332*b[1]+w*.0750759;b[2]=.96900*b[2]+w*.1538520;b[3]=.86650*b[3]+w*.3104856;b[4]=.55000*b[4]+w*.5329522;b[5]=-.7616*b[5]-w*.0168980;d[i]=(b[0]+b[1]+b[2]+b[3]+b[4]+b[5]+w*.5362)*.11;}}
+  else{var last=0;for(var i=0;i<len;i++){var w=Math.random()*2-1;last=(last+.02*w)/1.02;d[i]=last*3.5;}}
+  var src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return src;
+}
+function mkG(ctx,v){var g=ctx.createGain();g.gain.value=v;return g;}
+function mkF(ctx,type,freq,q){var f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;return f;}
+function mkA(ctx){var a=ctx.createAnalyser();a.fftSize=512;return a;}
+function ch(){for(var i=0;i<arguments.length-1;i++)arguments[i].connect(arguments[i+1]);}
+function makeIR(ctx,len){var buf=ctx.createBuffer(2,ctx.sampleRate*len,ctx.sampleRate);for(var c=0;c<2;c++){var d=buf.getChannelData(c);for(var i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,1.8);}return buf;}
+function fadeEnv(g,ctx,peak){var p=peak||g.gain.value;g.gain.setValueAtTime(0,ctx.currentTime);g.gain.linearRampToValueAtTime(p,ctx.currentTime+2);g.gain.setValueAtTime(p,ctx.currentTime+DUR-2.5);g.gain.linearRampToValueAtTime(0,ctx.currentTime+DUR);}
+function mkLFO(ctx,freq,depth,target,nodes){var l=ctx.createOscillator();var g=ctx.createGain();l.frequency.value=freq;g.gain.value=depth;l.connect(g);g.connect(target);l.start();nodes.push(l);return l;}
+
+var SOUNDS={
+  forest:{name:'森林鸟鸣',subtype:'Nature Atmos · 自然大气层',sc:'#1d9e75',sb:'#0f3d2c',eng:'Natural ambience',color:'#1d9e75',
+    desc:'粉噪声经带通滤波，集中 800Hz–5kHz，模拟树冠层鸟鸣与风叶叠加，是最典型的自然 Atmos 素材。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.08);m.gain.value=.08;var n=mkNoise(ctx,'pink'),f=mkF(ctx,'bandpass',2000,.4),f2=mkF(ctx,'highpass',700,.3);ch(n,f,f2,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.3,800,f.frequency,nodes);fadeEnv(m,ctx,.08);return{a:a,m:m,nodes:nodes};}},
+  stream:{name:'溪流水声',subtype:'Water Texture · 流水纹理',sc:'#378add',sb:'#0c2a4a',eng:'Running stream',color:'#378add',
+    desc:'白噪声经带通滤波后叠加振幅调制，模拟湍急水流的随机撞击，中频突出，颗粒感强。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.09);var n=mkNoise(ctx,'white'),f=mkF(ctx,'bandpass',1100,.5);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.7,250,f.frequency,nodes);fadeEnv(m,ctx,.09);return{a:a,m:m,nodes:nodes};}},
+  fire:{name:'篝火噼啪',subtype:'Impulse Noise · 脉冲噪声',sc:'#ef9f27',sb:'#3a2500',eng:'Campfire crackle',color:'#ef9f27',
+    desc:'棕噪声低频托底，叠加振幅包络调制模拟噼啪，是典型的非稳态（Non-stationary）氛围素材。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.1);var n=mkNoise(ctx,'brown'),f=mkF(ctx,'lowpass',700,.5);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,1.4,.04,m.gain,nodes);fadeEnv(m,ctx,.1);return{a:a,m:m,nodes:nodes};}},
+  wind:{name:'风过树梢',subtype:'Low Noise Bed · 低频噪声底层',sc:'#888780',sb:'#252520',eng:'Wind through trees',color:'#888780',
+    desc:'粉噪声经低通滤波集中在低频，配合缓慢振幅 LFO 模拟风速变化，频率重心远低于雨声。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.08);var n=mkNoise(ctx,'pink'),f=mkF(ctx,'lowpass',450,.3);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.12,.035,m.gain,nodes);fadeEnv(m,ctx,.08);return{a:a,m:m,nodes:nodes};}},
+  rain:{name:'窗边雨声',subtype:'White Noise Wash · 白噪声冲刷',sc:'#85b7eb',sb:'#0c2a4a',eng:'Rain on window',color:'#85b7eb',
+    desc:'白噪声经高通+低通双滤波，频谱集中在 1k–6kHz，均匀沙沙质感，掩蔽效果最佳。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.1);var n=mkNoise(ctx,'white'),f1=mkF(ctx,'highpass',900,.3),f2=mkF(ctx,'lowpass',5500,.2);ch(n,f1,f2,m,a,ctx.destination);n.start();nodes.push(n);fadeEnv(m,ctx,.1);return{a:a,m:m,nodes:nodes};}},
+  thunder:{name:'远雷滚滚',subtype:'Sub-bass Rumble · 次低频隆隆',sc:'#534ab7',sb:'#1c1a3d',eng:'Distant thunder',color:'#534ab7',
+    desc:'棕噪声经低通滤波集中在 20–150Hz，缓慢包络调制，能量进入次低频，产生明显身体震感。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.15);var n=mkNoise(ctx,'brown'),f=mkF(ctx,'lowpass',130,2.5);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.06,.055,m.gain,nodes);fadeEnv(m,ctx,.15);return{a:a,m:m,nodes:nodes};}},
+  ocean:{name:'海浪潮涌',subtype:'LFO Swell · 潮涌调制',sc:'#378add',sb:'#0c2a4a',eng:'Ocean waves',color:'#378add',
+    desc:'棕噪声低通滤波后以 0.12Hz LFO 调制振幅，模拟周期 8–10s 的涌浪，低频饱满，纵深感强。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.1);var n=mkNoise(ctx,'brown'),f=mkF(ctx,'lowpass',850,.4);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.12,.055,m.gain,nodes);mkLFO(ctx,.08,180,f.frequency,nodes);fadeEnv(m,ctx,.1);return{a:a,m:m,nodes:nodes};}},
+  storm:{name:'暴风雪',subtype:'Wide-band Noise · 宽频带噪声',sc:'#b5d4f4',sb:'#0c2a4a',eng:'Blizzard',color:'#b5d4f4',
+    desc:'白噪声与粉噪声双层混合，全频段覆盖，高频刺骨风声叠加低频气压变动，传递紧迫情绪底色。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.09);var w=mkNoise(ctx,'white'),p=mkNoise(ctx,'pink'),g1=mkG(ctx,.55),g2=mkG(ctx,.45),fh=mkF(ctx,'highpass',1400,.3);ch(w,g1,m,a,ctx.destination);ch(p,g2,fh,m);w.start();p.start();nodes.push(w,p);mkLFO(ctx,.22,.04,m.gain,nodes);fadeEnv(m,ctx,.09);return{a:a,m:m,nodes:nodes};}},
+  ac:{name:'空调低鸣',subtype:'Industrial Drone · 工业 Drone',sc:'#888780',sb:'#252520',eng:'HVAC hum · 工频泛音叠加',color:'#888780',
+    desc:'以 50Hz 工频为基音叠加 100/150/200/300Hz 谐波，是最典型的工业 Drone——稳定、枯燥、难以察觉。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.07);var lp=mkF(ctx,'lowpass',400,.5);ch(lp,m,a,ctx.destination);[50,100,150,200,300].forEach(function(f,i){var o=ctx.createOscillator();o.type='sine';o.frequency.value=f;var g=mkG(ctx,.22/(i+1));ch(o,g,lp);o.start();nodes.push(o);});fadeEnv(m,ctx,.07);return{a:a,m:m,nodes:nodes};}},
+  subway:{name:'地铁隆隆',subtype:'Rhythmic Noise Bed · 节律底噪',sc:'#5f5e5a',sb:'#252520',eng:'Subway rumble',color:'#5f5e5a',
+    desc:'棕噪声经带通滤波聚焦 80–300Hz，叠加 0.3Hz 振幅脉动，模拟车轮接触铁轨的节律震动。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.12);var n=mkNoise(ctx,'brown'),f=mkF(ctx,'bandpass',190,1.5);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.32,.04,m.gain,nodes);fadeEnv(m,ctx,.12);return{a:a,m:m,nodes:nodes};}},
+  cafe:{name:'咖啡馆混响',subtype:'Social Ambience · 社交氛围',sc:'#ef9f27',sb:'#3a2500',eng:'Cafe ambience · 中频粉噪声',color:'#ef9f27',
+    desc:'粉噪声经带通聚焦中频，叠加缓慢振幅调制，模拟人声与器皿碰撞经空间混响后的"社交白噪声"。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.07);var n=mkNoise(ctx,'pink'),f=mkF(ctx,'bandpass',950,.6);ch(n,f,m,a,ctx.destination);n.start();nodes.push(n);mkLFO(ctx,.45,.025,m.gain,nodes);fadeEnv(m,ctx,.07);return{a:a,m:m,nodes:nodes};}},
+  strings:{name:'弦乐长弓',subtype:'Orchestral String Pad · 弦乐 Pad',sc:'#7f77dd',sb:'#1c1a3d',eng:'String pad · 微失谐叠加',color:'#7f77dd',
+    desc:'六把弦乐微量失谐（±0.4Hz）叠加，低通滤波后形成厚重泛音晕，是交响乐 Pad 的核心技法。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.07);var lp=mkF(ctx,'lowpass',1100,.5);ch(lp,m,a,ctx.destination);[220,220.4,440,440.7,330,329.6].forEach(function(f){var o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=f;var g=mkG(ctx,.15);ch(o,g,lp);o.start();nodes.push(o);});fadeEnv(m,ctx,.07);return{a:a,m:m,nodes:nodes};}},
+  organ:{name:'管风琴持续音',subtype:'Pipe Organ Drone · 谐波 Drone',sc:'#534ab7',sb:'#1c1a3d',eng:'Pipe organ sustained tone',color:'#534ab7',
+    desc:'锯齿波 110Hz 叠加六次谐波，各次谐波按 1/n 衰减，低通滤波，模拟管风琴充满空间的驻留音。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.065);var lp=mkF(ctx,'lowpass',1400,.3);ch(lp,m,a,ctx.destination);[110,220,330,440,550,660].forEach(function(f,i){var o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=f;var g=mkG(ctx,.22/(i+1));ch(o,g,lp);o.start();nodes.push(o);});fadeEnv(m,ctx,.065);return{a:a,m:m,nodes:nodes};}},
+  bowl:{name:'西藏颂钵',subtype:'Resonant Overtone Decay · 拍频衰减',sc:'#1d9e75',sb:'#0f3d2c',eng:'Singing bowl · 泛音拍频颤动',color:'#1d9e75',
+    desc:'432/864/1296Hz 三阶泛音同时衰减，各阶衰减速度不同；432 与 433.2Hz 微失谐产生拍频颤动感。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.12);ch(m,a,ctx.destination);[[432,433.2],[864,865],[1296,1297]].forEach(function(pair,i){pair.forEach(function(f){var o=ctx.createOscillator();o.type='sine';o.frequency.value=f;var g=mkG(ctx,.28/(i+1));g.gain.setValueAtTime(.28/(i+1),ctx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+DUR);ch(o,g,m);o.start();nodes.push(o);});});return{a:a,m:m,nodes:nodes};}},
+  pianosus:{name:'钢琴泛音踏板',subtype:'Sympathetic Resonance · 共鸣泛音',sc:'#9FE1CB',sb:'#0f3d2c',eng:'Piano sustain pedal',color:'#9FE1CB',
+    desc:'C 大调五音同时发声，各音按指数衰减，模拟踏板踩下后全弦共鸣激发同频泛音的金属声云。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.09);ch(m,a,ctx.destination);[261.6,329.6,392,523.2,659.3].forEach(function(f,i){var o=ctx.createOscillator();o.type='sine';o.frequency.value=f;var g=mkG(ctx,.22/(i*.6+1));g.gain.setValueAtTime(.001,ctx.currentTime);g.gain.linearRampToValueAtTime(.22/(i*.6+1),ctx.currentTime+.4);g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+DUR);ch(o,g,m);o.start();nodes.push(o);});return{a:a,m:m,nodes:nodes};}},
+  pad:{name:'Pad',subtype:'Warm Pad · 温暖垫层',sc:'#7f77dd',sb:'#1c1a3d',eng:'Synthesizer pad · 合成器垫层',color:'#7f77dd',
+    desc:'四个锯齿波微失谐叠加，低通滤波截止在 600Hz，卷积混响尾巴 3s，Attack 2s 渐入，是最常见的氛围基础层。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.09);var ir=makeIR(ctx,3),vb=ctx.createConvolver();vb.buffer=ir;var lp=mkF(ctx,'lowpass',600,.4);ch(lp,vb,m,a,ctx.destination);[130.8,164.8,196,261.6].forEach(function(f){var o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=f+Math.random()*.4-.2;var g=mkG(ctx,.2);ch(o,g,lp);o.start();nodes.push(o);});m.gain.setValueAtTime(0,ctx.currentTime);m.gain.linearRampToValueAtTime(.09,ctx.currentTime+2.2);m.gain.setValueAtTime(.09,ctx.currentTime+DUR-2.5);m.gain.linearRampToValueAtTime(0,ctx.currentTime+DUR);return{a:a,m:m,nodes:nodes};}},
+  droneS:{name:'Drone',subtype:'Sub Drone · 次低频持续音',sc:'#ef9f27',sb:'#3a2500',eng:'Synthesizer drone · 次低频单音',color:'#ef9f27',
+    desc:'55Hz 正弦基音叠加 110Hz 泛音，低通滤波限制在 320Hz 以下，频率绝对不变，催眠感来自这份"无变化"。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.1);var lp=mkF(ctx,'lowpass',320,1);ch(lp,m,a,ctx.destination);var o1=ctx.createOscillator(),o2=ctx.createOscillator();o1.type='sine';o1.frequency.value=55;o2.type='sine';o2.frequency.value=110;var g1=mkG(ctx,.75),g2=mkG(ctx,.3);ch(o1,g1,lp);ch(o2,g2,lp);o1.start();o2.start();nodes.push(o1,o2);fadeEnv(m,ctx,.1);return{a:a,m:m,nodes:nodes};}},
+  atmos:{name:'Atmos',subtype:'Atmospheric Space · 大气空间层',sc:'#378add',sb:'#0c2a4a',eng:'Atmospheric texture · 宽频混响空间',color:'#378add',
+    desc:'粉噪声经低通滤波后通过 5s 长尾卷积混响，所有瞬态被掩盖，剩下无边无际的"空气感"，是电影配乐的标配。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.09);var ir=makeIR(ctx,5),vb=ctx.createConvolver();vb.buffer=ir;var n=mkNoise(ctx,'pink'),lp=mkF(ctx,'lowpass',1800,.2);ch(n,lp,vb,m,a,ctx.destination);n.start();nodes.push(n);fadeEnv(m,ctx,.09);return{a:a,m:m,nodes:nodes};}},
+  texture:{name:'Texture',subtype:'Granular Texture · 颗粒肌理',sc:'#1d9e75',sb:'#0f3d2c',eng:'Granular noise texture · 颗粒+基础音叠加',color:'#1d9e75',
+    desc:'220Hz 锯齿波（低通）叠加高频白噪声（带通 3200Hz），两层独立并分别连接主增益，LFO 调制噪声滤波频率。',
+    make:function(){
+      var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.08);
+      ch(m,a,ctx.destination);
+      var osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=220;
+      var lpOsc=mkF(ctx,'lowpass',850,.5),gOsc=mkG(ctx,.55);
+      ch(osc,lpOsc,gOsc,m);osc.start();nodes.push(osc);
+      var noiseNode=mkNoise(ctx,'white');
+      var bpNoise=mkF(ctx,'bandpass',3200,.9),gNoise=mkG(ctx,.5);
+      ch(noiseNode,bpNoise,gNoise,m);noiseNode.start();nodes.push(noiseNode);
+      var lfoOsc=ctx.createOscillator(),lfoG=ctx.createGain();
+      lfoOsc.frequency.value=1.6;lfoG.gain.value=700;
+      lfoOsc.connect(lfoG);lfoG.connect(bpNoise.frequency);
+      lfoOsc.start();nodes.push(lfoOsc);
+      fadeEnv(m,ctx,.08);
+      return{a:a,m:m,nodes:nodes};
+    }},
+  wash:{name:'Ambient Wash',subtype:'Shimmer Wash · 光晕冲刷',sc:'#d4537e',sb:'#2d1020',eng:'Guitar ambient wash · 无限混响漂浮',color:'#d4537e',
+    desc:'G3/B3/D4 三个锯齿波叠加，低通滤波后经 6s 长尾卷积混响，音符轮廓消失，漂浮在混响空间，是 Shoegaze 核心音色。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.08);var ir=makeIR(ctx,6),vb=ctx.createConvolver();vb.buffer=ir;var lp=mkF(ctx,'lowpass',900,.4);ch(lp,vb,m,a,ctx.destination);[196,246.9,293.7].forEach(function(f){var o=ctx.createOscillator();o.type='sawtooth';o.frequency.value=f;var g=mkG(ctx,.22);ch(o,g,lp);o.start();nodes.push(o);});fadeEnv(m,ctx,.08);return{a:a,m:m,nodes:nodes};}},
+  reverseVerb:{name:'反向混响',subtype:'Reverse Reverb · 时间轴倒置',sc:'#d4537e',sb:'#2d1020',eng:'Reverse reverb effect · 幽灵预涌感',color:'#d4537e',
+    desc:'周期性振幅包络从零渐涨再骤降，模拟声音"提前到来后消失"的倒置时间感，每 5s 一个循环。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.0001);var osc=ctx.createOscillator();osc.type='sawtooth';osc.frequency.value=220;var lp=mkF(ctx,'lowpass',600,.5);ch(osc,lp,m,a,ctx.destination);osc.start();nodes.push(osc);for(var i=0;i<6;i++){m.gain.linearRampToValueAtTime(.28,ctx.currentTime+1+i*5);m.gain.linearRampToValueAtTime(.0001,ctx.currentTime+2.5+i*5);}m.gain.linearRampToValueAtTime(0,ctx.currentTime+DUR);var n=mkNoise(ctx,'pink'),fn=mkF(ctx,'bandpass',950,.4),gn=mkG(ctx,.04);ch(n,fn,gn,a,ctx.destination);n.start();nodes.push(n);return{a:a,m:m,nodes:nodes};}},
+  stretched:{name:'极限拉伸',subtype:'Time-stretched Drone · 时间解构',sc:'#ed93b1',sb:'#2d1020',eng:'Paul Stretch simulation · 瞬态消失泛音云',color:'#ed93b1',
+    desc:'80/160/240Hz 三层正弦波以极慢 LFO（0.05Hz）调制频率，模拟 Paul Stretch 拉伸后瞬态消失、缓慢流动泛音云的效果。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.1);var lp=mkF(ctx,'lowpass',380,.3);ch(lp,m,a,ctx.destination);[80,160,240].forEach(function(f,i){var o=ctx.createOscillator();o.type='sine';o.frequency.value=f;var g=mkG(ctx,.35/(i+1));ch(o,g,lp);o.start();nodes.push(o);var lo=ctx.createOscillator(),loG=ctx.createGain();lo.frequency.value=.05+i*.02;loG.gain.value=8+i*4;lo.connect(loG);loG.connect(o.frequency);lo.start();nodes.push(lo);});fadeEnv(m,ctx,.1);return{a:a,m:m,nodes:nodes};}},
+  field:{name:'场录处理',subtype:'Processed Field Recording · 工业氛围',sc:'#b4b2a9',sb:'#252520',eng:'Treated field recording · 滤波+混响处理',color:'#b4b2a9',
+    desc:'棕噪声经带通滤波（650Hz）叠加缓慢频率调制，模拟工厂/街道录音经过 Reverb 与 EQ 处理后的工业氛围质感。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.09);var n=mkNoise(ctx,'brown'),bp=mkF(ctx,'bandpass',650,.6);ch(n,bp,m,a,ctx.destination);n.start();nodes.push(n);var lo=ctx.createOscillator(),loG=ctx.createGain();lo.frequency.value=.28;loG.gain.value=.03;lo.connect(loG);loG.connect(m.gain);lo.start();nodes.push(lo);var lo2=ctx.createOscillator(),lo2G=ctx.createGain();lo2.frequency.value=.12;lo2G.gain.value=130;lo2.connect(lo2G);lo2G.connect(bp.frequency);lo2.start();nodes.push(lo2);fadeEnv(m,ctx,.09);return{a:a,m:m,nodes:nodes};}},
+  noiseLayer:{name:'噪声层叠',subtype:'Layered Noise Bed · 多层噪声底',sc:'#888780',sb:'#252520',eng:'Brown + pink noise stacking',color:'#888780',
+    desc:'棕噪声（低通 600Hz）叠加粉噪声（带通 900Hz），比例 6:4，以超慢 LFO 整体调制，制造密度极高的声音底层。',
+    make:function(){var ctx=getACX(),nodes=[],a=mkA(ctx),m=mkG(ctx,.11);var b=mkNoise(ctx,'brown'),p=mkNoise(ctx,'pink'),fb=mkF(ctx,'lowpass',600,.3),fp=mkF(ctx,'bandpass',900,.5),gb=mkG(ctx,.65),gp=mkG(ctx,.42);ch(b,fb,gb,m,a,ctx.destination);ch(p,fp,gp,m);b.start();p.start();nodes.push(b,p);var lo=ctx.createOscillator(),loG=ctx.createGain();lo.frequency.value=.09;loG.gain.value=.038;lo.connect(loG);loG.connect(m.gain);lo.start();nodes.push(lo);fadeEnv(m,ctx,.11);return{a:a,m:m,nodes:nodes};}}
+};
+
+var GRIDS=[
+  ['forest','stream','fire','wind'],
+  ['rain','thunder','ocean','storm'],
+  ['ac','subway','cafe'],
+  ['strings','organ','bowl','pianosus'],
+  ['pad','droneS','atmos','texture','wash'],
+  ['reverseVerb','stretched','field','noiseLayer']
+];
+
+function stopAll(){
+  if(curBtn){setBtn(curBtn,false);curBtn=null;}
+  curNodes.forEach(function(n){
+    try{
+      if(n.gain){n.gain.cancelScheduledValues(0);n.gain.setValueAtTime(0,0);}
+      if(n.stop)n.stop(0);
+      n.disconnect();
+    }catch(e){}
+  });
+  curNodes=[];curAnalyser=null;
+  if(vizRAF){cancelAnimationFrame(vizRAF);vizRAF=null;}
+  if(progRAF){cancelAnimationFrame(progRAF);progRAF=null;}
+  document.querySelectorAll('.prog').forEach(function(p){p.style.width='0%';});
+}
+
+function setBtn(btn,on){
+  var svg=btn.querySelector('svg'),span=btn.querySelector('span'),key=btn.getAttribute('data-skey');
+  if(on){
+    btn.classList.add('on');
+    svg.innerHTML='<rect x="1" y="1" width="4" height="11" rx="1" fill="currentColor"/><rect x="8" y="1" width="4" height="11" rx="1" fill="currentColor"/>';
+    if(span)span.textContent='停止';
+    if(key){var c=document.getElementById('sc_'+key);if(c)c.classList.add('playing');}
+  }else{
+    btn.classList.remove('on');
+    svg.innerHTML='<polygon points="2,1 11,6.5 2,12"/>';
+    if(span)span.textContent='播放';
+    if(key){var c=document.getElementById('sc_'+key);if(c)c.classList.remove('playing');}
+  }
+}
+
+function play(btn,key){
+  getACX();
+  var was=btn.classList.contains('on');
+  stopAll();
+  if(was)return;
+  btn.setAttribute('data-skey',key);
+  curBtn=btn;
+  var s=SOUNDS[key];
+  curNodes=[];
+  var res=s.make();
+  curNodes=res.nodes||[];
+  curAnalyser=res.a;
+  setBtn(btn,true);
+  var vizC=document.getElementById('sv_'+key);
+  if(vizC)startViz(res.a,vizC,s.color);
+  var pg=document.getElementById('sp_'+key);
+  if(pg)startProg(pg);
+  setTimeout(function(){if(curBtn===btn)stopAll();},DUR*1000);
+}
+
+function toggleCompare(btn,key){
+  getACX();
+  var was=btn.classList.contains('on');
+  stopAll();
+  if(was)return;
+  btn.setAttribute('data-skey',key);
+  curBtn=btn;
+  var s=SOUNDS[key];
+  curNodes=[];
+  var res=s.make();
+  curNodes=res.nodes||[];
+  curAnalyser=res.a;
+  setBtn(btn,true);
+  var cv=document.getElementById('compareViz');
+  if(cv)startViz(res.a,cv,s.color);
+  setTimeout(function(){if(curBtn===btn)stopAll();},DUR*1000);
+}
+
+function startViz(analyser,canvas,color){
+  var ctx2=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+  var buf=new Uint8Array(analyser.frequencyBinCount);
+  var r=parseInt(color.slice(1,3),16),g=parseInt(color.slice(3,5),16),b=parseInt(color.slice(5,7),16);
+  function draw(){
+    vizRAF=requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(buf);
+    ctx2.clearRect(0,0,W,H);ctx2.fillStyle='#222228';ctx2.fillRect(0,0,W,H);
+    var bw=W/buf.length*2.2,x=0;
+    for(var i=0;i<buf.length;i++){
+      var h=(buf[i]/255)*H,al=.3+(buf[i]/255)*.7;
+      ctx2.fillStyle='rgba('+r+','+g+','+b+','+al+')';
+      ctx2.fillRect(x,H-h,Math.max(bw-1,1),h);
+      x+=bw;
+    }
+  }
+  draw();
+}
+
+function startProg(bar){
+  var t0=performance.now();
+  function step(now){var pct=Math.min((now-t0)/(DUR*1000)*100,100);bar.style.width=pct+'%';if(pct<100)progRAF=requestAnimationFrame(step);}
+  progRAF=requestAnimationFrame(step);
+}
+
+function buildGrids(){
+  GRIDS.forEach(function(keys,gi){
+    var grid=document.getElementById('grid'+gi);
+    if(!grid)return;
+    keys.forEach(function(key){
+      var s=SOUNDS[key];
+      var el=document.createElement('div');
+      el.className='sound-card';el.id='sc_'+key;
+      el.style.setProperty('--c',s.color);
+      el.innerHTML='<div class="card-name">'+s.name+'</div>'
+        +'<span class="card-subtype" style="background:'+s.sb+';color:'+s.sc+'">'+s.subtype+'</span>'
+        +'<div class="card-eng">'+s.eng+'</div>'
+        +'<div class="card-desc">'+s.desc+'</div>'
+        +'<button class="play-btn" id="sb_'+key+'" style="--c:'+s.color+'">'
+        +'<svg viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><polygon points="2,1 11,6.5 2,12"/></svg>'
+        +'<span>播放</span></button>'
+        +'<div class="viz-wrap"><canvas id="sv_'+key+'" width="260" height="48"></canvas></div>'
+        +'<div class="prog-wrap"><div class="prog" id="sp_'+key+'" style="background:'+s.color+'"></div></div>';
+      grid.appendChild(el);
+      (function(k){document.getElementById('sb_'+k).addEventListener('click',function(){play(this,k);});})(key);
+    });
+  });
+}
+
+// Compare table buttons
+document.addEventListener('DOMContentLoaded',function(){
+  ['pad','droneS','atmos','texture','wash'].forEach(function(key){
+    var btn=document.getElementById('cbtn_'+key);
+    if(btn)btn.addEventListener('click',function(){toggleCompare(this,key);});
+  });
+});
+
+function switchTab(i){
+  document.querySelectorAll('.tab').forEach(function(t,j){t.classList.toggle('active',i===j);});
+  document.querySelectorAll('.section').forEach(function(s,j){s.classList.toggle('active',i===j);});
+}
+
+buildGrids();
+</script>
+</body>
+</html>
