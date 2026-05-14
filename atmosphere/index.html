@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>氛围色 — 声音的"温度"与"空间" · 声音设计笔记</title>
+<meta name="description" content="氛围音色互动指南 — 25 个 Web Audio 实时合成示例，涵盖自然环境、气候水声、城市底噪、乐器延音、合成器氛围与采样处理六大类。">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/atmosphere.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12 Q7 4 12 12 Q17 20 21 12" stroke="#D85A30" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#D85A30"/>
+      </svg>
+      声音设计笔记
+    </a>
+    <div class="nav-links">
+      <a href="../effects/index.html">效果器</a>
+      <a href="../timbre/index.html">音色</a>
+      <a href="index.html" class="active">氛围色</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-eyebrow">ATMOSPHERE · 第 3 章</div>
+    <h1>氛围色 — 声音的 <em>"温度"与"空间"</em></h1>
+    <p class="lead">25 个互动示例，覆盖 Pad / Drone / Atmos / Texture / Ambient Wash 五大专业术语。<br>每个音色都标注了子类型，便于在 DAW 里直接对应。</p>
+  </header>
+
+  <section>
+    <h2>开始前 — 氛围色是什么</h2>
+    <p>氛围色（Atmosphere / Ambient）是一类<strong style="font-weight:500;">不承担旋律、不承担节奏，但承担"情绪温度"与"空间感"</strong>的声音。它通常铺在混音底层，几乎察觉不到，但一旦抽掉，整段音乐立刻"失去维度"。</p>
+    <p>在影视、游戏、流媒体里，氛围色是<em class="accent">最被低估也最不可或缺的一层</em>。一个森林场景的可信度，往往不是来自画面，而是来自背景里那层鸟鸣 + 风过树梢 + 远雷。</p>
+    <p>下面分 6 大类讲 25 种氛围素材，外加一个 5 大合成器术语的横向对比。<strong style="font-weight:500;">所有声音都由 Web Audio API 实时合成，不依赖外部音频文件</strong> — 你听到的就是参数本身。</p>
+  </section>
+
+  <div class="amb-tabs">
+    <button class="amb-tab active" data-tab="0" onclick="switchAmbTab(0)">自然环境音</button>
+    <button class="amb-tab" data-tab="1" onclick="switchAmbTab(1)">气候与水声</button>
+    <button class="amb-tab" data-tab="2" onclick="switchAmbTab(2)">城市与人造</button>
+    <button class="amb-tab" data-tab="3" onclick="switchAmbTab(3)">乐器延音</button>
+    <button class="amb-tab" data-tab="4" onclick="switchAmbTab(4)">合成器氛围</button>
+    <button class="amb-tab" data-tab="5" onclick="switchAmbTab(5)">采样处理</button>
+    <button class="amb-tab" data-tab="6" onclick="switchAmbTab(6)">5 类对比</button>
+  </div>
+
+  <!-- 类别 0：自然环境音 -->
+  <section class="amb-section active" data-tab="0">
+    <div class="cat-header cat-nature">
+      <span class="cat-badge">自然环境音</span>
+      <span class="cat-en">Field Recording · Nature</span>
+    </div>
+    <p>直接录制于自然界 — 是最古老、也最本能的氛围素材。人脑会将这些声音与空间、温度、安全感自动关联：清晨林间的鸟鸣，本身就是天然的 Pad，无需任何处理。</p>
+    <div class="sound-grid" id="grid0"></div>
+    <div class="amb-info">
+      <div class="amb-info-card">
+        <div class="info-head">用在什么场景，会产生什么效果</div>
+        <p>当你需要听众"秒进场景"时使用。一段森林鸟鸣铺底，即使没有画面，听众也会在几秒内形成"我在树林里"的空间感。这是进化级别的反应：稳定的流水声激活副交感神经、降低皮质醇，主动触发放松。<strong style="font-weight:500;">合成器无法复制这一效果</strong>，因为缺少自然声音那种随机的、非周期性的"生命感"。</p>
+      </div>
+      <div class="amb-info-card">
+        <div class="info-head">具体作品中的运用</div>
+        <p>《指环王》用夏尔的鸟鸣 + 溪流建立"安全家园"感，切换到魔多后完全消失 — 对比本身就是叙事。Lofi Hip-Hop 的夜晚虫鸣让枯燥的学习 BGM 有了"深夜书房"的沉浸感。冥想 App 用它作为声音锚点，帮助大脑从城市模式切换到休息模式。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 类别 1：气候与水声 -->
+  <section class="amb-section" data-tab="1">
+    <div class="cat-header cat-weather">
+      <span class="cat-badge">气候与水声</span>
+      <span class="cat-en">Weather &amp; Water</span>
+    </div>
+    <p>雨、雷、海浪 — 频谱宽广、接近白噪声，天然具有<strong style="font-weight:500;">掩蔽效果</strong>。咖啡馆让人专注的原因之一，正是背景雨声屏蔽了中频人声干扰。</p>
+    <div class="sound-grid" id="grid1"></div>
+    <div class="amb-info">
+      <div class="amb-info-card">
+        <div class="info-head">用在什么场景</div>
+        <p>想屏蔽外部干扰、让听众专注或入睡 → 雨声，因为它的频谱覆盖 20Hz–15kHz，和白噪声高度相似，能把周围的说话声、交通声"盖住"。雷声相反 — 低频隆隆制造潜意识紧张感，适合悬疑/恐怖氛围。海浪缓慢潮起潮落会同步人的呼吸节律，适合冥想类"减速"场景。</p>
+      </div>
+      <div class="amb-info-card">
+        <div class="info-head">作品里的例子</div>
+        <p>Radiohead《Kid A》开场用极度处理过的雨声制造"失联感"，听众还没听到旋律就已经感到不安。《生化危机》每逢雨夜场景必有危机 — 雨声同时掩盖了怪物脚步声。ASMR 创作者用雨声作为底层，把听众的注意力锁定在近场。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 类别 2：城市与人造 -->
+  <section class="amb-section" data-tab="2">
+    <div class="cat-header cat-urban">
+      <span class="cat-badge">城市与人造</span>
+      <span class="cat-en">Urban Soundscape</span>
+    </div>
+    <p>工业文明制造的持续底噪构成现代人的"声音地景"（Soundscape）。加拿大作曲家 R. Murray Schafer 认为，城市背景噪声本身就是一种集体氛围音色。</p>
+    <div class="sound-grid" id="grid2"></div>
+    <div class="amb-info">
+      <div class="amb-info-card">
+        <div class="info-head">用在什么场景</div>
+        <p>想传递"都市疏离感""科幻工业感"或"当代现实感"。空调嗡鸣、地铁隆隆这类声音已深植于城市人的日常记忆 — 放进音乐里哪怕只有几秒，就能让听众感到"这就是我生活的地方"。也可以反向利用：在本该宁静的音乐里插入工业噪声，制造不适与撕裂感。</p>
+      </div>
+      <div class="amb-info-card">
+        <div class="info-head">作品里的例子</div>
+        <p>Brian Eno 为希思罗机场创作《Music for Airports》时，刻意把飞机引擎的低频嗡鸣融入音乐 — 旅客焦虑时，那层"熟悉的机械声"反而产生了奇异的安慰效果。《银翼杀手 2049》的城市背景音始终有一层工业低频压着，让画面里哪怕安静的对话场景也充满压迫。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 类别 3：乐器延音 -->
+  <section class="amb-section" data-tab="3">
+    <div class="cat-header cat-sustain">
+      <span class="cat-badge">乐器延音与泛音</span>
+      <span class="cat-en">Sustain &amp; Overtone</span>
+    </div>
+    <p>弦乐组长弓、管风琴持续音、西藏颂钵 — 通过极慢的演奏速度或物理共鸣，让单音拉伸成一片声音"云朵"。这是人类最早掌握的氛围技法。</p>
+    <div class="sound-grid" id="grid3"></div>
+    <div class="amb-info">
+      <div class="amb-info-card">
+        <div class="info-head">用在什么场景</div>
+        <p>需要"神圣感""古典庄重感"或"时间被拉长"的感受时，传统乐器的延音比合成器更有说服力。颂钵在冥想中使用，是因为它的<strong style="font-weight:500;">拍频颤动与 alpha 脑波（8–12 Hz 放松状态）频率接近</strong>，能物理性地引导神经系统减速。</p>
+      </div>
+      <div class="amb-info-card">
+        <div class="info-head">作品里的例子</div>
+        <p>汉斯·季默在《星际穿越》开场用管风琴的持续低音营造宇宙尺度感 — 那个音不解决、不结束，听众的大脑会一直处于"等待"状态，焦虑与敬畏同时产生。钢琴踏板泛音在后现代古典（Nils Frahm）中大量出现，踏板踩下后的混响云团就是一种天然的 Ambient Wash。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 类别 4：合成器氛围 -->
+  <section class="amb-section" data-tab="4">
+    <div class="cat-header cat-synth">
+      <span class="cat-badge">合成器氛围音色</span>
+      <span class="cat-en">Synthesizer Textures</span>
+    </div>
+    <p>现代音乐中使用最广泛的氛围来源。以下五种是<strong style="font-weight:500;">核心专业术语</strong> — 在 DAW 里都能找到对应设置。</p>
+
+    <div class="metaphor-box" style="margin:1rem 0;">
+      <div class="metaphor-head">DAW 制作提示</div>
+      <p>Pad → Attack 拉至 2 s+，加大量 Reverb；Drone → 单音固定，关掉所有调制；Texture → Granulator II / Portal；Ambient Wash → Shimmer Reverb + Infinite Reverb。</p>
+    </div>
+
+    <div class="sound-grid" id="grid4"></div>
+    <div class="amb-info">
+      <div class="amb-info-card">
+        <div class="info-head">什么场景选哪种</div>
+        <p>需要托住旋律、不抢主角 → <strong style="font-weight:500;">Pad</strong>。需要制造张力却不想引入旋律 → <strong style="font-weight:500;">Drone</strong>，单频的"不动"本身就是压力。需要表达辽阔或虚空 → <strong style="font-weight:500;">Atmos</strong>，没有音高，只有空间。想让音色有"可触摸的表面感" → <strong style="font-weight:500;">Texture</strong>。想让整段声音边界消失 → <strong style="font-weight:500;">Ambient Wash</strong>。</p>
+      </div>
+      <div class="amb-info-card">
+        <div class="info-head">作品里的例子</div>
+        <p>游戏《Journey》全程用 Pad — 玩家在沙漠中孤独行走，Pad 提供"陪伴感"。恐怖游戏《Amnesia》用 Drone 做背景：玩家感到不安却找不到具体原因。Shoegaze 乐队 My Bloody Valentine 把吉他完全淹进混响，变成 Ambient Wash — 人声从乐器中"溶出来"，失去边界。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 类别 5：采样处理 -->
+  <section class="amb-section" data-tab="5">
+    <div class="cat-header cat-processed">
+      <span class="cat-badge">采样处理</span>
+      <span class="cat-en">Processed Samples</span>
+    </div>
+    <p>对真实录音进行极端处理 — 反转、极速拉伸、混响堆叠 — 让声音失去原本面貌，变成全新的氛围材质。这是最具创造力的氛围制作方式。</p>
+    <div class="sound-grid" id="grid5"></div>
+    <div class="amb-info">
+      <div class="amb-info-card">
+        <div class="info-head">用在什么场景</div>
+        <p>想创造一种"似曾相识却说不清是什么"的陌生感时使用。反向混响让声音在到来之前就已经"泄露"。极限拉伸把普通声音变成绵延数分钟的氛围云团，时间感被瓦解。场录处理则让日常声音获得叙事意义。</p>
+      </div>
+      <div class="amb-info-card">
+        <div class="info-head">作品里的例子</div>
+        <p>电影《她》（Her）里科幻的温柔氛围，很大程度来自 Arcade Fire 用极限拉伸处理过的人声和钢琴 — 熟悉的声音被拉到辨认不出，但仍残留一丝"人味"。《死亡搁浅》的荒野场景用场录风声叠加反向混响。Hauntology 流派（Burial、The Caretaker）的核心技法就是让旧录音"腐烂"。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 类别 6：横向对比 -->
+  <section class="amb-section" data-tab="6">
+    <div class="cat-header cat-compare">
+      <span class="cat-badge">5 类合成器氛围 · 横向对比</span>
+      <span class="cat-en">5 Terms Side-by-Side</span>
+    </div>
+    <p>点击右侧"播放"逐个对比 — 注意频谱图形状：<strong style="font-weight:500;">Drone 一条尖峰、Pad 低频宽胖、Texture 高频更亮、Atmos 全频均匀、Ambient Wash 中频漫射</strong>。</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>术语</th>
+          <th>质感</th>
+          <th>核心特征</th>
+          <th>低频量</th>
+          <th>播放</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="tname" style="color:#D85A30;">Pad</td>
+          <td>柔软 · 包围 · 温暖</td>
+          <td>长 Attack，低通滤波，和弦持续</td>
+          <td><span class="lf-dots" data-fill="3"></span></td>
+          <td><button class="btn cmp-btn" onclick="playCompare('pad', this)" style="--cc:#D85A30;"><span class="ico-play"></span><span class="label">Pad</span></button></td>
+        </tr>
+        <tr>
+          <td class="tname" style="color:#A07820;">Drone</td>
+          <td>催眠 · 紧张 · 单调</td>
+          <td>单一低频，无和声变化，极简</td>
+          <td><span class="lf-dots" data-fill="4"></span></td>
+          <td><button class="btn cmp-btn" onclick="playCompare('droneS', this)" style="--cc:#A07820;"><span class="ico-play"></span><span class="label">Drone</span></button></td>
+        </tr>
+        <tr>
+          <td class="tname" style="color:#378ADD;">Atmos</td>
+          <td>辽阔 · 宇宙 · 无重力</td>
+          <td>宽频平坦，极大空间混响，无音高</td>
+          <td><span class="lf-dots" data-fill="2"></span></td>
+          <td><button class="btn cmp-btn" onclick="playCompare('atmos', this)" style="--cc:#378ADD;"><span class="ico-play"></span><span class="label">Atmos</span></button></td>
+        </tr>
+        <tr>
+          <td class="tname" style="color:#1D9E75;">Texture</td>
+          <td>粗糙 · 颗粒 · 有摩擦感</td>
+          <td>颗粒合成，高频噪声层</td>
+          <td><span class="lf-dots" data-fill="1"></span></td>
+          <td><button class="btn cmp-btn" onclick="playCompare('texture', this)" style="--cc:#1D9E75;"><span class="ico-play"></span><span class="label">Texture</span></button></td>
+        </tr>
+        <tr>
+          <td class="tname" style="color:#D4537E;">Ambient Wash</td>
+          <td>模糊 · 浪潮 · 边界消融</td>
+          <td>混响叠加，音符轮廓消失</td>
+          <td><span class="lf-dots" data-fill="2"></span></td>
+          <td><button class="btn cmp-btn" onclick="playCompare('wash', this)" style="--cc:#D4537E;"><span class="ico-play"></span><span class="label">Wash</span></button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="compare-viz-wrap">
+      <div class="info-head" style="margin-bottom:8px;">实时频谱（播放任一术语时更新）</div>
+      <canvas id="compareViz"></canvas>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <p class="muted" style="text-align:center;font-size:0.85rem;">
+    回到上一章 <a href="../timbre/index.html" style="color:var(--ink-light);">音色</a> · 或浏览 <a href="../effects/index.html" style="color:var(--ink-light);">效果器</a> 板块
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  <p><a href="../index.html" style="color:var(--ink-light);text-decoration:none;">← 回到首页</a></p>
+</footer>
+
+<script src="../assets/js/atmosphere.js"></script>
+</body>
+</html>

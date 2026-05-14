@@ -1,0 +1,508 @@
+/* ============================================
+   音色页 — Timbre 专属样式
+   遵循极简手绘风 + 与 EQ 页一致的卡片/网格规范
+   ============================================ */
+
+/* ============= 类比 / 核心洞见框 ============= */
+.metaphor-box {
+  background: var(--accent-soft);
+  border: 1px solid rgba(216, 90, 48, 0.18);
+  border-left: 3px solid var(--accent);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 1.25rem 0;
+}
+.metaphor-head {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.metaphor-box p {
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* ============= 五维度卡片 ============= */
+.dim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 1.25rem 0;
+}
+.dim-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: border-color 0.15s;
+}
+.dim-card:hover { border-color: var(--accent); }
+.dim-icon {
+  width: 32px;
+  height: 24px;
+  margin-bottom: 8px;
+  display: block;
+}
+.dim-name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.dim-desc {
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  line-height: 1.6;
+}
+
+/* ============= 波形卡片网格 ============= */
+.wave-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+@media (max-width: 700px) {
+  .wave-grid { grid-template-columns: 1fr; }
+}
+.wave-card {
+  background: rgba(247, 243, 236, 0.06);
+  border: 1px solid rgba(247, 243, 236, 0.12);
+  border-radius: 10px;
+  padding: 14px 16px;
+  color: rgba(247, 243, 236, 0.85);
+  transition: all 0.15s;
+}
+.wave-card[data-wave="sine"] { color: #E8A070; }
+.wave-card[data-wave="square"] { color: #B294D8; }
+.wave-card[data-wave="sawtooth"] { color: #6ED9AC; }
+.wave-card[data-wave="triangle"] { color: #E8C770; }
+
+.wave-card.playing {
+  border-color: currentColor;
+  background: rgba(247, 243, 236, 0.1);
+}
+.wave-meta {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: currentColor;
+  margin-bottom: 8px;
+}
+.wave-shape {
+  width: 100%;
+  height: 40px;
+  display: block;
+  margin-bottom: 8px;
+}
+.wave-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.wave-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  color: currentColor;
+  opacity: 0.85;
+}
+.wave-desc {
+  font-size: 0.78rem;
+  color: rgba(247, 243, 236, 0.55);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.wave-play {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px !important;
+  padding: 6px 12px !important;
+  background: rgba(247, 243, 236, 0.08) !important;
+  color: currentColor !important;
+  border: 1px solid currentColor !important;
+}
+.wave-card.playing .wave-play {
+  background: currentColor !important;
+  color: #1A1816 !important;
+}
+.wave-play-ico { fill: currentColor; flex-shrink: 0; }
+.wave-card.playing .wave-play-ico { display: none; }
+.wave-card.playing .wave-play::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+#wave-canvas {
+  width: 100%;
+  height: 110px;
+  display: block;
+  border-radius: 8px;
+  margin: 0.8rem 0 0.4rem;
+}
+.canvas-caption {
+  font-size: 11px;
+  color: rgba(247, 243, 236, 0.4);
+  text-align: center;
+  margin: 0;
+}
+
+/* ============= 谐波频谱柱状图 ============= */
+.harmonic-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 1.25rem 0;
+}
+@media (max-width: 700px) {
+  .harmonic-grid { grid-template-columns: repeat(2, 1fr); }
+}
+.harmonic-col {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.harmonic-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--c, var(--accent));
+  margin-bottom: 10px;
+}
+.harmonic-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-evenly;
+  height: 80px;
+  gap: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.hbar {
+  flex: 1;
+  background: var(--c, var(--accent));
+  border-radius: 2px 2px 0 0;
+  height: var(--h);
+  min-height: 1px;
+  transition: height 0.3s;
+}
+.harmonic-axis {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 5px;
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  color: var(--ink-light);
+}
+.harmonic-axis span { flex: 1; }
+.harmonic-sub {
+  font-size: 0.72rem;
+  color: var(--ink-light);
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
+/* ============= 五种音色类别 ============= */
+.tcat {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.tcat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--tcat-c, var(--accent));
+}
+.tcat-percussive { --tcat-c: #D85A30; }
+.tcat-sustained { --tcat-c: #1D9E75; }
+.tcat-resonant { --tcat-c: #7B5EA7; }
+.tcat-noisy { --tcat-c: #9B978E; }
+.tcat-modulated { --tcat-c: #A07820; }
+
+.tcat-head {
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--line);
+}
+.tcat-num {
+  font-family: ui-monospace, monospace;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--tcat-c);
+  line-height: 1;
+}
+.tcat-title h3 {
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin: 0 0 3px;
+  color: var(--ink);
+}
+.tcat-tagline {
+  font-size: 0.82rem;
+  color: var(--ink-light);
+  line-height: 1.5;
+}
+.tcat-body {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 720px) {
+  .tcat-body { grid-template-columns: 1fr; gap: 16px; }
+}
+.tcat-left p {
+  font-size: 0.88rem;
+  color: var(--ink);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+.tcat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+.chip {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  color: var(--ink-light);
+}
+.tcat-percussive .chip { background: rgba(216, 90, 48, 0.08); color: #993C1D; }
+.tcat-sustained .chip { background: rgba(29, 158, 117, 0.08); color: #1A6E52; }
+.tcat-resonant .chip { background: rgba(123, 94, 167, 0.08); color: #534AB7; }
+.tcat-noisy .chip { background: rgba(155, 151, 142, 0.10); color: #5F5E5A; }
+.tcat-modulated .chip { background: rgba(160, 120, 32, 0.08); color: #7A5A0F; }
+
+.scene-ref {
+  font-size: 0.78rem !important;
+  color: var(--ink-light) !important;
+  font-style: italic;
+  border-top: 1px dashed var(--line);
+  padding-top: 8px;
+  margin-top: 8px !important;
+  line-height: 1.65 !important;
+}
+
+/* ADSR mini bars */
+.tcat-right {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.adsr-mini {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 56px;
+  padding: 0;
+}
+.adsr-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.adsr-bar {
+  width: 100%;
+  background: var(--tcat-c);
+  opacity: 0.4;
+  border-radius: 3px 3px 0 0;
+  height: var(--h);
+  min-height: 4px;
+}
+.adsr-col span {
+  font-size: 10px;
+  font-family: ui-monospace, monospace;
+  color: var(--ink-light);
+}
+.adsr-caption {
+  font-size: 11px;
+  color: var(--ink-light);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+/* Audio play buttons */
+.audio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.audio-btn {
+  font-size: 11px !important;
+  padding: 5px 11px !important;
+  background: var(--paper) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--ink) !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+}
+.audio-btn:hover {
+  border-color: var(--tcat-c) !important;
+  color: var(--tcat-c) !important;
+}
+.audio-btn.playing {
+  background: var(--tcat-c) !important;
+  color: white !important;
+  border-color: var(--tcat-c) !important;
+}
+.ico-play {
+  width: 7px;
+  height: 7px;
+  background: currentColor;
+  display: inline-block;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  flex-shrink: 0;
+}
+.audio-btn.playing .ico-play {
+  clip-path: none;
+  border-radius: 1px;
+}
+
+/* ============= 时间包络对比 ============= */
+.env-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 1.25rem 0;
+}
+@media (max-width: 700px) {
+  .env-grid { grid-template-columns: 1fr; }
+}
+.env-panel {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+.env-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.env-sub {
+  font-size: 0.78rem;
+  color: var(--ink-light);
+  margin-bottom: 10px;
+}
+.env-curve {
+  width: 100%;
+  height: 60px;
+  display: block;
+  margin-bottom: 10px;
+}
+.env-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.env-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 10px;
+  color: var(--ink-light);
+  font-family: ui-monospace, monospace;
+}
+
+/* ============= 复用：article-toc（与 eq.css 同步） ============= */
+.article-toc {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem 1.2rem 0.7rem;
+  margin: 0 0 2rem;
+}
+.toc-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.6rem;
+}
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2;
+  column-gap: 1.4rem;
+}
+@media (max-width: 700px) {
+  .toc-list { columns: 1; }
+}
+.toc-list li {
+  break-inside: avoid;
+  margin: 0 0 6px;
+  font-size: 0.88rem;
+}
+.toc-list a {
+  color: var(--ink);
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 3px 0;
+  transition: color 0.15s;
+}
+.toc-list a:hover { color: var(--accent); }
+.toc-list .toc-num {
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+  color: var(--ink-light);
+  flex-shrink: 0;
+  min-width: 22px;
+}
+
+/* dark-panel 在音色页里也有用 */
+.dark-panel {
+  background: #1A1816;
+  border-radius: 16px;
+  padding: 1.75rem;
+  color: var(--paper);
+  margin: 1.5rem 0;
+}
+.warning-bar {
+  background: rgba(216, 90, 48, 0.15);
+  border-left: 3px solid var(--accent);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: rgba(247, 243, 236, 0.85);
+  margin-bottom: 1rem;
+}

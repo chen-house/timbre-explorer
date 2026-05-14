@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音色 — 声音的"面孔" · 声音设计笔记</title>
+<meta name="description" content="音色是什么、由什么构成、如何分类？从四种基础波形到五大音色类型，每一节配可交互的 Web Audio 演示。">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/timbre.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12 Q7 4 12 12 Q17 20 21 12" stroke="#D85A30" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#D85A30"/>
+      </svg>
+      声音设计笔记
+    </a>
+    <div class="nav-links">
+      <a href="../effects/index.html">效果器</a>
+      <a href="index.html" class="active">音色</a>
+      <a href="../atmosphere/index.html">氛围色</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-eyebrow">TIMBRE · 第 2 章</div>
+    <h1>音色 — 声音的 <em>"面孔"</em></h1>
+    <p class="lead">为什么钢琴和吉他弹同一个音，听起来完全不同？<br>这个问题的答案，就是音色。</p>
+  </header>
+
+  <!-- ============= 目录 ============= -->
+  <nav class="article-toc" aria-label="文章目录">
+    <div class="toc-head">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M2 4 H14 M2 8 H14 M2 12 H10" stroke="#D85A30" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span>本章目录</span>
+    </div>
+    <ol class="toc-list" id="toc-list"><!-- JS 填充 --></ol>
+  </nav>
+
+  <!-- ============= 1. 什么是音色 ============= -->
+  <section>
+    <h2>什么是音色</h2>
+    <p>想象你蒙上眼睛，有人在你面前说一个字 — 你立刻就能判断说话的是妈妈还是朋友。他们的音量一样，说的音调也一样，但你就是能分辨出来。这个让声音"长得不一样"的东西，就叫做 <strong style="font-weight:500;">音色</strong>（Timbre，读作 /ˈtæmbər/）。</p>
+    <p>美国声学协会（ASA）给音色下了一个学术定义：音色是"在响度和音调相同的情况下，让两个声音听起来不同的那种属性"。<em class="accent">剥掉音量、剥掉音高，剩下的就是音色</em>。</p>
+
+    <div class="metaphor-box">
+      <div class="metaphor-head">类比帮你记住</div>
+      <p>如果把一段声音比作一个人 — <strong style="font-weight:500;">音高</strong>是他的身高，<strong style="font-weight:500;">响度</strong>是他说话的音量，那么<strong style="font-weight:500;">音色</strong>就是他的长相、声线、气质，是让你认出他的全部特征。</p>
+    </div>
+  </section>
+
+  <!-- ============= 2. 音色由什么构成 ============= -->
+  <section>
+    <h2>音色由什么构成 — 五个维度</h2>
+    <p>音色不是一个单一的参数，而是由几个维度共同决定的"整体印象"。就像一个人的外貌是由脸型、肤色、眼睛形状等共同决定一样。</p>
+
+    <div class="dim-grid">
+      <div class="dim-card">
+        <div class="dim-icon">
+          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12 Q6 4 10 12 Q14 20 18 12 Q22 4 26 12 Q28 16 30 12" stroke="#D85A30" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="dim-name">频谱结构</div>
+        <div class="dim-desc">声音由哪些频率成分组成、各自有多强。<em class="accent">这是音色最核心的物理基础</em>。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-icon">
+          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 20 L8 4 L16 18 L30 22" stroke="#1D9E75" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="dim-name">时间包络</div>
+        <div class="dim-desc">声音如何"生长"和"消亡"— 起音快慢、持续多久、如何衰减（ADSR）。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-icon">
+          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="14" width="3" height="8" fill="#7B5EA7"/>
+            <rect x="9" y="6" width="3" height="16" fill="#7B5EA7"/>
+            <rect x="15" y="10" width="3" height="12" fill="#7B5EA7"/>
+            <rect x="21" y="14" width="3" height="8" fill="#7B5EA7" opacity="0.7"/>
+            <rect x="27" y="17" width="3" height="5" fill="#7B5EA7" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="dim-name">谐波分布</div>
+        <div class="dim-desc">泛音是否丰富、以哪种规律排列。决定音色是"圆润"还是"尖锐"。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-icon">
+          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12 Q5 6 8 14 Q11 4 14 18 Q17 8 20 12 Q23 18 26 6 Q29 14 30 10" stroke="#9B978E" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="dim-name">噪声成分</div>
+        <div class="dim-desc">纯粹的乐音之外，有多少摩擦、气息、随机噪声。这是"质感"的来源。</div>
+      </div>
+      <div class="dim-card">
+        <div class="dim-icon">
+          <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12 Q6 6 10 12 Q14 18 18 12 Q22 6 26 12 Q30 18 30 12" stroke="#D85A30" stroke-width="1.6" fill="none"/>
+            <circle cx="16" cy="12" r="1.5" fill="#D85A30"/>
+          </svg>
+        </div>
+        <div class="dim-name">动态调制</div>
+        <div class="dim-desc">声音是静止的还是在颤抖、摇曳？弦乐的颤音让它"活"起来。</div>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:0.8rem;">⌐ 接下来三个互动演示，你会依次听到：(1) 不同频谱结构是怎么改变音色的；(2) 谐波排列差异如何带来"亮 / 暗"的感受；(3) 时间包络如何让"同样的声音材料"变成完全不同的音色。</p>
+  </section>
+
+  <!-- ============= 3. 互动：四种基础波形 ============= -->
+  <section>
+    <h2>听一遍：四种基础波形</h2>
+    <p>同样的音高（A4 = 440 Hz），只改变波形 — 你能听出完全不同的音色。这正是<strong style="font-weight:500;">频谱结构</strong>在起作用。</p>
+
+    <div class="dark-panel">
+      <div class="warning-bar">建议戴耳机。每点击一个波形播放 / 停止。当前播放的会高亮。</div>
+
+      <div class="wave-grid">
+        <div class="wave-card" data-wave="sine">
+          <div class="wave-meta">SINE · 正弦波</div>
+          <svg class="wave-shape" viewBox="0 0 200 56" preserveAspectRatio="none">
+            <path d="M0,28 C25,4 50,4 100,28 C150,52 175,52 200,28" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+          <div class="wave-tags">
+            <span class="wave-tag">只含基频</span>
+            <span class="wave-tag">无泛音</span>
+          </div>
+          <div class="wave-desc">频谱最简单。听起来像"哔"声 — 接近口哨、音叉。是所有复杂波形的基础单元。</div>
+          <button class="btn wave-play" onclick="toggleWave('sine', this)">
+            <svg class="wave-play-ico" width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
+            <span class="label">试听</span>
+          </button>
+        </div>
+
+        <div class="wave-card" data-wave="square">
+          <div class="wave-meta">SQUARE · 方波</div>
+          <svg class="wave-shape" viewBox="0 0 200 56" preserveAspectRatio="none">
+            <path d="M0,42 L0,14 L50,14 L50,42 L100,42 L100,14 L150,14 L150,42 L200,42 L200,14" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+          <div class="wave-tags">
+            <span class="wave-tag">奇次谐波</span>
+            <span class="wave-tag">复古游戏感</span>
+          </div>
+          <div class="wave-desc">只含奇次谐波（1、3、5…倍频）。空洞质感 — 是 8-bit 游戏、单簧管的频谱特征。</div>
+          <button class="btn wave-play" onclick="toggleWave('square', this)">
+            <svg class="wave-play-ico" width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
+            <span class="label">试听</span>
+          </button>
+        </div>
+
+        <div class="wave-card" data-wave="sawtooth">
+          <div class="wave-meta">SAW · 锯齿波</div>
+          <svg class="wave-shape" viewBox="0 0 200 56" preserveAspectRatio="none">
+            <path d="M0,42 L50,14 L50,42 L100,14 L100,42 L150,14 L150,42 L200,14" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+          <div class="wave-tags">
+            <span class="wave-tag">所有谐波</span>
+            <span class="wave-tag">最丰富</span>
+          </div>
+          <div class="wave-desc">含全部奇偶谐波。频谱最厚、最亮。合成器 Lead、Pad 的首选起点。</div>
+          <button class="btn wave-play" onclick="toggleWave('sawtooth', this)">
+            <svg class="wave-play-ico" width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
+            <span class="label">试听</span>
+          </button>
+        </div>
+
+        <div class="wave-card" data-wave="triangle">
+          <div class="wave-meta">TRI · 三角波</div>
+          <svg class="wave-shape" viewBox="0 0 200 56" preserveAspectRatio="none">
+            <path d="M0,42 L50,14 L100,42 L150,14 L200,42" stroke="currentColor" stroke-width="2" fill="none"/>
+          </svg>
+          <div class="wave-tags">
+            <span class="wave-tag">奇次谐波</span>
+            <span class="wave-tag">柔和</span>
+          </div>
+          <div class="wave-desc">和方波一样只含奇次谐波，但高次谐波衰减更快，所以比方波柔和 — 接近笛子。</div>
+          <button class="btn wave-play" onclick="toggleWave('triangle', this)">
+            <svg class="wave-play-ico" width="10" height="10" viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>
+            <span class="label">试听</span>
+          </button>
+        </div>
+      </div>
+
+      <canvas id="wave-canvas"></canvas>
+      <p class="canvas-caption">↑ 时域波形（横轴 = 时间，纵轴 = 振幅）— 播放时实时更新</p>
+    </div>
+  </section>
+
+  <!-- ============= 4. 谐波频谱对比 ============= -->
+  <section>
+    <h2>谐波频谱柱状图 — 看见"音色"</h2>
+    <p>把每个波形拆成谐波（1、2、3、4、5…倍基频），看每个谐波各自有多强。谐波越丰富、能量分布越均匀，音色就越"厚"越"亮"。</p>
+
+    <div class="harmonic-grid">
+      <div class="harmonic-col" style="--c:#D85A30;">
+        <div class="harmonic-name">正弦波</div>
+        <div class="harmonic-bars">
+          <div class="hbar" style="--h:70%"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:0"></div>
+        </div>
+        <div class="harmonic-axis"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        <div class="harmonic-sub">只有基频，极简</div>
+      </div>
+      <div class="harmonic-col" style="--c:#7B5EA7;">
+        <div class="harmonic-name">方波</div>
+        <div class="harmonic-bars">
+          <div class="hbar" style="--h:70%"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:23%"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:14%"></div>
+        </div>
+        <div class="harmonic-axis"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        <div class="harmonic-sub">奇次谐波（1, 3, 5…）</div>
+      </div>
+      <div class="harmonic-col" style="--c:#1D9E75;">
+        <div class="harmonic-name">锯齿波</div>
+        <div class="harmonic-bars">
+          <div class="hbar" style="--h:70%"></div>
+          <div class="hbar" style="--h:35%"></div>
+          <div class="hbar" style="--h:23%"></div>
+          <div class="hbar" style="--h:17%"></div>
+          <div class="hbar" style="--h:14%"></div>
+        </div>
+        <div class="harmonic-axis"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        <div class="harmonic-sub">所有谐波，最丰富</div>
+      </div>
+      <div class="harmonic-col" style="--c:#A07820;">
+        <div class="harmonic-name">三角波</div>
+        <div class="harmonic-bars">
+          <div class="hbar" style="--h:70%"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:8%"></div>
+          <div class="hbar" style="--h:0"></div>
+          <div class="hbar" style="--h:3%"></div>
+        </div>
+        <div class="harmonic-axis"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+        <div class="harmonic-sub">奇次谐波，快速衰减</div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:0.6rem;">横轴 = 谐波次数（1 = 基频），纵轴 = 该谐波相对能量。理论值 — 与上方实时频谱一致。</p>
+  </section>
+
+  <!-- ============= 5. 五种音色感知分类 ============= -->
+  <section>
+    <h2>五种音色感知分类 — 不按乐器，按"耳朵的感受"</h2>
+    <p>声学心理学发现，人耳对音色的感知主要依赖两个维度：<strong style="font-weight:500;">时间包络的形状</strong>（声音如何开始和结束）和<strong style="font-weight:500;">频谱的丰富程度</strong>（音色的"质地"）。基于这两个维度，加上实际制作中的使用场景，我们把音色分为五大类。</p>
+
+    <!-- 瞬态型 -->
+    <div class="tcat tcat-percussive">
+      <div class="tcat-head">
+        <div class="tcat-num">01</div>
+        <div class="tcat-title">
+          <h3>瞬态型 · Percussive</h3>
+          <div class="tcat-tagline">起音极快、衰减短促 — 几乎没有持续段</div>
+        </div>
+      </div>
+      <div class="tcat-body">
+        <div class="tcat-left">
+          <p><strong style="font-weight:500;">为什么听起来是这样：</strong>时间包络的 Attack 极短（通常 &lt; 10 ms），能量集中在最初的一瞬，之后快速衰减归零。这种"脉冲"式的能量释放，让大脑感知为冲击与打击。</p>
+          <div class="tcat-chips">
+            <span class="chip">底鼓 Kick</span>
+            <span class="chip">军鼓 Snare</span>
+            <span class="chip">踩镲 Hihat</span>
+            <span class="chip">拨弦 Pluck</span>
+            <span class="chip">拍手</span>
+            <span class="chip">木鱼</span>
+          </div>
+          <p class="scene-ref">流行音乐的鼓点驱动感、动作片的引擎轰鸣起步、日常生活的门铃声键盘敲击 — 都是瞬态型的典型应用。</p>
+        </div>
+        <div class="tcat-right">
+          <div class="adsr-mini" data-adsr="2,2,1,1">
+            <div class="adsr-col"><div class="adsr-bar" style="--h:90%"></div><span>A</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:70%"></div><span>D</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:10%"></div><span>S</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:10%"></div><span>R</span></div>
+          </div>
+          <div class="adsr-caption">ADSR 包络示意</div>
+          <div class="audio-row">
+            <button class="btn audio-btn" onclick="playTimbre('kick', this)"><span class="ico-play"></span><span class="label">底鼓</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('snare', this)"><span class="ico-play"></span><span class="label">军鼓</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('hihat', this)"><span class="ico-play"></span><span class="label">踩镲</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('pluck', this)"><span class="ico-play"></span><span class="label">拨弦</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 持续型 -->
+    <div class="tcat tcat-sustained">
+      <div class="tcat-head">
+        <div class="tcat-num">02</div>
+        <div class="tcat-title">
+          <h3>持续型 · Sustained</h3>
+          <div class="tcat-tagline">有稳定持续段，可以维持很长时间 — 像一口气托住的声音</div>
+        </div>
+      </div>
+      <div class="tcat-body">
+        <div class="tcat-left">
+          <p><strong style="font-weight:500;">为什么听起来是这样：</strong>稳定的 Sustain 阶段让频谱在持续过程中相对不变。谐波丰富，往往含有颤音（Vibrato）使其更有生命感。弦乐、人声、风琴都属于此类。</p>
+          <div class="tcat-chips">
+            <span class="chip">小提琴长弓</span>
+            <span class="chip">大提琴</span>
+            <span class="chip">长笛</span>
+            <span class="chip">风琴 Organ</span>
+            <span class="chip">合唱 Choir</span>
+            <span class="chip">合成器 Pad</span>
+          </div>
+          <p class="scene-ref">《辛德勒的名单》的小提琴主题、《星际穿越》的管风琴铺底 — 持续型音色是烘托情绪、撑起场景的"空气"。</p>
+        </div>
+        <div class="tcat-right">
+          <div class="adsr-mini">
+            <div class="adsr-col"><div class="adsr-bar" style="--h:55%"></div><span>A</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:40%"></div><span>D</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:85%"></div><span>S</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:45%"></div><span>R</span></div>
+          </div>
+          <div class="adsr-caption">ADSR 包络示意</div>
+          <div class="audio-row">
+            <button class="btn audio-btn" onclick="playTimbre('strings', this)"><span class="ico-play"></span><span class="label">弦乐 Pad</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('organ', this)"><span class="ico-play"></span><span class="label">风琴</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('flute', this)"><span class="ico-play"></span><span class="label">长笛感</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 谐鸣型 -->
+    <div class="tcat tcat-resonant">
+      <div class="tcat-head">
+        <div class="tcat-num">03</div>
+        <div class="tcat-title">
+          <h3>谐鸣型 · Resonant</h3>
+          <div class="tcat-tagline">起音较快，然后像钟声一样缓慢指数衰减 — 有清晰音高，泛音丰富</div>
+        </div>
+      </div>
+      <div class="tcat-body">
+        <div class="tcat-left">
+          <p><strong style="font-weight:500;">为什么听起来是这样：</strong>金属、木质物体被敲击后，会按其共振特性产生一系列泛音。这些泛音衰减速度不同 — 高频先消失，低频泛音慢慢留存，形成独特的"尾音感"。这种拖尾是谐鸣型音色的标志。</p>
+          <div class="tcat-chips">
+            <span class="chip">三角铁</span>
+            <span class="chip">钟琴 Glockenspiel</span>
+            <span class="chip">马林巴</span>
+            <span class="chip">钢琴单音</span>
+            <span class="chip">寺庙钟</span>
+            <span class="chip">音叉</span>
+          </div>
+          <p class="scene-ref">古装剧里的编钟、手机短信通知音（"叮"）、《魔戒》精灵世界的空灵钟声、塞尔达金币拾取音 — 都是谐鸣型的经典使用。</p>
+        </div>
+        <div class="tcat-right">
+          <div class="adsr-mini">
+            <div class="adsr-col"><div class="adsr-bar" style="--h:90%"></div><span>A</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:80%"></div><span>D</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:15%"></div><span>S</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:60%"></div><span>R</span></div>
+          </div>
+          <div class="adsr-caption">ADSR 包络示意（D 阶段呈指数曲线）</div>
+          <div class="audio-row">
+            <button class="btn audio-btn" onclick="playTimbre('bell', this)"><span class="ico-play"></span><span class="label">钟声</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('marimba', this)"><span class="ico-play"></span><span class="label">马林巴</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('temple', this)"><span class="ico-play"></span><span class="label">寺庙钟</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 质感型 -->
+    <div class="tcat tcat-noisy">
+      <div class="tcat-head">
+        <div class="tcat-num">04</div>
+        <div class="tcat-title">
+          <h3>质感型 · Textural / Noisy</h3>
+          <div class="tcat-tagline">噪声成分占主导，没有清晰音高 — 风声、沙沙声、摩擦声</div>
+        </div>
+      </div>
+      <div class="tcat-body">
+        <div class="tcat-left">
+          <p><strong style="font-weight:500;">为什么听起来是这样：</strong>能量分布在宽泛的频率范围内，没有集中的谐波峰值，所以大脑无法提取出明确的音高。<em class="accent">噪声并不意味着难听</em> — 白噪声有镇静效果，海浪声令人放松，关键在频率分布和动态特征。</p>
+          <div class="tcat-chips">
+            <span class="chip">白噪声 White</span>
+            <span class="chip">粉噪声 Pink</span>
+            <span class="chip">风声</span>
+            <span class="chip">海浪</span>
+            <span class="chip">磁带噪底</span>
+            <span class="chip">弓弦摩擦</span>
+          </div>
+          <p class="scene-ref">恐怖片的弦乐摩擦、睡眠 App 的白噪声、《沙丘》的沙漠风声 — 噪声不是杂音，是有意识的声音材料。</p>
+        </div>
+        <div class="tcat-right">
+          <div class="adsr-mini">
+            <div class="adsr-col"><div class="adsr-bar" style="--h:45%"></div><span>A</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:25%"></div><span>D</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:70%"></div><span>S</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:35%"></div><span>R</span></div>
+          </div>
+          <div class="adsr-caption">ADSR 包络示意</div>
+          <div class="audio-row">
+            <button class="btn audio-btn" onclick="playTimbre('white', this)"><span class="ico-play"></span><span class="label">白噪声</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('pink', this)"><span class="ico-play"></span><span class="label">粉噪声</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('wind', this)"><span class="ico-play"></span><span class="label">风声感</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 调制型 -->
+    <div class="tcat tcat-modulated">
+      <div class="tcat-head">
+        <div class="tcat-num">05</div>
+        <div class="tcat-title">
+          <h3>调制型 · Modulated</h3>
+          <div class="tcat-tagline">音高 / 音量 / 滤波在随时间周期性变化 — 声音是"活的"、"在呼吸"</div>
+        </div>
+      </div>
+      <div class="tcat-body">
+        <div class="tcat-left">
+          <p><strong style="font-weight:500;">为什么听起来是这样：</strong>当频率被周期性调制（颤音 Vibrato），或振幅被调制（颤幅 Tremolo），听感上就产生动感。人声、弦乐天然含有这种微颤，正是它们显得有"生命力"的原因。电子音乐里的 Wobble Bass，本质就是对滤波器截止频率的节奏性调制。</p>
+          <div class="tcat-chips">
+            <span class="chip">颤音人声</span>
+            <span class="chip">Wobble Bass</span>
+            <span class="chip">Leslie 旋转</span>
+            <span class="chip">古琴泛音</span>
+            <span class="chip">Chorus 效果</span>
+          </div>
+          <p class="scene-ref">Dubstep 标志性的"嗡嗡抖动"低音、歌剧演员的颤音、老电影的莱斯利管风琴 — 调制让声音从静止变成有动机的运动体。</p>
+        </div>
+        <div class="tcat-right">
+          <div class="adsr-mini">
+            <div class="adsr-col"><div class="adsr-bar" style="--h:55%"></div><span>A</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:40%"></div><span>D</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:75%"></div><span>S</span></div>
+            <div class="adsr-col"><div class="adsr-bar" style="--h:40%"></div><span>R</span></div>
+          </div>
+          <div class="adsr-caption">ADSR + LFO 调制</div>
+          <div class="audio-row">
+            <button class="btn audio-btn" onclick="playTimbre('vibrato', this)"><span class="ico-play"></span><span class="label">颤音</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('wobble', this)"><span class="ico-play"></span><span class="label">Wobble</span></button>
+            <button class="btn audio-btn" onclick="playTimbre('tremolo', this)"><span class="ico-play"></span><span class="label">颤幅</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 6. 时间包络的力量 ============= -->
+  <section>
+    <h2>时间包络的力量 — 同样的波形，不同的音色</h2>
+    <p>把一段钢琴录音<em class="accent">反转播放</em>：Attack 变成 Release，Release 变成 Attack。频谱完全没有改变，但音色从"打击感"变成了"弦乐渐入感"。</p>
+    <p>这说明：<strong style="font-weight:500;">时间包络对音色感知的影响，不亚于频谱本身</strong>。同样的"材料"，不同的"时间形状"，就是不同的音色。</p>
+
+    <div class="env-grid">
+      <div class="env-panel">
+        <div class="env-title">打击型</div>
+        <div class="env-sub">钢琴 / Pluck / 鼓 — 快起音，快衰减</div>
+        <svg class="env-curve" viewBox="0 0 200 60" preserveAspectRatio="none">
+          <path d="M5 55 L20 5 L40 28 L180 50 L195 53" stroke="#D85A30" stroke-width="2" fill="none"/>
+        </svg>
+        <div class="env-tags">
+          <span class="env-tag">A 极短</span>
+          <span class="env-tag">D 短</span>
+          <span class="env-tag">S 低</span>
+          <span class="env-tag">R 短</span>
+        </div>
+      </div>
+      <div class="env-panel">
+        <div class="env-title">弦乐型</div>
+        <div class="env-sub">弦乐 Pad / Choir — 慢起音，长持续</div>
+        <svg class="env-curve" viewBox="0 0 200 60" preserveAspectRatio="none">
+          <path d="M5 55 C 25 55 60 8 80 8 L 140 8 C 155 8 175 38 195 42" stroke="#1D9E75" stroke-width="2" fill="none"/>
+        </svg>
+        <div class="env-tags">
+          <span class="env-tag">A 慢</span>
+          <span class="env-tag">D 短</span>
+          <span class="env-tag">S 高</span>
+          <span class="env-tag">R 长</span>
+        </div>
+      </div>
+      <div class="env-panel">
+        <div class="env-title">钟声型</div>
+        <div class="env-sub">马林巴 / 钟 / 颤音琴 — 快起音，指数衰减</div>
+        <svg class="env-curve" viewBox="0 0 200 60" preserveAspectRatio="none">
+          <path d="M5 55 L18 5 C 35 5 65 25 100 42 C 130 52 160 56 195 57" stroke="#7B5EA7" stroke-width="2" fill="none"/>
+        </svg>
+        <div class="env-tags">
+          <span class="env-tag">A 极短</span>
+          <span class="env-tag">D 长（指数）</span>
+          <span class="env-tag">S 极低</span>
+          <span class="env-tag">R 自然</span>
+        </div>
+      </div>
+      <div class="env-panel">
+        <div class="env-title">反转包络</div>
+        <div class="env-sub">Reverse Piano — 渐入感，飘忽感</div>
+        <svg class="env-curve" viewBox="0 0 200 60" preserveAspectRatio="none">
+          <path d="M5 55 C 35 53 65 38 100 22 C 130 8 155 5 175 5 L 180 5 L 195 55" stroke="#A07820" stroke-width="2" fill="none"/>
+        </svg>
+        <div class="env-tags">
+          <span class="env-tag">慢渐入</span>
+          <span class="env-tag">无冲击</span>
+          <span class="env-tag">飘忽感</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="metaphor-box" style="margin-top:1.5rem;">
+      <div class="metaphor-head">核心洞见</div>
+      <p>声音设计师真正在做的事 — 不是选乐器，是<strong style="font-weight:500;">在五个维度（频谱 / 包络 / 谐波 / 噪声 / 调制）上做有意识的取舍</strong>。一把真实的大提琴，同时具有持续型（长弓）、质感型（弓毛摩擦的气息）和调制型（演奏家的颤音）特征。下次听一段音效，问自己：起音是快是慢？干净还是含噪？在摇曳还是静止？这就是读懂音色的开始。</p>
+    </div>
+
+    <p class="muted" style="margin-top:0.8rem;">理论参考：Grey (1977) Multidimensional Perceptual Scaling of Musical Timbres · Wessel (1979) Timbre Space · McAdams & Giordano (2009) Handbook of Music Psychology · ASA Standard Definition (S1.1-1994).</p>
+  </section>
+
+  <hr class="divider">
+
+  <p class="muted" style="text-align:center;font-size:0.85rem;">
+    下一章：<a href="../atmosphere/index.html" style="color:var(--accent);">氛围色 — 声音的"温度"与"空间"</a><br>
+    或回到：<a href="../effects/index.html" style="color:var(--ink-light);">效果器</a>
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  <p><a href="../index.html" style="color:var(--ink-light);text-decoration:none;">← 回到首页</a></p>
+</footer>
+
+<script src="../assets/js/timbre.js"></script>
+</body>
+</html>

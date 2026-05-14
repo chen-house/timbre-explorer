@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EQ 均衡器 · 声音设计笔记</title>
+<meta name="description" content="EQ 均衡器深度解析：修正性 vs 创意性、频段听感、6种滤波器形状、电话声原理。配可交互演示。">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/eq.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12 Q7 4 12 12 Q17 20 21 12" stroke="#D85A30" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#D85A30"/>
+      </svg>
+      声音设计笔记
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="active">效果器</a>
+      <a href="../timbre/index.html">音色</a>
+      <a href="../atmosphere/index.html">氛围色</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-eyebrow">EFFECTS · 01 · EQ</div>
+    <h1>EQ 均衡器 — 雕刻 <em>频率</em></h1>
+    <p class="lead">如果只能学一个效果器，那就是 EQ。<br>它是声音设计师最常用、也最容易低估的工具。</p>
+  </header>
+
+  <!-- ============= 目录 ============= -->
+  <nav class="article-toc" aria-label="文章目录">
+    <div class="toc-head">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M2 4 H14 M2 8 H14 M2 12 H10" stroke="#D85A30" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span>本章目录</span>
+    </div>
+    <ol class="toc-list" id="toc-list"><!-- 由 JS 填充 --></ol>
+  </nav>
+
+  <!-- ============= 1. 心理模型 ============= -->
+  <section>
+    <h2>EQ 是什么 — 先建立一个正确的心理模型</h2>
+    <p>声音不是一个整体，而是无数频率叠加而成。EQ 给每个频段单独装一个音量旋钮。本质上，你操作的不是"声音"，而是"声音里某段频率的能量"。</p>
+    <p>这点很关键：<em class="accent">EQ 不改变音高，不改变节奏，只改变能量分布</em>。</p>
+  </section>
+
+  <!-- ============= 2. 两种用法 ============= -->
+  <section>
+    <h2>先分清两种用法</h2>
+    <p class="muted">职业混音师和新手最大的认知差异之一：他们做 EQ 之前，先问自己"我现在要做的，是修正问题，还是塑造性格？"</p>
+
+    <div class="intent-grid">
+      <div class="intent-card corrective">
+        <span class="intent-tag">修正性 Corrective</span>
+        <h3>解决问题</h3>
+        <p class="desc">耳朵能听到一个具体的"毛病" — 空调嗡嗡、人声齿音刺耳、贝斯糊成一团 — 你拿 EQ 去消灭它。</p>
+        <p class="actions">常见动作：<br>
+          • HPF 80–100 Hz 切隆隆声<br>
+          • 3–5 kHz 用窄 Q 找吉他"哨叫频率"再衰减 3–6 dB<br>
+          • 5–8 kHz 找齿音衰减 2–4 dB（更专业的做法是 De-Esser）
+        </p>
+      </div>
+      <div class="intent-card creative">
+        <span class="intent-tag">创意性 Creative</span>
+        <h3>塑造性格</h3>
+        <p class="desc">声音本身没毛病，你想让它"更有故事"。这是把 EQ 当乐器用，不是当工具用。</p>
+        <p class="actions">常见动作：<br>
+          • Kick 60–80 Hz 加几个 dB 增加力量<br>
+          • Snare 200 Hz 加点 body、5 kHz 加点 snap<br>
+          • 人声 10 kHz High Shelf 加空气感<br>
+          • Pad 切 500 Hz 以下让贝斯有空间
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 2.5 思考流程图 ============= -->
+  <section>
+    <h2>把"修正/创意"落地成可操作的流程</h2>
+    <p>下面这张图是<strong style="font-weight:500;">职业混音师拿到一条新轨道时的实际思考链路</strong>。新手最大的差别是没有这个流程，结果是不知道从哪儿下手，或者一上来就盲目堆 boost。点任意节点查看细节。</p>
+
+    <div class="flow-wrap">
+      <svg id="flow-chart" viewBox="0 0 720 560" xmlns="http://www.w3.org/2000/svg" aria-label="EQ 思考流程图">
+        <!-- Defs: 箭头 -->
+        <defs>
+          <marker id="arrow-ink" viewBox="0 0 10 10" refX="8" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#2C2A1E" opacity="0.55"/>
+          </marker>
+          <marker id="arrow-coral" viewBox="0 0 10 10" refX="8" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#D85A30"/>
+          </marker>
+          <marker id="arrow-teal" viewBox="0 0 10 10" refX="8" refY="5"
+                  markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1D9E75"/>
+          </marker>
+        </defs>
+
+        <!-- 节点 1：在上下文里听 -->
+        <g class="flow-node" data-flow-id="listen" tabindex="0">
+          <rect x="260" y="20" width="200" height="60" rx="14" fill="#FAFAF7" stroke="#2C2A1E" stroke-width="1.4"/>
+          <text x="360" y="44" text-anchor="middle" font-size="14" font-weight="500" fill="#2C2A1E">① 在混音上下文里听</text>
+          <text x="360" y="62" text-anchor="middle" font-size="11" fill="#5F5E5A">不要 solo — solo 会骗你</text>
+        </g>
+
+        <!-- 箭头到诊断 -->
+        <path d="M 360 80 L 360 102" stroke="#2C2A1E" stroke-width="1.4" fill="none" marker-end="url(#arrow-ink)" opacity="0.7"/>
+
+        <!-- 节点 2：诊断（菱形） -->
+        <g class="flow-node" data-flow-id="diagnose" tabindex="0">
+          <polygon points="360,108 472,164 360,220 248,164" fill="#F5EFE5" stroke="#2C2A1E" stroke-width="1.4"/>
+          <text x="360" y="158" text-anchor="middle" font-size="13" font-weight="500" fill="#2C2A1E">② 这条轨道</text>
+          <text x="360" y="176" text-anchor="middle" font-size="13" font-weight="500" fill="#2C2A1E">有具体问题吗？</text>
+        </g>
+
+        <!-- 分支：左 = 修正路径 (有问题) -->
+        <path d="M 248 164 Q 180 164 130 200" stroke="#D85A30" stroke-width="1.5" fill="none" marker-end="url(#arrow-coral)"/>
+        <text x="200" y="155" text-anchor="middle" font-size="12" fill="#D85A30" font-weight="500">有 · 修正性</text>
+
+        <!-- 分支：右 = 创意路径 (没问题) -->
+        <path d="M 472 164 Q 540 164 590 200" stroke="#1D9E75" stroke-width="1.5" fill="none" marker-end="url(#arrow-teal)"/>
+        <text x="520" y="155" text-anchor="middle" font-size="12" fill="#1D9E75" font-weight="500">没问题 · 创意性</text>
+
+        <!-- 左路径：修正动作 -->
+        <g class="flow-node" data-flow-id="corrective" tabindex="0">
+          <rect x="36" y="210" width="192" height="76" rx="12" fill="#F5DDC9" stroke="#D85A30" stroke-width="1.4"/>
+          <text x="132" y="234" text-anchor="middle" font-size="13" font-weight="500" fill="#993C1D">修正动作</text>
+          <text x="132" y="254" text-anchor="middle" font-size="11" fill="#993C1D">HPF 切隆隆声</text>
+          <text x="132" y="270" text-anchor="middle" font-size="11" fill="#993C1D">扫频找问题 → 窄 Q 衰减</text>
+        </g>
+
+        <!-- 右路径：创意动作 -->
+        <g class="flow-node" data-flow-id="creative" tabindex="0">
+          <rect x="492" y="210" width="192" height="76" rx="12" fill="#E8F0DA" stroke="#1D9E75" stroke-width="1.4"/>
+          <text x="588" y="234" text-anchor="middle" font-size="13" font-weight="500" fill="#3B6D11">创意动作</text>
+          <text x="588" y="254" text-anchor="middle" font-size="11" fill="#3B6D11">先想清楚要塑造什么</text>
+          <text x="588" y="270" text-anchor="middle" font-size="11" fill="#3B6D11">再宽 Q 小幅提升</text>
+        </g>
+
+        <!-- 两路汇聚到 A/B -->
+        <path d="M 132 286 Q 132 360 320 360" stroke="#2C2A1E" stroke-width="1.4" fill="none" marker-end="url(#arrow-ink)" opacity="0.55"/>
+        <path d="M 588 286 Q 588 360 400 360" stroke="#2C2A1E" stroke-width="1.4" fill="none" marker-end="url(#arrow-ink)" opacity="0.55"/>
+
+        <!-- 节点 3：A/B 验证 -->
+        <g class="flow-node" data-flow-id="ab" tabindex="0">
+          <rect x="240" y="340" width="240" height="68" rx="14" fill="#FAFAF7" stroke="#7B5EA7" stroke-width="1.5"/>
+          <text x="360" y="364" text-anchor="middle" font-size="14" font-weight="500" fill="#534AB7">③ A/B 验证</text>
+          <text x="360" y="384" text-anchor="middle" font-size="11" fill="#534AB7">关键：响度匹配 ON</text>
+          <text x="360" y="399" text-anchor="middle" font-size="11" fill="#534AB7">切换间隔 &lt; 3 秒</text>
+        </g>
+
+        <!-- 决策：变好还是变响 -->
+        <path d="M 360 408 L 360 430" stroke="#2C2A1E" stroke-width="1.4" fill="none" marker-end="url(#arrow-ink)" opacity="0.7"/>
+
+        <g class="flow-node" data-flow-id="judge" tabindex="0">
+          <polygon points="360,436 462,476 360,516 258,476" fill="#F5EFE5" stroke="#2C2A1E" stroke-width="1.4"/>
+          <text x="360" y="472" text-anchor="middle" font-size="12" font-weight="500" fill="#2C2A1E">变好了？</text>
+          <text x="360" y="488" text-anchor="middle" font-size="11" fill="#5F5E5A">还是只是变响了？</text>
+        </g>
+
+        <!-- 没好回到 ② -->
+        <path d="M 258 476 Q 100 476 100 164 Q 100 130 248 152"
+              stroke="#2C2A1E" stroke-width="1.3" fill="none"
+              marker-end="url(#arrow-ink)" opacity="0.5" stroke-dasharray="4 4"/>
+        <text x="60" y="320" font-size="11" fill="#5F5E5A" opacity="0.85">只是变响 → 撤销重来</text>
+
+        <!-- 变好了向右出 -->
+        <path d="M 462 476 L 620 476" stroke="#1D9E75" stroke-width="1.5" fill="none" marker-end="url(#arrow-teal)"/>
+        <g class="flow-node" data-flow-id="commit" tabindex="0">
+          <rect x="620" y="448" width="84" height="56" rx="12" fill="#E8F0DA" stroke="#1D9E75" stroke-width="1.4"/>
+          <text x="662" y="472" text-anchor="middle" font-size="12" font-weight="500" fill="#3B6D11">真的好</text>
+          <text x="662" y="488" text-anchor="middle" font-size="11" fill="#3B6D11">保留</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="flow-detail" id="flow-detail">点击上面任意节点 — 这里会展开实操要点。</div>
+  </section>
+
+  <!-- ============= 3. 频段速查 ============= -->
+  <section>
+    <h2>频段听感速查</h2>
+    <p>不是金科玉律，但能帮你快速建立频率直觉。每个区域都有它的"魅力"和"陷阱"。</p>
+
+    <div class="freq-table">
+      <div class="freq-cell low">
+        <div class="hz">20–60</div>
+        <div class="name">次低频</div>
+        <div class="desc">身体感受
+震动感</div>
+        <button class="freq-btn" data-band="low" onclick="toggleBandAudition('low')" type="button" aria-label="试听 20 至 60 Hz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+      <div class="freq-cell warm">
+        <div class="hz">60–250</div>
+        <div class="name">温暖</div>
+        <div class="desc">力量感
+低音轰头</div>
+        <button class="freq-btn" data-band="warm" onclick="toggleBandAudition('warm')" type="button" aria-label="试听 60 至 250 Hz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+      <div class="freq-cell mud">
+        <div class="hz">250–500</div>
+        <div class="name">浑浊区</div>
+        <div class="desc">过多变糊
+常需削减</div>
+        <button class="freq-btn" data-band="mud" onclick="toggleBandAudition('mud')" type="button" aria-label="试听 250 至 500 Hz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+      <div class="freq-cell body">
+        <div class="hz">500–2k</div>
+        <div class="name">主体感</div>
+        <div class="desc">人声主体
+"前/后"感</div>
+        <button class="freq-btn" data-band="body" onclick="toggleBandAudition('body')" type="button" aria-label="试听 500 Hz 至 2 kHz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+      <div class="freq-cell bright">
+        <div class="hz">2–5k</div>
+        <div class="name">清晰度</div>
+        <div class="desc">耳最敏感
+刺耳高发</div>
+        <button class="freq-btn" data-band="bright" onclick="toggleBandAudition('bright')" type="button" aria-label="试听 2 至 5 kHz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+      <div class="freq-cell air">
+        <div class="hz">5–10k</div>
+        <div class="name">亮度</div>
+        <div class="desc">存在感
+齿音区域</div>
+        <button class="freq-btn" data-band="air" onclick="toggleBandAudition('air')" type="button" aria-label="试听 5 至 10 kHz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+      <div class="freq-cell sky">
+        <div class="hz">10–20k</div>
+        <div class="name">空气感</div>
+        <div class="desc">开阔感
+超高频</div>
+        <button class="freq-btn" data-band="sky" onclick="toggleBandAudition('sky')" type="button" aria-label="试听 10 至 20 kHz">
+          <svg class="play-ico" width="8" height="8" viewBox="0 0 8 8" aria-hidden="true"><polygon points="2,1 7,4 2,7"/></svg>
+          <span class="label">试听</span>
+        </button>
+      </div>
+    </div>
+    <p class="freq-note">人耳对 2–5 kHz 最敏感 — 源自外耳道共振（约 3 kHz，使该频段被天然提升 15–20 dB）与等响曲线（ISO 226）共同作用。这也是齿音和"刺耳"高发的频段。</p>
+    <p class="freq-note" style="margin-top:-0.4rem;">点试听按钮听粉噪声经过 24 dB/oct 带通后只剩该频段的样子 — 这是混音师训练耳朵最有效的方法。<strong style="font-weight:500;">20–60 Hz 与 10–20 kHz 在常规音量下感知较弱（等响曲线效应），不是按钮没响</strong>，次低频更多是"感受到"而非"听到"。</p>
+    <p class="freq-note" style="margin-top:-0.4rem;opacity:0.7;">注：行业内频段划分有 6/7/8 段几种传统，本文采用 7 段是为了把齿音区（5–10k）与空气感区（10–20k）分开讲 — 它们在实操中用法不同。</p>
+  </section>
+
+  <!-- ============= 4. 互动演示 ============= -->
+  <section>
+    <h2>边听边玩 — 这是训练耳朵最有效的方式</h2>
+    <p>下面是一个三参数的 EQ。先点播放，再调三个滑块，你会实时听到曲线在改变声音。重点动作：<strong style="font-weight:500;">频繁按 EQ 开/关</strong>（也就是工程师说的 A/B），听有无 EQ 的差别。</p>
+
+    <div class="dark-panel">
+      <div class="warning-bar">建议戴耳机。系统音量请先调小再播放 — 粉噪声听感比预期响。</div>
+
+      <div class="btn-row">
+        <button class="btn active" data-source="pink" onclick="setSource('pink')">粉噪声</button>
+        <button class="btn" data-source="synth" onclick="setSource('synth')">合成器</button>
+        <div style="flex:1"></div>
+        <button class="btn" id="loudness-toggle" onclick="toggleLoudnessMatch()" title="开启后会粗略补偿 EQ 增益带来的整体响度变化">响度匹配: 关</button>
+        <button class="btn active" id="eq-toggle" onclick="toggleEQ()">EQ: 开</button>
+      </div>
+
+      <div class="play-row">
+        <div class="play-btn" id="main-play" onclick="togglePlay()">
+          <svg id="play-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+            <polygon points="3,2 12,7 3,12"/>
+          </svg>
+        </div>
+        <span class="play-status" id="play-status">点击播放</span>
+      </div>
+
+      <p style="font-size:11px;color:rgba(247,243,236,0.4);margin:4px 0 4px;">
+        粉噪声 = 每个倍频程能量相等（贴近人耳听觉），最适合训练耳朵。合成器 = 一个 Am 类和弦，听 EQ 在音乐内容上的表现。
+      </p>
+
+      <canvas id="eq-canvas"></canvas>
+
+      <div class="control-row">
+        <div class="control-label">频率 Frequency<span>峰值的位置 — 影响哪一段</span></div>
+        <input type="range" min="20" max="20000" value="1000" step="10" id="sl-freq" oninput="updateEQ()">
+        <div class="control-val" id="v-freq">1.0 kHz</div>
+      </div>
+      <div class="control-row">
+        <div class="control-label">增益 Gain<span>提升或衰减 — 加多少调料</span></div>
+        <input type="range" min="-15" max="15" value="0" step="0.5" id="sl-gain" oninput="updateEQ()">
+        <div class="control-val" id="v-gain">+0.0 dB</div>
+      </div>
+      <div class="control-row">
+        <div class="control-label">Q 品质因数<span>影响范围宽窄 — Q 大窄，Q 小宽</span></div>
+        <input type="range" min="0.2" max="10" value="1.4" step="0.1" id="sl-q" oninput="updateEQ()">
+        <div class="control-val" id="v-q">1.4</div>
+      </div>
+
+      <div class="preset-row">
+        <div class="btn-row">
+          <button class="btn" onclick="applyPreset('scan')">扫频找问题</button>
+          <button class="btn" onclick="applyPreset('phone')">电话声</button>
+          <button class="btn" onclick="applyPreset('air')">空气感</button>
+          <button class="btn" onclick="applyPreset('mud')">去泥浊</button>
+          <button class="btn" onclick="applyPreset('reset')" style="opacity:.6;">重置</button>
+        </div>
+        <div class="preset-status" id="preset-status">↑ 试试预设，观察曲线变化的同时倾听效果</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 5. 经典案例 - 电话声 ============= -->
+  <section>
+    <h2>经典案例 — 为什么电话里的声音"瘪"</h2>
+    <p>传统电话线路的传输带宽只有 <strong style="font-weight:500;">300 Hz – 3400 Hz</strong>（ITU-T G.712 窄带语音规范）。低于 300 Hz 的"胸腔感"和高于 3400 Hz 的"齿音/空气感"全被切掉了。</p>
+    <p>要做这个效果，组合一个 HPF（切 300 Hz 以下）和一个 LPF（切 3400 Hz 以上）即可 — 也就是一个 BPF（带通滤波器）。</p>
+
+    <canvas id="phone-canvas"></canvas>
+    <p class="phone-caption">橙色区域 = 电话保留的频率（300 Hz – 3.4 kHz）。两侧被切掉的部分你的耳朵根本听不到，但正是这些让声音听起来"有厚度"和"真实感"。</p>
+  </section>
+
+  <!-- ============= 6. 六种 EQ 形状 ============= -->
+  <section>
+    <h2>六种你会反复见到的 EQ 形状</h2>
+    <p>不同的"曲线形状"对应不同用法。这六种你会在所有 EQ 插件里看到。</p>
+    <div class="shapes-grid" id="shapes-grid"></div>
+  </section>
+
+  <!-- ============= 6.5 滤波器斜率（dB/oct） ============= -->
+  <section>
+    <h2>斜率 — 同样的截止频率，听感天差地别</h2>
+    <p>HPF 和 LPF 不止"截不截"那么简单，<em class="accent">截得多陡</em>同样关键。这个"陡度"叫<strong style="font-weight:500;">斜率</strong>（slope），单位是 <code style="font-family:ui-monospace,monospace;font-size:0.92em;">dB/oct</code>（每倍频程衰减多少分贝）。</p>
+    <p>专业 EQ 插件里你会反复看到 6 / 12 / 24 / 48 dB/oct 这几档。它们的物理含义：<strong style="font-weight:500;">12 dB/oct = 二阶滤波器（巴特沃斯）= 每往低/高一个倍频程，信号衰减 12 dB</strong>。阶数越高，截得越干净，但过渡区也越短 — 听感越"突然"。</p>
+
+    <div class="dark-panel">
+      <div class="warning-bar">下面对比同一截止频率（200 Hz HPF）、不同斜率下的听感差异。</div>
+
+      <div class="btn-row">
+        <button class="btn active" data-slope-src="pink" onclick="setSlopeSource('pink')">粉噪声</button>
+        <button class="btn" data-slope-src="synth" onclick="setSlopeSource('synth')">合成器</button>
+        <div style="flex:1"></div>
+        <button class="btn" id="slope-filter-toggle" onclick="toggleSlopeFilter()">滤波: 开</button>
+      </div>
+
+      <div class="play-row">
+        <div class="play-btn" id="slope-play" onclick="toggleSlopePlay()">
+          <svg id="slope-play-icon" width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+            <polygon points="3,2 12,7 3,12"/>
+          </svg>
+        </div>
+        <span class="play-status" id="slope-play-status">点击播放</span>
+      </div>
+
+      <p style="font-size:11px;color:rgba(247,243,236,0.4);margin:4px 0 4px;">
+        切换四档斜率，听低频是被"温柔削掉"还是"一刀切下"。粉噪声最容易听出差别 — 因为它的能量在每个频段都均匀。
+      </p>
+
+      <canvas id="slope-canvas"></canvas>
+
+      <div class="slope-tabs">
+        <button class="slope-tab" data-slope="6"  onclick="setSlope(6)">6 dB/oct</button>
+        <button class="slope-tab active" data-slope="12" onclick="setSlope(12)">12 dB/oct</button>
+        <button class="slope-tab" data-slope="24" onclick="setSlope(24)">24 dB/oct</button>
+        <button class="slope-tab" data-slope="48" onclick="setSlope(48)">48 dB/oct</button>
+      </div>
+
+      <div class="slope-info" id="slope-info">
+        12 dB/oct（二阶 / 巴特沃斯）— 最常见的默认斜率。过渡自然，听感温和。
+      </div>
+    </div>
+
+    <div class="slope-facts">
+      <div class="slope-fact">
+        <div class="slope-fact-head">6 dB/oct</div>
+        <div class="slope-fact-body">最温和。"切掉"几乎听不出突变，更像是把低频<strong style="font-weight:500;">慢慢淡出</strong>。模拟时代很多老式 EQ 是 6 dB/oct。适合在不想听出"加了滤波"的场合用。</div>
+      </div>
+      <div class="slope-fact">
+        <div class="slope-fact-head">12 dB/oct</div>
+        <div class="slope-fact-body">默认档。<strong style="font-weight:500;">大多数混音师挂 HPF 的首选</strong>。截掉空调嗡嗡、台震、麦克风手持噪声足够干净，又不至于伤到附近的有用低频。</div>
+      </div>
+      <div class="slope-fact">
+        <div class="slope-fact-head">24 dB/oct</div>
+        <div class="slope-fact-body">激进档。EDM、电子音乐里 LPF 扫频效果几乎都是 24 起步 — 因为它带"形状感"，能听出"被切了"。在专业混音里，HPF 24 dB/oct 用于排除任何低于截止点的内容（例如清扫贝斯轨的次低频泥）。</div>
+      </div>
+      <div class="slope-fact">
+        <div class="slope-fact-head">48 dB/oct</div>
+        <div class="slope-fact-body">外科手术档。<strong style="font-weight:500;">截得几乎像一堵墙</strong>。母带工程师切隆隆声、广播电台滤除 DC 偏移常用。但代价是相位失真和"pre-ringing"也最严重 — 数学上更陡的滤波器必然带来时域上的振铃。</div>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:0.8rem;">⌐ 这里只是"斜率"参数的入门。当滤波器在截止频率附近<em class="accent">出现共振</em>（Resonance Q&gt;0.707）时，事情会变得很有趣 — 那是<a href="filter.html" style="color:var(--accent);">下一章 Filter 滤波器</a>的核心话题。</p>
+  </section>
+
+  <!-- ============= 7. 生活场景 ============= -->
+  <section>
+    <h2>生活里的 EQ — 你每天都在遇到</h2>
+    <p>一旦你理解了 EQ，会发现日常生活中无处不在 — 它们都是"自然界的滤波器"。</p>
+
+    <div class="life-list">
+      <div class="life-card">
+        <div class="life-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="6" width="26" height="20" stroke="#7B5EA7" stroke-width="1.5" fill="none" rx="1"/>
+            <line x1="3" y1="14" x2="29" y2="14" stroke="#7B5EA7" stroke-width="0.8" opacity="0.5"/>
+            <line x1="3" y1="20" x2="29" y2="20" stroke="#7B5EA7" stroke-width="0.8" opacity="0.5"/>
+            <circle cx="22" cy="22" r="2" fill="#D85A30"/>
+          </svg>
+        </div>
+        <div>
+          <div class="life-name">隔壁邻居的派对</div>
+          <div class="life-desc">LPF 切到 200 Hz 以下。墙体把高频全吸收了，只剩低频穿墙而来 — 这是"墙的物理"在做天然 EQ。</div>
+        </div>
+      </div>
+
+      <div class="life-card">
+        <div class="life-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 14 Q8 10 14 14 Q20 18 26 14 Q30 11 30 14" stroke="#1D9E75" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path d="M3 22 Q8 18 14 22 Q20 26 26 22 Q30 19 30 22" stroke="#1D9E75" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M3 28 Q10 26 16 28 Q22 30 30 28" stroke="#1D9E75" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="life-name">水下听声音</div>
+          <div class="life-desc">LPF 切到 500 Hz + 轻微 BPF 共振峰。介质密度吸收高频，同时产生特定频段共鸣。电影里大量使用此效果模拟溺水/耳鸣瞬间。</div>
+        </div>
+      </div>
+
+      <div class="life-card">
+        <div class="life-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="10" width="24" height="14" stroke="#D85A30" stroke-width="1.5" fill="none" rx="2"/>
+            <circle cx="11" cy="17" r="3" stroke="#D85A30" stroke-width="1.2" fill="none"/>
+            <circle cx="22" cy="17" r="3" stroke="#D85A30" stroke-width="1.2" fill="none"/>
+            <line x1="14" y1="13" x2="19" y2="13" stroke="#D85A30" stroke-width="1"/>
+          </svg>
+        </div>
+        <div>
+          <div class="life-name">Lo-fi Hip-Hop 的"暖糊感"</div>
+          <div class="life-desc">LPF 切到 8–10 kHz，模拟磁带和老唱片的高频损失。J Dilla 那一脉的鼓味很大一部分来自这里 — 不是风格，是物理损耗。</div>
+        </div>
+      </div>
+
+      <div class="life-card">
+        <div class="life-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 4 L20 12 L28 14 L22 20 L24 28 L16 24 L8 28 L10 20 L4 14 L12 12 Z" 
+                  stroke="#D85A30" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="life-name">电影里"耳鸣过后世界变远"</div>
+          <div class="life-desc">LPF 突然切到 800 Hz 左右，配合大混响。爆炸后的听觉损伤让高频暂时丢失 — 这是有神经生理依据的：耳蜗毛细胞过载后对高频响应下降。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 7.5 为什么响 ≠ 好 ============= -->
+  <section>
+    <h2>为什么"响 = 好"是新手最大的认知陷阱</h2>
+    <p>你 boost 一个频段 +6 dB，<em class="accent">什么都没改善 — 只是变响了</em>。但耳朵会立刻告诉你"这个版本更好"。这不是错觉，是人类听觉的硬件 bug。</p>
+
+    <div class="loudness-grid">
+      <div class="loudness-card">
+        <div class="loudness-card-head">等响曲线（ISO 226）</div>
+        <div class="loudness-card-body">同样 SPL（声压级）下，人耳对不同频率的<strong style="font-weight:500;">主观响度感知不同</strong>。这条曲线由 Fletcher & Munson 1933 年首次测出，2003 年由 ISO 226 标准化。结论：响度低的时候，低频和高频被"压低"得严重，中频（2-5 kHz）被相对"放大"。</div>
+      </div>
+      <div class="loudness-card">
+        <div class="loudness-card-head">"响一点就是好"现象</div>
+        <div class="loudness-card-body">两段音频音量差 <strong style="font-weight:500;">1 dB</strong> 以上，大脑就倾向认为响的那个"更饱满、更清晰、更有冲击力"。这就是为什么 80 年代起 master 越来越响 — 业界叫这场失败的战争<a href="https://en.wikipedia.org/wiki/Loudness_war" style="color:var(--accent);" target="_blank" rel="noopener">"响度战争"</a>。</div>
+      </div>
+      <div class="loudness-card">
+        <div class="loudness-card-head">为什么这影响 EQ</div>
+        <div class="loudness-card-body">EQ 提升任何频段 → 整体能量上升 → 听起来"更好" → 你以为是 EQ 起了作用，其实只是变响了。同理：EQ 减一刀也会让人觉得"声音瘦了"，但可能<strong style="font-weight:500;">那一刀切对了</strong>，只是因为变小声而被你下意识否定。</div>
+      </div>
+      <div class="loudness-card">
+        <div class="loudness-card-head">怎么破解</div>
+        <div class="loudness-card-body">在 A/B 时做<strong style="font-weight:500;">响度匹配</strong>（loudness matching / gain matching）。专业插件如 FabFilter Pro-Q、Soothe2、iZotope Ozone 都内置此功能。回到上面的演示，<strong style="font-weight:500;">把"响度匹配: 开"打开</strong>，再切 EQ 开/关，你会突然发现很多"明显的提升"其实并没有让声音变好。</div>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:0.8rem;">⌐ 上方演示里的响度匹配是粗略的静态补偿（根据 gain 和 Q 估算）。专业插件用的是 ITU-R BS.1770 的 LUFS 算法做实时测量，会更精准 — 但原理一致。</p>
+  </section>
+
+  <!-- ============= 8. 实操准则 ============= -->
+  <section>
+    <h2>实操准则（经验，不是金科玉律）</h2>
+    <ul class="rules-list">
+      <li>
+        <div class="rule-num">1</div>
+        <div><strong>先减后加。</strong>减法比加法干净。先把不需要的频段切掉，腾出空间，再考虑加什么。新手最容易犯的错是一上来就 boost，结果整首混音撞顶。</div>
+      </li>
+      <li>
+        <div class="rule-num">2</div>
+        <div><strong>用宽 Q 加，用窄 Q 减。</strong>宽 Q 加 → 自然、有音乐性；窄 Q 减 → 外科手术式精准消灭问题频率。反过来做（窄 Q 加、宽 Q 减）往往听起来"很 EQ"，不自然。</div>
+      </li>
+      <li>
+        <div class="rule-num">3</div>
+        <div><strong>不要 solo 调。</strong>在单轨 solo 下听起来"对"的频谱，放回混音里常常糊。永远在上下文里调 — 这是职业混音师和新手最大的行为差异之一。</div>
+      </li>
+      <li>
+        <div class="rule-num">4</div>
+        <div><strong>扫频找问题：</strong>开一个 Bell EQ，Q 调窄，Gain 拉到 +10 dB，然后缓慢扫频。什么频率最难听就是问题所在，再把 Gain 翻到负值衰减它。可以点上方"扫频找问题"预设感受这个操作。</div>
+      </li>
+      <li>
+        <div class="rule-num">5</div>
+        <div><strong>HPF 不是咒语。</strong>不要在每条轨道上盲目挂 HPF。Kick、贝斯、低沉男声的次低频里有重要内容。判断标准：这条轨道有没有低于某频率的"有用信息"？</div>
+      </li>
+      <li>
+        <div class="rule-num">6</div>
+        <div><strong>频繁 A/B 对比。</strong>绕过（bypass）EQ 前后反复切换，时间间隔不要超过 3 秒 — 人耳对变化的记忆很短。你会很快分辨出哪个"更对"。</div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============= 9. 延伸：EQ 类型 ============= -->
+  <section>
+    <h2>延伸 — 你会在插件里看到的几种 EQ 类型</h2>
+    <p>到这里基础已经够你用了。但拿到 FabFilter Pro-Q、iZotope Ozone、Waves SSL 这些插件，会发现里面还有些"模式切换"按钮 — analog/digital、minimum-phase/linear-phase、static/dynamic。它们对应的是 EQ 的<strong style="font-weight:500;">三种工作原理</strong>，不是音色风格。</p>
+
+    <div class="types-grid">
+
+      <div class="type-card">
+        <div class="type-head">
+          <span class="type-label">类型 1</span>
+          <span class="type-name">分析型 EQ（Minimum-Phase / 标准 IIR）</span>
+        </div>
+        <div class="type-body">
+          <p><strong style="font-weight:500;">是什么：</strong>所有 EQ 的默认形态，包括本文上面演示的那个。底层是 IIR（无限冲激响应）滤波器，CPU 消耗极低、延迟为零。</p>
+          <p><strong style="font-weight:500;">代价：</strong>提升或衰减一个频率，必然在该频率附近<em class="accent">引入相位偏移</em>。相位偏移本身听不到，但同一信号源走多条不同处理的轨道（比如鼓的多麦克）相加时，相位差会导致频段抵消/加强 — 这是新手不容易意识到的隐性问题。</p>
+          <p><strong style="font-weight:500;">什么时候用：</strong>99% 的场合都用它。除非你有特别理由，否则就是它。</p>
+        </div>
+      </div>
+
+      <div class="type-card type-linear">
+        <div class="type-head">
+          <span class="type-label">类型 2</span>
+          <span class="type-name">线性相位 EQ（Linear-Phase / FIR）</span>
+        </div>
+        <div class="type-body">
+          <p><strong style="font-weight:500;">是什么：</strong>底层是 FIR（有限冲激响应）滤波器。设计上让所有频率<em class="accent">通过同样的时间延迟</em>，因此不引入相位偏移，频率响应曲线和实际听感一一对应。</p>
+          <p><strong style="font-weight:500;">代价：</strong>(1) 高延迟 — 通常 10-100 ms，不能用于实时演奏监听；(2) <strong style="font-weight:500;">Pre-ringing</strong>（前响铃）— 在瞬态前出现微弱的振铃，对鼓、Pluck 这类瞬态素材是听得见的伤害；(3) CPU 消耗几倍于普通 EQ。</p>
+          <p><strong style="font-weight:500;">什么时候用：</strong>母带、并行处理需要相位对齐时、立体声处理中怕中央象偏移时。<em class="accent">不要在 Kick、Snare 等强瞬态素材上用</em>。</p>
+        </div>
+      </div>
+
+      <div class="type-card type-dynamic">
+        <div class="type-head">
+          <span class="type-label">类型 3</span>
+          <span class="type-name">动态 EQ（Dynamic EQ）</span>
+        </div>
+        <div class="type-body">
+          <p><strong style="font-weight:500;">是什么：</strong>每个 EQ 频段挂一个"压缩器"：<em class="accent">只有当该频段能量超过阈值时，EQ 动作才生效</em>；低于阈值就当没事一样。本质是 EQ + 多段压缩的杂交。</p>
+          <p><strong style="font-weight:500;">什么时候用：</strong>问题是<em class="accent">间歇性</em>的时候。比如人声只在某些字眼齿音过重 — 静态 EQ 切 6 kHz 会让其他字眼也变闷；动态 EQ 只在齿音真正出现时才衰减。同理：吉他偶尔在某和弦轰头、贝斯部分音的次低频突出、人声呼吸冲麦。</p>
+          <p><strong style="font-weight:500;">代价：</strong>参数复杂（多了阈值、起释放时间），新手容易调成自激或卡顿。建议先把基础静态 EQ 玩熟再上动态 EQ。</p>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="muted" style="margin-top:0.8rem;">⌐ 真实工作里 90% 用类型 1。类型 2 给母带 / 关键并行轨道用。类型 3 给"间歇性问题"用。三种不是好坏关系，是工具箱里互补的三把工具。</p>
+  </section>
+
+  <!-- ============= 10. 术语表 ============= -->
+  <section>
+    <h2>术语表</h2>
+    <p class="muted">遇到不熟的词回来查 — 不需要一次记住。</p>
+    <dl class="glossary">
+      <div class="glossary-item"><dt>HPF / High-Pass Filter / 高通滤波器</dt><dd>切掉截止频率以下的所有低频，保留高频。"高通过"，所以叫高通。<strong>HPF 不是减低频的同义词</strong> — Bell EQ 在低频做衰减是减；HPF 是把那段彻底切掉。</dd></div>
+      <div class="glossary-item"><dt>LPF / Low-Pass Filter / 低通滤波器</dt><dd>HPF 的反面 — 切掉高频保留低频。Lo-fi、隔壁派对、水下声都是它做的。</dd></div>
+      <div class="glossary-item"><dt>BPF / Band-Pass Filter / 带通滤波器</dt><dd>HPF + LPF 串联。只保留中间一段。电话声、对讲机声、本文频段试听按钮用的都是 BPF。</dd></div>
+      <div class="glossary-item"><dt>Bell / Peaking / 峰值（钟形）</dt><dd>最常用的 EQ 形状，对称的钟形曲线。中心频率 + 增益 + Q 三参数。</dd></div>
+      <div class="glossary-item"><dt>Shelf / 架式</dt><dd>从某截止频率开始整体抬升/下压（不是局部峰）。Low Shelf 抬全部低频，High Shelf 抬全部高频。空气感、温暖感常用 Shelf。</dd></div>
+      <div class="glossary-item"><dt>Notch / 陷波</dt><dd>极窄极深的 Bell 衰减，用于"杀单一啸叫"。Q 通常 &gt; 10。</dd></div>
+      <div class="glossary-item"><dt>Q / Quality Factor / 品质因数</dt><dd>影响 EQ 动作的频率范围宽窄。Q 越大，影响范围越窄（外科手术），越小越宽（音乐性）。Q=0.707 是巴特沃斯标准值，通带最平坦。</dd></div>
+      <div class="glossary-item"><dt>dB/oct / 斜率</dt><dd>HPF/LPF 截止后每往低/高一个倍频程衰减多少分贝。常见 6 / 12 / 24 / 48 dB/oct。越大越陡。</dd></div>
+      <div class="glossary-item"><dt>Resonance / 共振</dt><dd>滤波器在截止频率附近的"凸起"。在 EQ 里通常不希望出现（Q 控制在 0.707 附近），但在 Filter 里它是核心 — 下一章详谈。</dd></div>
+      <div class="glossary-item"><dt>Pre-ring / 前响铃</dt><dd>线性相位 EQ 因数学结构而在瞬态<em class="accent">之前</em>产生的微弱振铃。对鼓、Pluck 类素材是有害失真。</dd></div>
+      <div class="glossary-item"><dt>Minimum-Phase / 最小相位</dt><dd>分析型 / 标准 IIR EQ 的相位特性：会引入相位偏移但不会产生 pre-ring。99% 的 EQ 默认模式。</dd></div>
+      <div class="glossary-item"><dt>Linear-Phase / 线性相位</dt><dd>FIR 实现的 EQ。无相位偏移，但有延迟和 pre-ring。</dd></div>
+      <div class="glossary-item"><dt>Dynamic EQ / 动态 EQ</dt><dd>EQ + 压缩器的混合体。频段动作只在该频段能量超阈值时才生效，适合处理"间歇性"问题。</dd></div>
+      <div class="glossary-item"><dt>Fletcher-Munson / 等响曲线</dt><dd>1933 年 Fletcher 和 Munson 测出的曲线，描述同样 SPL 下不同频率的主观响度差异。后由 ISO 226 标准化（最新版 ISO 226:2023）。</dd></div>
+      <div class="glossary-item"><dt>LUFS / Loudness Units Full Scale</dt><dd>ITU-R BS.1770 定义的响度计量单位，比 RMS 或 peak 更贴近人耳感知。流媒体平台都用它做响度归一化（Spotify -14 LUFS、YouTube -14 LUFS、Apple Music -16 LUFS）。</dd></div>
+      <div class="glossary-item"><dt>A/B 测试 / Gain Matching</dt><dd>切换"处理前/处理后"的对比方法。必须做响度匹配（gain matching），否则你比较的是响度而不是品质。</dd></div>
+    </dl>
+  </section>
+
+  <!-- ============= 11. 自测题 ============= -->
+  <section>
+    <h2>读完你应该能回答这 5 道题</h2>
+    <p class="muted">先自己想，再展开看答案。能讲清楚才算掌握。</p>
+
+    <div class="quiz">
+      <details class="quiz-item">
+        <summary>1. 为什么 250-500 Hz 被称为"浑浊区"，混音里常需要削减？</summary>
+        <div class="quiz-ans">这一段是大多数有调乐器（人声、吉他、键盘、弦乐）的低端能量集中区。多轨叠加时，每条轨道在这里都有一点点能量，混音总和就会能量过载 → 听起来糊、没空间。所以经验做法是在<strong style="font-weight:500;">非主奏轨道</strong>上 250-500 Hz 削减 2-4 dB，让主奏轨道在这一频段"有地方站"。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>2. HPF 在 12 dB/oct 和 24 dB/oct 下，听感差别是什么？</summary>
+        <div class="quiz-ans">12 dB/oct 截得"温柔"，截止频率附近还有渐变的尾巴，听感是"自然地把低频淡掉"；24 dB/oct 截得"果断"，截止频率附近就有明显形状感，能听出"被切了"。混音师在做"清扫"时（去空调嗡嗡、麦克风手持噪声）多用 12-18 dB/oct；做"必须彻底排除"时（贝斯轨切次低频、人声去隆隆）多用 24 dB/oct。母带级的"决不能漏过"才用 48 dB/oct。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>3. 什么时候用宽 Q 提升，什么时候用窄 Q 衰减？</summary>
+        <div class="quiz-ans">规则：<strong style="font-weight:500;">宽 Q 加，窄 Q 减</strong>。宽 Q 提升（Q=0.5-1.4，gain +2~+4 dB）听起来自然、有音乐性，适合塑造性格；窄 Q 衰减（Q=4-10+，gain -3~-12 dB）像外科手术，精准消灭问题频率而不影响周围。反过来做（窄 Q 提升、宽 Q 衰减）通常会让人听出"很 EQ"的人工感。原理是：人耳对窄峰提升敏感（容易察觉），但对窄峰衰减不敏感（不容易察觉到失去了什么）。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>4. "响 ≠ 好" 的本质原因是什么？怎么破解？</summary>
+        <div class="quiz-ans"><strong style="font-weight:500;">本质原因</strong>：人类听觉有一个硬件 bug — 当两段音频音量差 1 dB 以上时，大脑会下意识认为响的那段"更饱满、更清晰、更有冲击力"。这是 Fletcher-Munson 等响曲线效应在动态上的体现（响度增加时低/高频感知比例改变）。任何 EQ 提升都会让整体能量上升，所以"提升后听起来更好"可能只是"提升后变响了"。<strong style="font-weight:500;">破解方法</strong>：A/B 时做响度匹配 — 让 EQ 开/关两态的 RMS 或 LUFS 接近。专业 EQ 插件（FabFilter Pro-Q、iZotope Ozone、Soothe2）内置此功能。这也是本文上方"响度匹配"开关的意义。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>5. 线性相位 EQ 不能用在什么素材上？为什么？</summary>
+        <div class="quiz-ans">不能用在<strong style="font-weight:500;">强瞬态素材上</strong>，比如 Kick、Snare、Pluck 合成器。原因是线性相位 EQ 由 FIR 滤波器实现，数学结构必然产生 <strong style="font-weight:500;">Pre-ringing（前响铃）</strong> — 在瞬态出现<em class="accent">之前</em>，会有一段微弱的振铃。这是物理上听得见的"假声"，会让鼓的攻击感变虚、Pluck 变软。补充：线性相位 EQ 也有延迟（typical 10-100 ms），不能用在实时演奏监听场景。适合用的场景：母带处理、需要相位对齐的并行处理、立体声中央象稳定性优先时。</div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <p class="muted" style="text-align:center;font-size:0.85rem;">
+    下一篇：Filter 滤波器 — 当 EQ 还不够极端的时候。<br>
+    敬请期待。
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  <p><a href="index.html" style="color:var(--ink-light);text-decoration:none;">← 回到效果器目录</a></p>
+</footer>
+
+<script src="../assets/js/eq.js"></script>
+</body>
+</html>
