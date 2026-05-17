@@ -600,6 +600,42 @@ input[type="range"] {
   line-height: 1.7;
 }
 
+/* ============= ISO 226 等响曲线图 ============= */
+.iso226-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0 0.5rem;
+  overflow-x: auto;
+}
+.iso226-title {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+}
+.iso226-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-width: 540px;  /* 太窄就横向滚 */
+  user-select: none;
+}
+.iso226-caption {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed var(--line);
+}
+.iso226-caption p {
+  font-size: 0.86rem;
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 0 0 4px;
+}
+
 /* ============= EQ 思考流程图 ============= */
 .flow-wrap {
   background: white;

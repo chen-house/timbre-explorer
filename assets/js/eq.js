@@ -3,7 +3,8 @@
    ============================================ */
 
 let ac = null;
-let sourceNode = null;
+let sourceNode = null;         // 粉噪声：BufferSource（loop=true）
+let synthNodes = null;         // 合成器：{ oscs:[...], mix } — 持续 oscillator
 let filterNode = null;
 let gainNode = null;
 let playing = false;
@@ -54,7 +55,8 @@ function buildBuffer(durationSec, type) {
       b6 = w * 0.115926;
     }
   } else {
-    // Am 类和弦 (A3-C4-E4-A4)
+    // Am 类和弦 (A3-C4-E4-A4) — 持续音，无任何包络
+    // 这些频率在 t=4s 处所有 sin 都接近零，所以 loop 时几乎无 click
     const freqs = [220, 261.63, 329.63, 440];
     for (let i = 0; i < len; i++) {
       const t = i / a.sampleRate;
@@ -62,17 +64,27 @@ function buildBuffer(durationSec, type) {
       freqs.forEach((f, idx) => {
         s += Math.sin(2 * Math.PI * f * t) / (idx + 1.5);
       });
-      const env = Math.exp(-t * 0.4) * (1 - Math.exp(-t * 30));
-      d[i] = s * 0.18 * env;
+      d[i] = s * 0.16;  // 恒定振幅，没有衰减，没有淡化
     }
   }
   return buf;
 }
 
 function stopAll() {
+  // 粉噪声路径
   if (sourceNode) {
     try { sourceNode.stop(); } catch (e) {}
+    try { sourceNode.disconnect(); } catch (e) {}
     sourceNode = null;
+  }
+  // 合成器路径 — 停掉所有持续振荡器
+  if (synthNodes) {
+    synthNodes.oscs.forEach(o => {
+      try { o.stop(); } catch (e) {}
+      try { o.disconnect(); } catch (e) {}
+    });
+    try { synthNodes.mix.disconnect(); } catch (e) {}
+    synthNodes = null;
   }
   playing = false;
   document.getElementById('main-play').classList.remove('playing');
@@ -85,40 +97,57 @@ function togglePlay() {
   // 主播放器启动时先停掉任何正在试听的频段，避免叠加
   stopBandAudition();
   const a = getAC();
-  const dur = srcType === 'pink' ? 4 : 3.5;
-  const buf = buildBuffer(dur, srcType);
 
   filterNode = a.createBiquadFilter();
   filterNode.type = 'peaking';
-  filterNode.frequency.value = parseFloat(document.getElementById('sl-freq').value);
-  filterNode.gain.value = eqOn ? parseFloat(document.getElementById('sl-gain').value) : 0;
-  filterNode.Q.value = parseFloat(document.getElementById('sl-q').value);
+  // 用 setValueAtTime 显式设置初始值，避免后续 AudioParam 自动化覆盖
+  const t0 = a.currentTime;
+  filterNode.frequency.setValueAtTime(parseFloat(document.getElementById('sl-freq').value), t0);
+  filterNode.gain.setValueAtTime(eqOn ? parseFloat(document.getElementById('sl-gain').value) : 0, t0);
+  filterNode.Q.setValueAtTime(parseFloat(document.getElementById('sl-q').value), t0);
 
   gainNode = a.createGain();
   gainNode.gain.value = computeOutputGain();
 
-  sourceNode = a.createBufferSource();
-  sourceNode.buffer = buf;
-  sourceNode.loop = (srcType === 'pink');
-
-  sourceNode.connect(filterNode);
+  // 公共下游：filter → gain → destination
   filterNode.connect(gainNode);
   gainNode.connect(a.destination);
-  sourceNode.start();
+
+  if (srcType === 'pink') {
+    // 粉噪声：4 秒 buffer + 循环
+    const buf = buildBuffer(4, 'pink');
+    sourceNode = a.createBufferSource();
+    sourceNode.buffer = buf;
+    sourceNode.loop = true;
+    sourceNode.connect(filterNode);
+    sourceNode.start();
+  } else {
+    // 合成器：4 个锯齿波振荡器（Am 和弦 A3-C4-E4-A4）
+    // 锯齿波包含全部奇偶谐波（f, 2f, 3f, 4f, ...），频谱从基频铺到 Nyquist
+    // 这样 EQ 在任意频率都能"撞到东西"，参数变化才有听感
+    const mix = a.createGain();
+    mix.gain.value = 0.35;   // 锯齿波能量大，整体压低避免削顶
+    const oscs = [];
+    const freqs = [220, 261.63, 329.63, 440];
+    freqs.forEach((f, i) => {
+      const osc = a.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = f;
+      const og = a.createGain();
+      og.gain.value = 0.2 / (i + 1.5);
+      osc.connect(og);
+      og.connect(mix);
+      osc.start();
+      oscs.push(osc);
+    });
+    mix.connect(filterNode);
+    synthNodes = { oscs, mix };
+  }
 
   playing = true;
   document.getElementById('main-play').classList.add('playing');
   document.getElementById('play-icon').innerHTML = '<rect x="3" y="2" width="3" height="10" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/>';
   document.getElementById('play-status').textContent = '播放中 — 调节参数实时听变化';
-
-  if (!sourceNode.loop) {
-    sourceNode.onended = () => {
-      playing = false;
-      document.getElementById('main-play').classList.remove('playing');
-      document.getElementById('play-icon').innerHTML = '<polygon points="3,2 12,7 3,12"/>';
-      document.getElementById('play-status').textContent = '点击重新播放';
-    };
-  }
 }
 
 function setSource(t) {
@@ -137,7 +166,10 @@ function toggleEQ() {
   btn.textContent = 'EQ: ' + (eqOn ? '开' : '关');
   btn.classList.toggle('active', eqOn);
   if (filterNode) {
-    filterNode.gain.value = eqOn ? parseFloat(document.getElementById('sl-gain').value) : 0;
+    const t = getAC().currentTime;
+    filterNode.gain.setValueAtTime(
+      eqOn ? parseFloat(document.getElementById('sl-gain').value) : 0, t
+    );
   }
   applyOutputGain();
   drawEQ();
@@ -183,7 +215,17 @@ function updateEQ() {
     (gain >= 0 ? '+' : '') + gain.toFixed(1) + ' dB';
   document.getElementById('v-q').textContent = q.toFixed(1);
 
+  // 用 setValueAtTime 保证实时更新一定生效；先 cancel 掉之前的调度，
+  // 避免与历史 setTargetAtTime/setValueAtTime 事件冲突（这是关键 bug 修复）
   if (filterNode) {
+    const t = getAC().currentTime;
+    filterNode.frequency.cancelScheduledValues(t);
+    filterNode.frequency.setValueAtTime(freq, t);
+    filterNode.gain.cancelScheduledValues(t);
+    filterNode.gain.setValueAtTime(eqOn ? gain : 0, t);
+    filterNode.Q.cancelScheduledValues(t);
+    filterNode.Q.setValueAtTime(q, t);
+    // 同时直接赋 .value 作为双保险（某些实现下 setValueAtTime 在 currentTime 严格相等时可能延迟生效）
     filterNode.frequency.value = freq;
     filterNode.gain.value = eqOn ? gain : 0;
     filterNode.Q.value = q;
@@ -409,7 +451,10 @@ function renderShapes() {
 /* ============================================
    滤波器斜率演示（HPF 200 Hz，可切 6/12/24/48 dB/oct）
    ============================================ */
-const SLOPE_CUTOFF = 200; // 固定截止频率，让用户专注感受"斜率"而非"截到哪"
+// 截止频率定在 500 Hz：一个倍频程内（250-500 Hz）是中低频，
+// 普通笔记本/耳塞都能重放，斜率差异在所有设备上都能听到。
+// 注：真实工程里 HPF 通常切 60-200 Hz 去隆隆声，但那段需要好的低频监听才能区分斜率
+const SLOPE_CUTOFF = 500;
 let slopeAC_state = {
   src: null,
   filters: [],
@@ -457,8 +502,14 @@ function buildSlopeChain(ac) {
 
 function stopSlope() {
   if (!slopeAC_state.playing) return;
-  if (slopeAC_state.src) {
+  // 停 BufferSource（粉噪声）
+  if (slopeAC_state.src && slopeAC_state.src.stop) {
     try { slopeAC_state.src.stop(); } catch (e) {}
+  }
+  // 停所有合成器 oscillator
+  if (slopeAC_state.synthOscs) {
+    slopeAC_state.synthOscs.forEach(o => { try { o.stop(); } catch (e) {} });
+    slopeAC_state.synthOscs = null;
   }
   slopeAC_state.src = null;
   slopeAC_state.filters = [];
@@ -472,6 +523,27 @@ function stopSlope() {
   if (status) status.textContent = '点击播放';
 }
 
+/* 热替换滤波器链 — 不动音源，只把 filter 段拔下来换上新的，
+   实现"无缝 A/B 切换"，听感对比最准 */
+function reconnectSlopeChain(ac) {
+  // 断开 src 上的所有连接（src 本身保持运行）
+  try { slopeAC_state.src.disconnect(); } catch (e) {}
+  // 断开旧 filter 节点（确保没有幽灵连接）
+  slopeAC_state.filters.forEach(f => {
+    try { f.disconnect(); } catch (e) {}
+  });
+  // 建新链
+  const filters = slopeAC_state.filterOn ? buildSlopeChain(ac) : [];
+  if (filters.length) {
+    slopeAC_state.src.connect(filters[0]);
+    for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
+    filters[filters.length - 1].connect(slopeAC_state.gain);
+  } else {
+    slopeAC_state.src.connect(slopeAC_state.gain);
+  }
+  slopeAC_state.filters = filters;
+}
+
 function toggleSlopePlay() {
   if (slopeAC_state.playing) { stopSlope(); return; }
   // 与其他声源互斥
@@ -479,41 +551,51 @@ function toggleSlopePlay() {
   stopBandAudition();
 
   const ac = getAC();
-  const dur = slopeAC_state.srcType === 'pink' ? 4 : 3.5;
-  const buf = buildBuffer(dur, slopeAC_state.srcType);
 
-  const src = ac.createBufferSource();
-  src.buffer = buf;
-  src.loop = (slopeAC_state.srcType === 'pink');
+  // 同主 EQ 一致：粉噪 buffer + loop，合成器 OscillatorNode 持续发声
+  let src;
+  if (slopeAC_state.srcType === 'pink') {
+    const buf = buildBuffer(4, 'pink');
+    src = ac.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+    src.start();
+  } else {
+    // 用一个 GainNode 作为"虚拟 src"，下面挂 4 个锯齿振荡器
+    src = ac.createGain();
+    src.gain.value = 0.35;
+    const freqs = [220, 261.63, 329.63, 440];
+    freqs.forEach((f, i) => {
+      const osc = ac.createOscillator();
+      osc.type = 'sawtooth';
+      osc.frequency.value = f;
+      const og = ac.createGain();
+      og.gain.value = 0.2 / (i + 1.5);
+      osc.connect(og);
+      og.connect(src);
+      osc.start();
+      // 把 osc 也存进 filters 数组，方便 stopSlope 一并 stop
+      slopeAC_state.synthOscs = (slopeAC_state.synthOscs || []);
+      slopeAC_state.synthOscs.push(osc);
+    });
+  }
 
-  const filters = buildSlopeChain(ac);
   const gain = ac.createGain();
   gain.gain.value = 0.55;
-
-  // src → [filters chain or bypass] → gain → destination
-  if (slopeAC_state.filterOn && filters.length) {
-    src.connect(filters[0]);
-    for (let i = 0; i < filters.length - 1; i++) filters[i].connect(filters[i + 1]);
-    filters[filters.length - 1].connect(gain);
-  } else {
-    src.connect(gain);
-  }
   gain.connect(ac.destination);
-  src.start();
 
   slopeAC_state.src = src;
-  slopeAC_state.filters = filters;
+  slopeAC_state.filters = [];
   slopeAC_state.gain = gain;
   slopeAC_state.playing = true;
+
+  // 第一次连上滤波器链
+  reconnectSlopeChain(ac);
 
   document.getElementById('slope-play').classList.add('playing');
   document.getElementById('slope-play-icon').innerHTML =
     '<rect x="3" y="2" width="3" height="10" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/>';
   document.getElementById('slope-play-status').textContent = '播放中 — 切换斜率档位感受差异';
-
-  if (!src.loop) {
-    src.onended = () => stopSlope();
-  }
 }
 
 function setSlopeSource(t) {
@@ -521,6 +603,7 @@ function setSlopeSource(t) {
   document.querySelectorAll('[data-slope-src]').forEach(b => {
     b.classList.toggle('active', b.dataset.slopeSrc === t);
   });
+  // 换音源（pink ↔ synth）必须重启，因为节点类型完全不同
   if (slopeAC_state.playing) {
     stopSlope();
     setTimeout(toggleSlopePlay, 50);
@@ -532,10 +615,9 @@ function toggleSlopeFilter() {
   const btn = document.getElementById('slope-filter-toggle');
   btn.textContent = '滤波: ' + (slopeAC_state.filterOn ? '开' : '关');
   btn.classList.toggle('active', slopeAC_state.filterOn);
-  // 重建播放链
+  // 仅热替换 filter 段，不停音源
   if (slopeAC_state.playing) {
-    stopSlope();
-    setTimeout(toggleSlopePlay, 30);
+    reconnectSlopeChain(getAC());
   }
   drawSlope();
 }
@@ -546,10 +628,10 @@ function setSlope(slope) {
     b.classList.toggle('active', parseInt(b.dataset.slope) === slope);
   });
   document.getElementById('slope-info').textContent = SLOPE_INFO[slope];
+  console.log('[Slope] switched to', slope, 'dB/oct — filterCount=', slopeFilterCount(slope));
   if (slopeAC_state.playing) {
-    // 实时重建滤波器链
-    stopSlope();
-    setTimeout(toggleSlopePlay, 30);
+    // 关键：只热替换 filter 链，src 保持播放，听感无 gap
+    reconnectSlopeChain(getAC());
   }
   drawSlope();
 }
@@ -644,7 +726,7 @@ function drawSlope() {
   // 截止频率标注
   ctx.fillStyle = '#D85A30';
   ctx.font = '500 10px ui-monospace, monospace';
-  ctx.fillText('fc=200', xCut + 4, 12);
+  ctx.fillText('fc=' + SLOPE_CUTOFF, xCut + 4, 12);
 
   // dB 标签
   ctx.fillStyle = 'rgba(255,255,255,0.32)';
@@ -829,6 +911,17 @@ function buildTOC() {
   });
 }
 
+/* 暴露调试入口到 window — 用于 console 诊断 */
+window.eqDebug = {
+  get ac() { return ac; },
+  get sourceNode() { return sourceNode; },
+  get synthNodes() { return synthNodes; },
+  get filterNode() { return filterNode; },
+  get playing() { return playing; },
+  get srcType() { return srcType; },
+  version: '20260515e',
+};
+
 /* 初始化 */
 window.addEventListener('DOMContentLoaded', () => {
   buildTOC();
@@ -845,4 +938,7 @@ window.addEventListener('DOMContentLoaded', () => {
     drawPhoneSpectrum();
     drawSlope();
   });
+
+  // 加载完成提示（确认这次的 JS 真的跑起来了）
+  console.log('[EQ.js] version 20260515e loaded — slope cutoff 500Hz');
 });
