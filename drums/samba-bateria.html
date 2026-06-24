@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桑巴乐队 bateria · 声音设计笔记</title>
+<meta name="description" content="桑巴打击乐团(bateria)的 8 件主力：surdo / caixa / repinique / tamborim / chocalho / agogô / cuíca / reco-reco。每件含手绘外观、Web Audio 实时合成试听，并有一个可逐层开关的「合奏台」，亲耳听低/中/高如何叠成一支桑巴。">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/drums.css">
+<link rel="stylesheet" href="../assets/css/samba.css?v=20260624b">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12 Q7 4 12 12 Q17 20 21 12" stroke="#D85A30" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#D85A30"/>
+      </svg>
+      声音设计笔记
+    </a>
+    <div class="nav-links">
+      <a href="../effects/index.html">效果器</a>
+      <a href="../timbre/index.html">音色</a>
+      <a href="../atmosphere/index.html">氛围色</a>
+      <a href="index.html" class="active">鼓</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-eyebrow">SAMBA BATERIA · 桑巴打击乐团</div>
+    <h1>桑巴乐队 bateria — 一支 <em>鼓的天团</em></h1>
+    <p class="lead">桑巴不是"一面鼓"，而是一整支打击乐团。低音的 surdo 当心跳，中音的 caixa、repinique 铺律动与领奏，高音的一堆金属和小鼓织出闪烁的切分。<br>下面 8 件主力各配实时合成试听，底部还有一个可逐层开关的<strong style="font-weight:500;">合奏台</strong>。</p>
+  </header>
+
+  <!-- 目录 -->
+  <nav class="article-toc" aria-label="文章目录">
+    <ol class="toc-list" id="toc-list"><!-- JS 填充 --></ol>
+  </nav>
+
+  <!-- 怎么用 -->
+  <section id="how">
+    <h2>怎么用这一页</h2>
+    <p>每张卡片点右上角播放键，用 <strong style="font-weight:500;">Web Audio API 实时合成</strong> 一小段该乐器的乐句 —— 声音由参数(频率、衰减、噪声)实时驱动，不依赖任何音频文件，离线也能听。</p>
+    <p>膜鼓类(surdo、caixa、repinique、tamborim)合成能贴近真实音色；而 <strong style="font-weight:500;">cuíca 的摩擦发声、reco-reco 的刮擦</strong> 含复杂噪声，简单合成只能"近似"，凡近似处都用 <span class="approx">合成近似</span> 明确标注，不冒充真实采样。</p>
+    <div class="scene-box">
+      <div class="scene-label">先玩这个</div>
+      <p>直接拉到下面的「<strong style="font-weight:500;">合奏台</strong>」，点"整队进场"，然后逐个关掉/打开声部 —— 你会亲耳听见<strong style="font-weight:500;">低 → 中 → 高三层是怎么叠成一支桑巴的</strong>。这是理解 bateria 最快的方式。</p>
+    </div>
+  </section>
+
+  <!-- ===================== 合奏台 ===================== -->
+  <section id="stage">
+    <h2>合奏台 — 听它们怎么叠起来</h2>
+    <p class="muted" style="font-size:0.88rem;">一小节 4/4 = 16 格的循环。点"整队进场"开始，再点声部上的胶囊可单独静音/打开；"独奏"= 只听这一层。</p>
+
+    <div class="bateria-stage" id="bateria-stage">
+      <div class="stage-top">
+        <button class="ensemble-btn" id="ensemble-toggle" onclick="toggleEnsemble(this)">▶ 整队进场</button>
+        <label class="tempo-ctl">速度
+          <input type="range" min="70" max="130" value="100" oninput="setTempo(this.value)" aria-label="速度 BPM">
+          <b id="bpm-val">100</b> BPM
+        </label>
+        <button class="stage-reset" onclick="allLayersOn()">全部开</button>
+      </div>
+
+      <div class="score-wrap">
+        <div class="score" id="score"><!-- JS 按 samba.js 的 PATTERN 生成总谱 --></div>
+      </div>
+      <p class="seq-caption">每行一件乐器、每列一个 16 分音符（深列 = 每拍的“1”）。播放时高亮列随节拍移动，<strong style="font-weight:500;">正好打到的声部格子会跟着亮</strong>；关掉某层，它整行会变暗。</p>
+
+      <div class="mixer">
+        <button class="layer-chip low-d"  data-layer="surdo"     onclick="toggleLayer('surdo', this)"><span class="dot"></span>surdo 大鼓<span class="solo" onclick="event.stopPropagation();soloLayer('surdo')">独奏</span></button>
+        <button class="layer-chip mid-d"  data-layer="caixa"     onclick="toggleLayer('caixa', this)"><span class="dot"></span>caixa 响弦<span class="solo" onclick="event.stopPropagation();soloLayer('caixa')">独奏</span></button>
+        <button class="layer-chip mid-d"  data-layer="repinique" onclick="toggleLayer('repinique', this)"><span class="dot"></span>repinique 领奏<span class="solo" onclick="event.stopPropagation();soloLayer('repinique')">独奏</span></button>
+        <button class="layer-chip high-d" data-layer="tamborim"  onclick="toggleLayer('tamborim', this)"><span class="dot"></span>tamborim 手鼓<span class="solo" onclick="event.stopPropagation();soloLayer('tamborim')">独奏</span></button>
+        <button class="layer-chip high-d" data-layer="chocalho"  onclick="toggleLayer('chocalho', this)"><span class="dot"></span>chocalho 摇铃<span class="solo" onclick="event.stopPropagation();soloLayer('chocalho')">独奏</span></button>
+        <button class="layer-chip high-d" data-layer="agogo"     onclick="toggleLayer('agogo', this)"><span class="dot"></span>agogô 双音铃<span class="solo" onclick="event.stopPropagation();soloLayer('agogo')">独奏</span></button>
+        <button class="layer-chip high-d" data-layer="cuica"     onclick="toggleLayer('cuica', this)"><span class="dot"></span>cuíca 摩擦鼓<span class="solo" onclick="event.stopPropagation();soloLayer('cuica')">独奏</span></button>
+        <button class="layer-chip high-d" data-layer="reco"      onclick="toggleLayer('reco', this)"><span class="dot"></span>reco-reco 刮器<span class="solo" onclick="event.stopPropagation();soloLayer('reco')">独奏</span></button>
+      </div>
+
+      <p class="mixer-hint">试试：先<strong style="font-weight:500;">只留 surdo</strong>，感受锚在拍 2 的心跳；再加 caixa(铺 16 分)、tamborim(切分)、chocalho(摇摆 wash)，一层层叠满 —— 这就是 bateria 的"频率分工"。</p>
+    </div>
+  </section>
+
+  <!-- ===================== 一、低音层 ===================== -->
+  <section id="low">
+    <div class="cat-intro">
+      <div class="cat-eyebrow">PART 01 · LOW · 低音地基</div>
+      <h2>一、低音层 — 心跳</h2>
+      <p>整支乐队的地基与脉搏。surdo 用开音/闷音的交替，把重心稳稳锚在拍 2 上 —— 这就是桑巴"感觉在 2"的来源。</p>
+    </div>
+
+    <div class="drum-grid">
+      <!-- Surdo -->
+      <article class="drum-card low">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="16" y1="18" x2="30" y2="32" stroke="#D85A30" stroke-width="1.6" stroke-linecap="round"/>
+            <ellipse cx="42" cy="30" rx="18" ry="6.5" stroke="#D85A30" stroke-width="2.2"/>
+            <path d="M24 30 V64 M60 30 V64" stroke="#D85A30" stroke-width="2.2"/>
+            <ellipse cx="42" cy="64" rx="18" ry="6.5" stroke="#D85A30" stroke-width="2.2" opacity="0.8"/>
+            <line x1="33" y1="33" x2="33" y2="61" stroke="#D85A30" stroke-width="1.2" opacity="0.6"/>
+            <line x1="51" y1="33" x2="51" y2="61" stroke="#D85A30" stroke-width="1.2" opacity="0.6"/>
+            <line x1="14" y1="34" x2="34" y2="28" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="13" cy="35" r="4.5" fill="#D85A30"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Surdo 大鼓<span class="freq-tag freq-low">低音</span><span class="drum-en">Surdo</span></h3>
+          <button class="drum-play" onclick="playSamba('surdo', this)" aria-label="试听 surdo"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>背带斜挎，软头槌敲 + 另一手按皮 → 开音 / 闷音两种</dd></div>
+          <div><dt>音色</dt><dd>又低又沉、闷闷的"咚"，名字 surdo 在葡语里就是"聋/闷"</dd></div>
+          <div><dt>角色</dt><dd>乐队心跳，锚在拍 2、撑起整支队的低频地基</dd></div>
+        </dl>
+        <p class="drum-note">合成：低频膜振 96→54 Hz(开音) / 90→64 Hz 更短(闷音)，交替出"da-BUM"的摇摆。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== 二、中音层 ===================== -->
+  <section id="mid">
+    <div class="cat-intro">
+      <div class="cat-eyebrow">PART 02 · MID · 中音律动</div>
+      <h2>二、中音层 — 骨架与指挥</h2>
+      <p>caixa 用连续 16 分滚奏铺出律动的"沙沙"地毯，repinique 则是穿透全队的领奏，负责起拍、break、收尾的口令。</p>
+    </div>
+
+    <div class="drum-grid">
+      <!-- Caixa -->
+      <article class="drum-card mid">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 18 L60 38 M62 18 L24 38" stroke="#7B5EA7" stroke-width="2" stroke-linecap="round"/>
+            <ellipse cx="42" cy="38" rx="24" ry="8" stroke="#7B5EA7" stroke-width="2.2"/>
+            <path d="M18 38 V52 M66 38 V52" stroke="#7B5EA7" stroke-width="2.2"/>
+            <ellipse cx="42" cy="52" rx="24" ry="8" stroke="#7B5EA7" stroke-width="2.2" opacity="0.85"/>
+            <path d="M22 56 Q42 63 62 56 M24 59 Q42 65 60 59" stroke="#7B5EA7" stroke-width="1.2" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Caixa 响弦鼓<span class="freq-tag freq-mid">中音</span><span class="drum-en">Caixa</span></h3>
+          <button class="drum-play" onclick="playSamba('caixa', this)" aria-label="试听 caixa"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>双槌，类似军鼓的鼓棒技巧，连续滚奏</dd></div>
+          <div><dt>音色</dt><dd>连续"嚓嚓"的沙沙声(底部有响弦)</dd></div>
+          <div><dt>角色</dt><dd>中频骨架，铺满 16 分音符的律动地毯</dd></div>
+        </dl>
+        <p class="drum-note">合成：三角波鼓腔 + 高通噪声(响弦)，每拍最后一个 16 分给重音。</p>
+      </article>
+
+      <!-- Repinique -->
+      <article class="drum-card mid">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="30" rx="16" ry="6" stroke="#7B5EA7" stroke-width="2.2"/>
+            <path d="M26 30 V60 M58 30 V60" stroke="#7B5EA7" stroke-width="2.2"/>
+            <ellipse cx="42" cy="60" rx="16" ry="6" stroke="#7B5EA7" stroke-width="2.2" opacity="0.8"/>
+            <line x1="64" y1="16" x2="48" y2="29" stroke="#7B5EA7" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M30 28 Q22 30 21 37 Q28 38 33 34" stroke="#7B5EA7" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Repinique 领奏鼓<span class="freq-tag freq-mid">中音</span><span class="drum-en">Repinique</span></h3>
+          <button class="drum-play" onclick="playSamba('repinique', this)" aria-label="试听 repinique"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>一手持槌、一手拍击</dd></div>
+          <div><dt>音色</dt><dd>很响、尖锐，能切穿整支乐队</dd></div>
+          <div><dt>角色</dt><dd>领奏鼓 —— 发号施令：起拍 / break / 停</dd></div>
+        </dl>
+        <p class="drum-note">合成：三角波 420→300 Hz + 高通敲击，明亮而短促。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== 三、高音层 ===================== -->
+  <section id="high">
+    <div class="cat-intro">
+      <div class="cat-eyebrow">PART 03 · HIGH · 高音色彩</div>
+      <h2>三、高音层 — 闪烁的切分</h2>
+      <p>在低中两层之上，这些金属与小鼓织出密集的高频切分与摇摆：tamborim 咬歌词、chocalho 制造 wash、agogô 给旋律点、cuíca 搞怪、reco-reco 垫拍前。</p>
+    </div>
+
+    <div class="drum-grid">
+      <!-- Tamborim -->
+      <article class="drum-card high">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="38" cy="44" r="22" stroke="#1D9E75" stroke-width="2.4"/>
+            <circle cx="38" cy="44" r="16" stroke="#1D9E75" stroke-width="1.2" opacity="0.5"/>
+            <path d="M72 28 Q52 38 50 46" stroke="#1D9E75" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <path d="M50 46 l-9,-3 M50 46 l-8,3 M50 46 l-10,-8" stroke="#1D9E75" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M16 44 Q8 44 6 52" stroke="#1D9E75" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Tamborim 手鼓<span class="freq-tag freq-high">高音</span><span class="drum-en">Tamborim</span></h3>
+          <button class="drum-play" onclick="playSamba('tamborim', this)" aria-label="试听 tamborim"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>小框鼓，用软鞭状的多股小槌抽打</dd></div>
+          <div><dt>音色</dt><dd>清脆的"嗒"，高频、穿透</dd></div>
+          <div><dt>角色</dt><dd>打 teleco-teco 切分，咬住歌词的重音</dd></div>
+        </dl>
+        <p class="drum-note">合成：高频三角波 + 极短高通噪声，做出干脆的"嗒"。</p>
+      </article>
+
+      <!-- Chocalho -->
+      <article class="drum-card high">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="38" y="14" width="10" height="14" rx="2" stroke="#1D9E75" stroke-width="2.2"/>
+            <rect x="24" y="28" width="38" height="42" rx="4" stroke="#1D9E75" stroke-width="2.2"/>
+            <line x1="28" y1="40" x2="58" y2="40" stroke="#1D9E75" stroke-width="1.4"/>
+            <line x1="28" y1="50" x2="58" y2="50" stroke="#1D9E75" stroke-width="1.4"/>
+            <line x1="28" y1="60" x2="58" y2="60" stroke="#1D9E75" stroke-width="1.4"/>
+            <g fill="#1D9E75">
+              <circle cx="34" cy="40" r="2.4"/><circle cx="43" cy="40" r="2.4"/><circle cx="52" cy="40" r="2.4"/>
+              <circle cx="34" cy="50" r="2.4"/><circle cx="43" cy="50" r="2.4"/><circle cx="52" cy="50" r="2.4"/>
+              <circle cx="34" cy="60" r="2.4"/><circle cx="43" cy="60" r="2.4"/><circle cx="52" cy="60" r="2.4"/>
+            </g>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Chocalho 摇铃<span class="freq-tag freq-high">高音</span><span class="drum-en">Chocalho · Ganzá</span></h3>
+          <button class="drum-play" onclick="playSamba('chocalho', this)" aria-label="试听 chocalho"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>金属框嵌多排小铃片(platinelas)，前后推拉整排摇</dd></div>
+          <div><dt>音色</dt><dd>一片"唰—唰"的连续高频</dd></div>
+          <div><dt>角色</dt><dd>填满 16 分的 wash，负责制造摇摆感</dd></div>
+        </dl>
+        <p class="drum-note">合成：高通噪声短衰减，整排 16 分音符连续摇。</p>
+      </article>
+
+      <!-- Agogô -->
+      <article class="drum-card high">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 26 Q42 14 54 26" stroke="#1D9E75" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <path d="M24 30 Q30 56 38 68 Q46 56 50 28 Q38 22 24 30 Z" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round" fill="none"/>
+            <path d="M50 28 Q54 50 60 60 Q67 50 67 30 Q58 25 50 28 Z" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round" fill="none"/>
+            <line x1="72" y1="20" x2="56" y2="34" stroke="#D85A30" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Agogô 双音铃<span class="freq-tag freq-high">高音</span><span class="drum-en">Agogô</span></h3>
+          <button class="drum-play" onclick="playSamba('agogo', this)" aria-label="试听 agogô"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>两颗(或更多)不同大小的铁钟相连，用铁棒敲钟口</dd></div>
+          <div><dt>音色</dt><dd>叮-咚两个清晰音高</dd></div>
+          <div><dt>角色</dt><dd>乐队里唯一带旋律的金属，奏固定的高低音型</dd></div>
+        </dl>
+        <p class="drum-note">合成：少数正弦泛音的钟铃，高(≈900 Hz) / 低(≈680 Hz)两颗。</p>
+      </article>
+
+      <!-- Cuíca -->
+      <article class="drum-card high">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="40" cy="40" rx="17" ry="6" stroke="#1D9E75" stroke-width="2.2"/>
+            <path d="M23 40 V64 M57 40 V64" stroke="#1D9E75" stroke-width="2.2"/>
+            <ellipse cx="40" cy="64" rx="17" ry="6" stroke="#1D9E75" stroke-width="2.2" opacity="0.8"/>
+            <line x1="40" y1="40" x2="40" y2="18" stroke="#1D9E75" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M40 28 Q31 26 27 31 Q33 35 40 32" stroke="#1D9E75" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+            <path d="M58 22 Q66 18 70 24 M60 30 Q68 26 72 32" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Cuíca 摩擦鼓<span class="freq-tag freq-high">高音</span><span class="drum-en">Cuíca</span></h3>
+          <button class="drum-play" onclick="playSamba('cuica', this)" aria-label="试听 cuíca"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>鼓内插一根竹/木杆，用湿布上下搓杆发声</dd></div>
+          <div><dt>音色</dt><dd>像人哭 / 猴叫的"呜-呃"，可滑音高</dd></div>
+          <div><dt>角色</dt><dd>即兴搞怪担当，给律动加表情</dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>锯齿音高滑动经带通近似"呜呃"；真实的湿布摩擦质感无法完全还原。</p>
+      </article>
+
+      <!-- Reco-reco -->
+      <article class="drum-card high">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="40" width="56" height="16" rx="8" stroke="#1D9E75" stroke-width="2.4"/>
+            <g stroke="#1D9E75" stroke-width="1.6">
+              <line x1="22" y1="41" x2="22" y2="55"/><line x1="29" y1="41" x2="29" y2="55"/>
+              <line x1="36" y1="41" x2="36" y2="55"/><line x1="43" y1="41" x2="43" y2="55"/>
+              <line x1="50" y1="41" x2="50" y2="55"/><line x1="57" y1="41" x2="57" y2="55"/>
+            </g>
+            <line x1="40" y1="22" x2="56" y2="62" stroke="#D85A30" stroke-width="2.4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>Reco-reco 刮器<span class="freq-tag freq-high">高音</span><span class="drum-en">Reco-reco</span></h3>
+          <button class="drum-play" onclick="playSamba('reco', this)" aria-label="试听 reco-reco"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>打法</dt><dd>金属管上有钢条/弹簧，用木棒来回刮</dd></div>
+          <div><dt>音色</dt><dd>"咔啦—咔啦"的刮擦声</dd></div>
+          <div><dt>角色</dt><dd>强调每个正拍之前的"垫拍"(anticipation)</dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>用一串极短颗粒噪声模拟刮擦，近似"咔啦"质感。</p>
+      </article>
+    </div>
+
+    <div class="drum-tipbar">
+      <span>提示：建议戴耳机；surdo 的低频在小音箱上可能听不全。</span>
+      <button onclick="stopAllSamba()">全部静音</button>
+    </div>
+  </section>
+
+  <!-- ===================== 节奏骨架 ===================== -->
+  <section id="rhythm">
+    <h2>桑巴的骨架：为什么是这样分工</h2>
+    <p>桑巴感觉<strong style="font-weight:500;">在 2</strong>(每小节两个强拍)。底层 surdo 用一记重重的开音把重心锚在拍 2 上，前面用闷音垫一记 —— 就是那个"哒—咚"的一摇一摆。中层 caixa 用连续 16 分铺底、repinique 发令，高层一堆金属在上面织密集切分。</p>
+    <p>这套高频的切分，骨子里就是我们说过的 <strong style="font-weight:500;">tamborim 的 teleco-teco</strong> 和 <strong style="font-weight:500;">3-3-2</strong> 那一类"把重量挪开半格"的玩法 —— 同一个非洲节奏根，bossa nova 正是把整支 bateria 浓缩进一把吉他的"轻声版"。</p>
+    <div class="scene-box">
+      <div class="scene-label">一句话记住</div>
+      <p>bateria = 按<strong style="font-weight:500;">频率分工</strong>叠出来的厚墙：低层心跳(surdo) + 中层律动/指挥(caixa·repinique) + 高层闪烁切分(其余)。三层一摞，才是推着整条街走的桑巴。</p>
+    </div>
+  </section>
+
+  <!-- ===================== 速查表 ===================== -->
+  <section id="cheat">
+    <h2>一张表速查 8 件</h2>
+    <div class="drum-table-wrap">
+      <table class="drum-table">
+        <thead>
+          <tr><th>乐器</th><th>频段</th><th>打法</th><th>音色 / 角色</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Surdo 大鼓</td><td>低</td><td>软槌 + 手按(开/闷)</td><td>沉闷"咚"，心跳，锚拍 2</td></tr>
+          <tr><td>Caixa 响弦鼓</td><td>中</td><td>双槌滚奏</td><td>连续"嚓嚓"，铺 16 分律动</td></tr>
+          <tr><td>Repinique 领奏鼓</td><td>中</td><td>一手槌一手拍</td><td>尖锐穿透，发令(起/break/停)</td></tr>
+          <tr><td>Tamborim 手鼓</td><td>高</td><td>软鞭状小槌</td><td>清脆"嗒"，teleco-teco 咬歌词</td></tr>
+          <tr><td>Chocalho 摇铃</td><td>高</td><td>整排前后摇</td><td>"唰唰"wash，制造摇摆</td></tr>
+          <tr><td>Agogô 双音铃</td><td>高</td><td>铁棒敲钟口</td><td>叮-咚两音高，唯一旋律金属</td></tr>
+          <tr><td>Cuíca 摩擦鼓</td><td>高</td><td>湿布搓内杆</td><td>"呜呃"人声感，即兴搞怪</td></tr>
+          <tr><td>Reco-reco 刮器</td><td>高</td><td>木棒刮钢条</td><td>"咔啦"刮擦，垫在正拍前</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 术语表 ===================== -->
+  <section id="glossary">
+    <h2>术语表</h2>
+    <dl class="glossary">
+      <div class="glossary-item"><dt>Bateria</dt><dd>桑巴学校(escola de samba)的整支打击乐队，常达上百人，由 ritmista(鼓手)组成。</dd></div>
+      <div class="glossary-item"><dt>In 2 / 感觉在 2</dt><dd>桑巴以 2/4 或切分四四来感受，每小节两个强拍，由 surdo 锚定。</dd></div>
+      <div class="glossary-item"><dt>Teleco-teco</dt><dd>tamborim 的标志性切分乐句，高频咬住 samba-enredo 歌词的重音。</dd></div>
+      <div class="glossary-item"><dt>Platinelas</dt><dd>chocalho/pandeiro 上的成对小铃片，摇动时发出"唰"的金属碎响。</dd></div>
+      <div class="glossary-item"><dt>Marcação / Resposta / Corte</dt><dd>三种 surdo 的分工：最大最低(标拍) / 中(应答) / 最小最高(切花)。</dd></div>
+      <div class="glossary-item"><dt>Apito</dt><dd>领队用的哨子，配合 repinique 发出整队的起停口令(本页未单独合成)。</dd></div>
+    </dl>
+  </section>
+
+  <hr class="divider">
+
+  <!-- 来源 -->
+  <section id="sources">
+    <h2>资料来源</h2>
+    <p class="muted" style="font-size:0.82rem;line-height:1.9;">
+      乐器编制、打法与频段分工参考：<br>
+      · 桑巴 bateria 总览：<a href="https://en.wikipedia.org/wiki/Bateria" target="_blank" rel="noopener">Wikipedia: Bateria</a><br>
+      · surdo / caixa / repinique / tamborim / chocalho / agogô / cuíca / reco-reco 各乐器：<a href="https://en.wikipedia.org/wiki/Surdo" target="_blank" rel="noopener">Wikipedia: Surdo</a> 及巴西打击乐资料<br>
+      · 注：本页声音全部为 Web Audio 实时合成，cuíca / reco-reco 标「合成近似」，非真实采样。
+    </p>
+  </section>
+
+  <hr class="divider">
+
+  <p class="muted" style="text-align:center;font-size:0.85rem;">
+    回到：<a href="../index.html" style="color:var(--ink-light);">首页</a> · <a href="index.html" style="color:var(--ink-light);">鼓</a> · <a href="../effects/index.html" style="color:var(--ink-light);">效果器</a>
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  <p><a href="index.html" style="color:var(--ink-light);text-decoration:none;">← 回到「鼓」</a></p>
+</footer>
+
+<script src="../assets/js/samba.js?v=20260624b"></script>
+</body>
+</html>

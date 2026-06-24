@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鼓与打击乐 · 声音设计笔记</title>
+<meta name="description" content="鼓的声音分类介绍：声学鼓套件 / 经典电子鼓机 / 世界民族打击乐，共 18 种。每种含手绘外观、Web Audio 实时合成试听、适合音乐、典型场景与已核实的代表作品。">
+<link rel="stylesheet" href="../assets/css/main.css">
+<link rel="stylesheet" href="../assets/css/drums.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12 Q7 4 12 12 Q17 20 21 12" stroke="#D85A30" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#D85A30"/>
+      </svg>
+      声音设计笔记
+    </a>
+    <div class="nav-links">
+      <a href="../effects/index.html">效果器</a>
+      <a href="../timbre/index.html">音色</a>
+      <a href="../atmosphere/index.html">氛围色</a>
+      <a href="index.html" class="active">鼓</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <header class="page-header">
+    <div class="page-eyebrow">PERCUSSION · 鼓与打击乐</div>
+    <h1>鼓的声音分类 — 每种鼓的 <em>性格</em></h1>
+    <p class="lead">鼓不只是"打节奏"。每种鼓有自己的音色、适配风格与来历。<br>这里按声学套件 / 电子鼓机 / 世界打击乐三类，共 18 种，每种配一段实时合成的试听。</p>
+  </header>
+
+  <!-- 目录 -->
+  <nav class="article-toc" aria-label="文章目录">
+    <ol class="toc-list" id="toc-list"><!-- JS 填充 --></ol>
+  </nav>
+
+  <!-- 怎么用这页 -->
+  <section id="how">
+    <h2>怎么用这一页</h2>
+    <p>每张卡片点右上角的播放键，会用 <strong style="font-weight:500;">Web Audio API 实时合成</strong> 一小段该鼓的乐句 —— 声音由参数(频率、衰减、噪声)实时驱动，不依赖任何音频文件，因此离线也能听。</p>
+    <p>合成能忠实还原大多数膜鼓(底鼓、嗵鼓、太鼓、康加等)。但 <strong style="font-weight:500;">金属类与复杂膜振</strong>(叮叮镲、锣、塔布拉、达卜的小铁环)含密集不和谐泛音，简单合成只能"音色近似"。凡近似处，卡片底部都用 <span class="approx">合成近似</span> 明确标注 —— 不冒充真实采样。</p>
+    <div class="scene-box">
+      <div class="scene-label">关于"代表作品"</div>
+      <p>卡片里标 <span style="color:var(--accent);font-weight:500;">橙色</span> 的曲目/史实均已逐条核实来源(见页尾)。鼓组里的通用部件(底鼓、嗵鼓、吊镲等)没有"某一首歌"的单一归属，则如实写其结构性角色，不硬安一首歌。</p>
+    </div>
+  </section>
+
+  <!-- ===================== 一、声学鼓套件 ===================== -->
+  <section id="kit">
+    <div class="cat-intro">
+      <div class="cat-eyebrow">PART 01 · ACOUSTIC KIT</div>
+      <h2>一、声学鼓套件</h2>
+      <p>一套现代爵士鼓(drum kit)的核心成员。底鼓 + 军鼓 + 踩镲构成绝大多数流行/摇滚律动的骨架，嗵鼓与吊镲、叮叮镲负责过门与色彩。</p>
+    </div>
+
+    <div class="drum-grid">
+
+      <!-- Kick -->
+      <article class="drum-card kit">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="42" cy="40" r="26" stroke="#D85A30" stroke-width="2.4"/>
+            <circle cx="42" cy="40" r="9" stroke="#D85A30" stroke-width="1.6" opacity="0.6"/>
+            <line x1="20" y1="60" x2="12" y2="72" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/>
+            <line x1="64" y1="60" x2="72" y2="72" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/>
+            <line x1="42" y1="66" x2="42" y2="74" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>底鼓 Kick<span class="drum-en">Bass Drum</span></h3>
+          <button class="drum-play" onclick="playDrum('kick', this)" aria-label="试听 底鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>几乎所有现代流行、摇滚、电子 —— 律动的低频地基</dd></div>
+          <div><dt>典型场景</dt><dd>每拍的"心跳"，与贝斯一起撑起整首歌的低频根基</dd></div>
+          <div><dt>代表作品</dt><dd>House / Techno 的 <span class="work">four-on-the-floor</span> 四四底鼓即由它定义(结构性角色)</dd></div>
+        </dl>
+        <p class="drum-note">合成：正弦基频从 ~120 Hz 滑到 ~48 Hz(音高包络) + 一记高通噪声做敲击点。</p>
+      </article>
+
+      <!-- Snare -->
+      <article class="drum-card kit">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="30" rx="26" ry="8" stroke="#D85A30" stroke-width="2.2"/>
+            <path d="M16 30 V46 M68 30 V46" stroke="#D85A30" stroke-width="2.2"/>
+            <ellipse cx="42" cy="46" rx="26" ry="8" stroke="#D85A30" stroke-width="2.2"/>
+            <path d="M22 50 Q42 58 62 50" stroke="#D85A30" stroke-width="1.3" opacity="0.55"/>
+            <path d="M24 53 Q42 60 60 53" stroke="#D85A30" stroke-width="1.3" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>军鼓 Snare<span class="drum-en">Snare Drum</span></h3>
+          <button class="drum-play" onclick="playDrum('snare', this)" aria-label="试听 军鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>摇滚、放克、流行的反拍(backbeat)核心</dd></div>
+          <div><dt>典型场景</dt><dd>落在第 2、4 拍的"啪"，定义节奏骨架</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">Phil Collins《In the Air Tonight》(1981)</span> 的门限混响军鼓，制作人 Hugh Padgham 意外发现，定义了 80 年代鼓声</dd></div>
+        </dl>
+        <p class="drum-note">合成：三角波鼓腔(~200/330 Hz) + 高通噪声(模拟底部响弦 snare wires)。</p>
+      </article>
+
+      <!-- Tom -->
+      <article class="drum-card kit">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="34" rx="20" ry="7" stroke="#D85A30" stroke-width="2.2"/>
+            <path d="M22 34 V54 M62 34 V54" stroke="#D85A30" stroke-width="2.2"/>
+            <ellipse cx="42" cy="54" rx="20" ry="7" stroke="#D85A30" stroke-width="2.2" opacity="0.8"/>
+            <line x1="42" y1="27" x2="42" y2="14" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="42" y1="14" x2="58" y2="14" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>嗵鼓 Tom<span class="drum-en">Tom-tom</span></h3>
+          <button class="drum-play" onclick="playDrum('tom', this)" aria-label="试听 嗵鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>摇滚、前卫摇滚的过门(fill)与部落式节奏</dd></div>
+          <div><dt>典型场景</dt><dd>段落转换时的下行过门，制造推进与张力</dd></div>
+          <div><dt>代表作品</dt><dd>鼓组过门的通用语汇、套件里的旋律性成员(归属随编曲而异)</dd></div>
+        </dl>
+        <p class="drum-note">合成：正弦基频 180→90 Hz，比底鼓高、衰减更长。</p>
+      </article>
+
+      <!-- Hi-Hat -->
+      <article class="drum-card kit">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="32" rx="24" ry="5" stroke="#D85A30" stroke-width="2.2"/>
+            <ellipse cx="42" cy="40" rx="24" ry="5" stroke="#D85A30" stroke-width="2.2"/>
+            <line x1="42" y1="36" x2="42" y2="70" stroke="#D85A30" stroke-width="1.8"/>
+            <line x1="30" y1="70" x2="42" y2="62" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="54" y1="70" x2="42" y2="62" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>踩镲 Hi-Hat<span class="drum-en">Hi-Hat</span></h3>
+          <button class="drum-play" onclick="playDrum('hihat', this)" aria-label="试听 踩镲"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>放克、Disco、几乎所有流行节奏的"时间细分"</dd></div>
+          <div><dt>典型场景</dt><dd>八分/十六分音符的稳定时值；开镲落在反拍是 Disco 标志</dd></div>
+          <div><dt>代表作品</dt><dd>Disco 标志性的 <span class="work">offbeat open hat</span>(反拍开镲)即由它确立(风格惯例)</dd></div>
+        </dl>
+        <p class="drum-note">合成：高通(~7.5 kHz)噪声 + 极短衰减(50 ms)。</p>
+      </article>
+
+      <!-- Crash -->
+      <article class="drum-card kit">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="30" rx="28" ry="8" stroke="#D85A30" stroke-width="2.2" transform="rotate(-10 42 30)"/>
+            <circle cx="42" cy="30" r="3" fill="#D85A30"/>
+            <line x1="42" y1="33" x2="42" y2="70" stroke="#D85A30" stroke-width="1.8"/>
+            <line x1="30" y1="70" x2="42" y2="62" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="54" y1="70" x2="42" y2="62" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>吊镲 Crash<span class="drum-en">Crash Cymbal</span></h3>
+          <button class="drum-play" onclick="playDrum('crash', this)" aria-label="试听 吊镲"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>各类摇滚、流行的段落重音</dd></div>
+          <div><dt>典型场景</dt><dd>副歌进入、段落起始的"哗"一声爆发与强调</dd></div>
+          <div><dt>代表作品</dt><dd>作为重音色彩广泛使用(强调用途，非单一作品)</dd></div>
+        </dl>
+        <p class="drum-note">合成：高通(~3 kHz)噪声做长 wash(1.5 s) + 一组金属泛音。</p>
+      </article>
+
+      <!-- Ride -->
+      <article class="drum-card kit">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="32" rx="30" ry="9" stroke="#D85A30" stroke-width="2.2"/>
+            <ellipse cx="42" cy="31" rx="6" ry="2.6" stroke="#D85A30" stroke-width="1.6"/>
+            <line x1="42" y1="36" x2="42" y2="70" stroke="#D85A30" stroke-width="1.8"/>
+            <line x1="30" y1="70" x2="42" y2="62" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="54" y1="70" x2="42" y2="62" stroke="#D85A30" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>叮叮镲 Ride<span class="drum-en">Ride Cymbal</span></h3>
+          <button class="drum-play" onclick="playDrum('ride', this)" aria-label="试听 叮叮镲"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>爵士、摇滚的持续时间保持(timekeeping)</dd></div>
+          <div><dt>典型场景</dt><dd>爵士摇摆(swing)里连续的"叮-叮叮"节拍；摇滚副歌的持续推进</dd></div>
+          <div><dt>代表作品</dt><dd>爵士节奏的根基 —— <span class="work">swing ride pattern</span> 是爵士鼓手的标准时间保持(风格惯例)</dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>真实叮叮镲含密集不和谐金属泛音；此处用带通泛音组 + 高频 wash 近似"叮"声与持续感。</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== 二、经典电子鼓机 ===================== -->
+  <section id="machine">
+    <div class="cat-intro">
+      <div class="cat-eyebrow">PART 02 · DRUM MACHINES</div>
+      <h2>二、经典电子鼓机</h2>
+      <p>它们不模仿真鼓，而是用电路造出全新音色 —— 并因此定义了一整个时代的音乐。808 给了嘻哈低频，909 给了电子舞曲引擎，LinnDrum 把"采样"带进了流行。</p>
+    </div>
+
+    <div class="drum-grid">
+
+      <!-- TR-808 -->
+      <article class="drum-card mach">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="22" width="60" height="40" rx="5" stroke="#7B5EA7" stroke-width="2.2"/>
+            <circle cx="24" cy="34" r="3.5" stroke="#7B5EA7" stroke-width="1.6"/>
+            <circle cx="36" cy="34" r="3.5" stroke="#7B5EA7" stroke-width="1.6"/>
+            <circle cx="48" cy="34" r="3.5" stroke="#7B5EA7" stroke-width="1.6"/>
+            <circle cx="60" cy="34" r="3.5" stroke="#7B5EA7" stroke-width="1.6"/>
+            <rect x="20" y="48" width="6" height="6" rx="1.4" fill="#D85A30"/>
+            <rect x="29" y="48" width="6" height="6" rx="1.4" fill="#E0B84A"/>
+            <rect x="38" y="48" width="6" height="6" rx="1.4" fill="#E0B84A"/>
+            <rect x="47" y="48" width="6" height="6" rx="1.4" fill="#D85A30"/>
+            <rect x="56" y="48" width="6" height="6" rx="1.4" fill="#E0B84A"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>TR-808<span class="drum-en">Roland · 1980</span></h3>
+          <button class="drum-play" onclick="playDrum('kick808', this)" aria-label="试听 808 底鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>嘻哈、Trap、R&amp;B、电子 —— 低频"长尾"底鼓与清脆镲</dd></div>
+          <div><dt>典型场景</dt><dd>可延音、可调音高的 808 底鼓(常当贝斯用)；Trap 的滚奏镲</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">Marvin Gaye《Sexual Healing》(1982)</span> 首支登榜的 808 单曲、<span class="work">Afrika Bambaataa《Planet Rock》(1982)</span>；<span class="work">Kanye West《808s &amp; Heartbreak》(2008)</span> 让其重定义流行</dd></div>
+        </dl>
+        <p class="drum-note">合成：底鼓为长衰减(1 s)纯正弦；点 ▶ 听四四底鼓。镲见下方速查表。</p>
+      </article>
+
+      <!-- TR-909 -->
+      <article class="drum-card mach">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="22" width="60" height="40" rx="5" stroke="#7B5EA7" stroke-width="2.2"/>
+            <circle cx="26" cy="33" r="4" stroke="#7B5EA7" stroke-width="1.6"/>
+            <line x1="26" y1="29.5" x2="26" y2="33" stroke="#7B5EA7" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="42" cy="33" r="4" stroke="#7B5EA7" stroke-width="1.6"/>
+            <line x1="42" y1="33" x2="44.5" y2="30.5" stroke="#7B5EA7" stroke-width="1.4" stroke-linecap="round"/>
+            <circle cx="58" cy="33" r="4" stroke="#7B5EA7" stroke-width="1.6"/>
+            <line x1="58" y1="33" x2="60.5" y2="35.5" stroke="#7B5EA7" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="20" y="48" width="44" height="7" rx="2" stroke="#D85A30" stroke-width="1.6"/>
+            <line x1="31" y1="48" x2="31" y2="55" stroke="#D85A30" stroke-width="1.2"/>
+            <line x1="42" y1="48" x2="42" y2="55" stroke="#D85A30" stroke-width="1.2"/>
+            <line x1="53" y1="48" x2="53" y2="55" stroke="#D85A30" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>TR-909<span class="drum-en">Roland · 1983</span></h3>
+          <button class="drum-play" onclick="playDrum('kick909', this)" aria-label="试听 909 底鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>House、Techno、Acid —— 比 808 更"冲"更"硬"</dd></div>
+          <div><dt>典型场景</dt><dd>四四底鼓、噪声感军鼓、采样踩镲；电子舞曲的引擎</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">Phuture《Acid Trax》</span>、<span class="work">Derrick May《Strings of Life》</span>、<span class="work">A Guy Called Gerald《Voodoo Ray》</span>；芝加哥 House 与底特律 Techno 的根基</dd></div>
+        </dl>
+        <p class="drum-note">909 为混合结构(采样镲片 + 模拟底鼓/军鼓)。合成：底鼓用更陡的 200→50 Hz 扫频 + 明显敲击。</p>
+      </article>
+
+      <!-- LinnDrum -->
+      <article class="drum-card mach">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="12" y="24" width="60" height="36" rx="5" stroke="#7B5EA7" stroke-width="2.2"/>
+            <rect x="20" y="32" width="9" height="9" rx="2" stroke="#7B5EA7" stroke-width="1.5"/>
+            <rect x="33" y="32" width="9" height="9" rx="2" stroke="#7B5EA7" stroke-width="1.5"/>
+            <rect x="46" y="32" width="9" height="9" rx="2" stroke="#7B5EA7" stroke-width="1.5"/>
+            <rect x="59" y="32" width="5" height="9" rx="2" stroke="#7B5EA7" stroke-width="1.5"/>
+            <rect x="20" y="45" width="9" height="9" rx="2" fill="#D85A30" opacity="0.85"/>
+            <rect x="33" y="45" width="9" height="9" rx="2" stroke="#7B5EA7" stroke-width="1.5"/>
+            <rect x="46" y="45" width="9" height="9" rx="2" stroke="#7B5EA7" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>LinnDrum<span class="drum-en">LM-1 / LinnDrum · 1980–82</span></h3>
+          <button class="drum-play" onclick="playDrum('linn', this)" aria-label="试听 LinnDrum"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>80 年代流行、Synth-pop、放克</dd></div>
+          <div><dt>典型场景</dt><dd>首批广泛使用真实鼓"采样"的鼓机，带来干净紧实的电子化原声鼓</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">Human League《Don't You Want Me》(1981)</span> 首支打榜的 LM-1 作品、<span class="work">Prince《1999》(1982) 与《When Doves Cry》(1984)</span></dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>LM-1 本质是采样回放(PCM)；此处用一记干、短的原声军鼓近似其质感。</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ===================== 三、世界与民族打击乐 ===================== -->
+  <section id="world">
+    <div class="cat-intro">
+      <div class="cat-eyebrow">PART 03 · WORLD PERCUSSION</div>
+      <h2>三、世界与民族打击乐</h2>
+      <p>离开爵士鼓套件，世界各地的鼓有完全不同的形制与演奏法 —— 徒手、框鼓、坐奏、双鼓。它们各自承载一种音乐传统的律动语言。</p>
+    </div>
+
+    <div class="drum-grid">
+
+      <!-- 中国大鼓 -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 30 Q42 24 60 30 L58 52 Q42 58 26 52 Z" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+            <ellipse cx="42" cy="30" rx="18" ry="6" stroke="#1D9E75" stroke-width="2"/>
+            <circle cx="28" cy="31" r="1.4" fill="#1D9E75"/>
+            <circle cx="42" cy="29" r="1.4" fill="#1D9E75"/>
+            <circle cx="56" cy="31" r="1.4" fill="#1D9E75"/>
+            <line x1="26" y1="52" x2="18" y2="70" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="58" y1="52" x2="66" y2="70" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="24" y1="66" x2="60" y2="66" stroke="#1D9E75" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>中国大鼓 / 堂鼓<span class="drum-en">Chinese Bass Drum</span></h3>
+          <button class="drum-play" onclick="playDrum('daku', this)" aria-label="试听 中国大鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>戏曲、民乐合奏、庆典锣鼓</dd></div>
+          <div><dt>典型场景</dt><dd>皮膜鼓中最大者，锣鼓队的核心，提供低沉震撼的基底</dd></div>
+          <div><dt>代表作品</dt><dd>中国传统锣鼓乐与戏曲伴奏的骨干乐器(功能性角色)</dd></div>
+        </dl>
+        <p class="drum-note">合成：低频膜振(150→78 Hz) + 木质敲击噪声。</p>
+      </article>
+
+      <!-- 中国锣/板鼓 -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 16 V64 M66 16 V64 M14 16 H70" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="20" x2="33" y2="26" stroke="#1D9E75" stroke-width="1.4"/>
+            <line x1="54" y1="20" x2="51" y2="26" stroke="#1D9E75" stroke-width="1.4"/>
+            <circle cx="42" cy="44" r="18" stroke="#1D9E75" stroke-width="2.4"/>
+            <circle cx="42" cy="44" r="6" stroke="#1D9E75" stroke-width="1.4" opacity="0.55"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>中国锣 / 板鼓<span class="drum-en">Gong &amp; Bangu</span></h3>
+          <button class="drum-play" onclick="playDrum('gong', this)" aria-label="试听 中国大锣"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>戏曲(尤其京剧)、民俗活动</dd></div>
+          <div><dt>典型场景</dt><dd>大锣以特征性"下滑"音强调段落；板鼓清脆嘹亮，是戏曲乐队的"指挥"</dd></div>
+          <div><dt>代表作品</dt><dd>京剧 <span class="work">锣鼓经</span>(锣+钹+鼓组合)的核心音色；板鼓主导唱念做打的节奏</dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>本演示发"大锣"声：金属泛音组 + 特征性下行音高弯转。</p>
+      </article>
+
+      <!-- 新疆达卜 -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="42" cy="42" r="26" stroke="#1D9E75" stroke-width="2.4"/>
+            <circle cx="42" cy="42" r="21" stroke="#1D9E75" stroke-width="1.2" opacity="0.5"/>
+            <circle cx="42" cy="20" r="2" stroke="#1D9E75" stroke-width="1.3"/>
+            <circle cx="60" cy="32" r="2" stroke="#1D9E75" stroke-width="1.3"/>
+            <circle cx="60" cy="52" r="2" stroke="#1D9E75" stroke-width="1.3"/>
+            <circle cx="42" cy="64" r="2" stroke="#1D9E75" stroke-width="1.3"/>
+            <circle cx="24" cy="52" r="2" stroke="#1D9E75" stroke-width="1.3"/>
+            <circle cx="24" cy="32" r="2" stroke="#1D9E75" stroke-width="1.3"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>新疆达卜<span class="drum-en">Dap · Uyghur Frame Drum</span></h3>
+          <button class="drum-play" onclick="playDrum('dap', this)" aria-label="试听 新疆达卜"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>维吾尔木卡姆、歌舞伴奏</dd></div>
+          <div><dt>典型场景</dt><dd>木框周围嵌许多小铁环，一手持鼓一手击；"咚-哒"鼓点配铁环碎响推动舞曲</dd></div>
+          <div><dt>代表作品</dt><dd>维吾尔 <span class="work">十二木卡姆</span> 与手鼓舞的灵魂乐器；南北朝已出现，隋唐随西域乐舞入中原</dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>膜鼓"咚"可合成，周围小铁环的金属碎响仅作近似。</p>
+      </article>
+
+      <!-- 日本和太鼓 -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="40" rx="16" ry="20" stroke="#1D9E75" stroke-width="2.4"/>
+            <path d="M26 30 Q42 26 58 30 M26 50 Q42 54 58 50" stroke="#1D9E75" stroke-width="1.3" opacity="0.5"/>
+            <line x1="30" y1="58" x2="22" y2="72" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="54" y1="58" x2="62" y2="72" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="60" y1="20" x2="74" y2="14" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/>
+            <line x1="64" y1="26" x2="78" y2="20" stroke="#D85A30" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>日本和太鼓<span class="drum-en">Taiko / Wadaiko</span></h3>
+          <button class="drum-play" onclick="playDrum('taiko', this)" aria-label="试听 和太鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>祭典、组太鼓(kumi-daiko)合奏、影视配乐</dd></div>
+          <div><dt>典型场景</dt><dd>厚重低频的"轰"，配合形体演奏；以气势与动态见长</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">鬼太鼓座(Ondekoza, 1969)</span> 与 <span class="work">鼓童(Kodō, 1981 成立、同年柏林爱乐厅首演)</span> 把组太鼓推向世界</dd></div>
+        </dl>
+        <p class="drum-note">合成：厚重低频膜振(105→68 Hz) + 木撞击噪声。</p>
+      </article>
+
+      <!-- 印度塔布拉 -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 36 Q22 30 30 30 Q38 30 38 36 L37 56 Q30 60 23 56 Z" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+            <ellipse cx="30" cy="36" rx="8" ry="3" stroke="#1D9E75" stroke-width="1.8"/>
+            <circle cx="30" cy="36" r="2.2" fill="#1D9E75"/>
+            <path d="M46 34 Q46 27 56 27 Q66 27 66 34 L64 58 Q55 63 48 58 Z" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+            <ellipse cx="56" cy="34" rx="10" ry="3.5" stroke="#1D9E75" stroke-width="1.8"/>
+            <circle cx="56" cy="34" r="2.6" fill="#1D9E75"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>印度塔布拉<span class="drum-en">Tabla</span></h3>
+          <button class="drum-play" onclick="playDrum('tabla', this)" aria-label="试听 塔布拉"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>印度古典(北印度斯坦)、世界融合(fusion)</dd></div>
+          <div><dt>典型场景</dt><dd>一对鼓(高音 dayan + 低音 bayan)，手指多种击法产生丰富、可调音高的"会说话"音色</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">Beatles《Within You Without You》(1967)</span>(塔布拉由 Asian Music Circle 的 Amiya Dasgupta 演奏)；大师 <span class="work">Zakir Hussain</span> 经 Shakti 乐队将其带入西方</dd></div>
+        </dl>
+        <p class="drum-note"><span class="approx">合成近似</span>塔布拉的复杂膜振与音高弯转极难合成，此处仅近似高音环鸣。</p>
+      </article>
+
+      <!-- 爱尔兰 Bodhrán -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="40" cy="42" r="26" stroke="#1D9E75" stroke-width="2.4"/>
+            <line x1="40" y1="16" x2="40" y2="68" stroke="#1D9E75" stroke-width="1.6" opacity="0.55"/>
+            <line x1="14" y1="42" x2="66" y2="42" stroke="#1D9E75" stroke-width="1.6" opacity="0.55"/>
+            <line x1="58" y1="58" x2="74" y2="70" stroke="#D85A30" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="56" cy="56" r="2.4" fill="#D85A30"/>
+            <circle cx="76" cy="72" r="2.4" fill="#D85A30"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>爱尔兰框鼓<span class="drum-en">Bodhrán</span></h3>
+          <button class="drum-play" onclick="playDrum('bodhran', this)" aria-label="试听 Bodhrán"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>爱尔兰传统(Celtic)音乐</dd></div>
+          <div><dt>典型场景</dt><dd>山羊皮单面框鼓，用双头鼓棒(tipper/cipín)敲击，背面手按改变音高 —— 为吉格/里尔舞曲打底</dd></div>
+          <div><dt>代表作品</dt><dd>1960 年代爱尔兰民谣复兴中由 <span class="work">Seán Ó Riada 的 Ceoltóirí Chualann</span> 乐团推广为标准伴奏</dd></div>
+        </dl>
+        <p class="drum-note">合成：温暖羊皮膜振(115→82 Hz)，敲击克制。</p>
+      </article>
+
+      <!-- 古巴 Conga -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="22" rx="13" ry="5" stroke="#1D9E75" stroke-width="2.2"/>
+            <path d="M29 22 Q31 46 34 62 Q42 67 50 62 Q53 46 55 22" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M30 30 Q42 34 54 30" stroke="#1D9E75" stroke-width="1.3" opacity="0.5"/>
+            <line x1="34" y1="62" x2="30" y2="74" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="50" y1="62" x2="54" y2="74" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>古巴康加<span class="drum-en">Conga / Tumbadora</span></h3>
+          <button class="drum-play" onclick="playDrum('conga', this)" aria-label="试听 康加"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>萨尔萨(salsa)、伦巴、拉丁爵士、拉丁流行</dd></div>
+          <div><dt>典型场景</dt><dd>高窄单面鼓(古巴称 tumbadora)，开音/扇击/闷音交替，撑起拉丁律动</dd></div>
+          <div><dt>代表作品</dt><dd>古巴非洲裔发展而来 —— 先用于 <span class="work">伦巴</span>，1930 年代进入 <span class="work">Son</span>，后成 <span class="work">萨尔萨</span> 核心</dd></div>
+        </dl>
+        <p class="drum-note">合成：开音为高音膜振(270→220 Hz)，扇击(slap)更亮更短，乐句中交替出现。</p>
+      </article>
+
+      <!-- 秘鲁/弗拉门戈 Cajón -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M26 22 L58 26 L58 64 L26 68 Z" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M58 26 L66 22 L66 60 L58 64" stroke="#1D9E75" stroke-width="1.6" opacity="0.55" stroke-linejoin="round"/>
+            <circle cx="42" cy="44" r="6" stroke="#1D9E75" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>木箱鼓 Cajón<span class="drum-en">Peruvian / Flamenco</span></h3>
+          <button class="drum-play" onclick="playDrum('cajon', this)" aria-label="试听 木箱鼓"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>弗拉门戈、不插电(unplugged)、民谣</dd></div>
+          <div><dt>典型场景</dt><dd>演奏者坐其上：击中央出低音、击边缘出高音 + 内置响弦嗡鸣，一人一鼓即成节奏组</dd></div>
+          <div><dt>代表作品</dt><dd><span class="work">Paco de Lucía 1977 年在秘鲁发现</span> 并带入弗拉门戈，半年内传遍西班牙</dd></div>
+        </dl>
+        <p class="drum-note">合成：低音为箱体膜振(95→70 Hz)，边缘高音含响弦噪声，乐句中低/高交替。</p>
+      </article>
+
+      <!-- 西非 Djembe -->
+      <article class="drum-card world">
+        <div class="drum-art">
+          <svg viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="42" cy="22" rx="16" ry="5" stroke="#1D9E75" stroke-width="2.2"/>
+            <path d="M26 22 Q30 38 37 44 L34 60 Q30 66 26 70 M58 22 Q54 38 47 44 L50 60 Q54 66 58 70" stroke="#1D9E75" stroke-width="2.2" stroke-linejoin="round"/>
+            <path d="M37 44 Q42 46 47 44" stroke="#1D9E75" stroke-width="1.4"/>
+            <path d="M28 68 Q42 73 56 68" stroke="#1D9E75" stroke-width="2" stroke-linecap="round"/>
+            <line x1="30" y1="26" x2="33" y2="42" stroke="#1D9E75" stroke-width="1" opacity="0.5"/>
+            <line x1="42" y1="27" x2="42" y2="43" stroke="#1D9E75" stroke-width="1" opacity="0.5"/>
+            <line x1="54" y1="26" x2="51" y2="42" stroke="#1D9E75" stroke-width="1" opacity="0.5"/>
+          </svg>
+        </div>
+        <div class="drum-head">
+          <h3>西非金贝<span class="drum-en">Djembe</span></h3>
+          <button class="drum-play" onclick="playDrum('djembe', this)" aria-label="试听 金贝"><svg viewBox="0 0 14 14" fill="currentColor"><polygon points="3,2 12,7 3,12"/></svg></button>
+        </div>
+        <dl class="drum-meta">
+          <div><dt>适合音乐</dt><dd>西非传统、世界音乐、鼓圈(drum circle)</dd></div>
+          <div><dt>典型场景</dt><dd>高脚杯形单面鼓，徒手演奏低音(bass)/音色音(tone)/扇击(slap)三种音</dd></div>
+          <div><dt>代表作品</dt><dd>源自西非曼德族(Mandé)，<span class="work">马里帝国时期(约 1230 CE)</span> 由努穆(Numu)铁匠种姓制作，鼓名意为"大家和平相聚"</dd></div>
+        </dl>
+        <p class="drum-note">合成：音色音(200→150 Hz)与扇击(高频)交替，体现三音色对比。</p>
+      </article>
+
+    </div>
+
+    <div class="drum-tipbar">
+      <span>提示：建议戴耳机；底鼓/808/太鼓的低频在小音箱上可能听不全。</span>
+      <button onclick="stopAllDrums()">全部静音</button>
+    </div>
+
+    <a href="samba-bateria.html" class="card card-link" style="display:block;margin-top:1.5rem;border-left:3px solid var(--accent-2);">
+      <div class="card-eyebrow">延伸 · 互动专题</div>
+      <h3>桑巴乐队 bateria — 一支鼓的天团 →</h3>
+      <p>surdo / caixa / repinique / tamborim / chocalho / agogô / cuíca / reco-reco 八件主力，含手绘外观、Web Audio 实时合成试听，以及一个可逐层开关的「合奏台」，亲耳听低 / 中 / 高怎么叠成一支桑巴。</p>
+      <span class="tag tag-teal">8 件 · 含合奏台</span>
+    </a>
+  </section>
+
+  <!-- ===================== 速查表 ===================== -->
+  <section id="cheat">
+    <h2>一张表速查 18 种鼓</h2>
+    <div class="drum-table-wrap">
+      <table class="drum-table">
+        <thead>
+          <tr><th>鼓</th><th>类别</th><th>音色关键词</th><th>适合 / 代表</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>底鼓 Kick</td><td>声学套件</td><td>低频、心跳、地基</td><td>流行/摇滚/电子骨架</td></tr>
+          <tr><td>军鼓 Snare</td><td>声学套件</td><td>反拍、啪、响弦</td><td>In the Air Tonight(1981)</td></tr>
+          <tr><td>嗵鼓 Tom</td><td>声学套件</td><td>旋律性、过门</td><td>段落过门</td></tr>
+          <tr><td>踩镲 Hi-Hat</td><td>声学套件</td><td>细分时间、嘶</td><td>Disco 反拍开镲</td></tr>
+          <tr><td>吊镲 Crash</td><td>声学套件</td><td>爆发、强调</td><td>副歌重音</td></tr>
+          <tr><td>叮叮镲 Ride</td><td>声学套件</td><td>持续、叮、wash</td><td>爵士 swing 时间保持</td></tr>
+          <tr><td>TR-808</td><td>电子鼓机</td><td>长尾低频、贝斯化</td><td>Sexual Healing / Planet Rock(1982)</td></tr>
+          <tr><td>TR-909</td><td>电子鼓机</td><td>冲、硬、四四</td><td>Strings of Life / Acid Trax</td></tr>
+          <tr><td>LinnDrum</td><td>电子鼓机</td><td>采样、干、紧</td><td>Don't You Want Me / 1999</td></tr>
+          <tr><td>中国大鼓/堂鼓</td><td>世界打击</td><td>低沉、震撼</td><td>戏曲/锣鼓队核心</td></tr>
+          <tr><td>中国锣/板鼓</td><td>世界打击</td><td>金属下滑/清脆</td><td>京剧锣鼓经</td></tr>
+          <tr><td>新疆达卜 Dap</td><td>世界打击</td><td>膜咚 + 铁环碎响</td><td>维吾尔十二木卡姆</td></tr>
+          <tr><td>日本和太鼓</td><td>世界打击</td><td>厚重、气势</td><td>鼓童 Kodō(1981)</td></tr>
+          <tr><td>印度塔布拉</td><td>世界打击</td><td>会说话、可调音高</td><td>Within You Without You(1967)</td></tr>
+          <tr><td>爱尔兰 Bodhrán</td><td>世界打击</td><td>温暖、框鼓</td><td>1960s 爱尔兰民谣复兴</td></tr>
+          <tr><td>古巴康加 Conga</td><td>世界打击</td><td>开音/扇击、拉丁</td><td>伦巴 → Son → 萨尔萨</td></tr>
+          <tr><td>木箱鼓 Cajón</td><td>世界打击</td><td>低音/高音 + 响弦</td><td>Paco de Lucía(1977)</td></tr>
+          <tr><td>西非金贝 Djembe</td><td>世界打击</td><td>bass/tone/slap 三音</td><td>马里帝国(~1230)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 术语表 ===================== -->
+  <section id="glossary">
+    <h2>术语表</h2>
+    <dl class="glossary">
+      <div class="glossary-item"><dt>Backbeat / 反拍</dt><dd>军鼓落在第 2、4 拍。摇滚、放克、流行节奏的灵魂。</dd></div>
+      <div class="glossary-item"><dt>Four-on-the-floor / 四四底鼓</dt><dd>每拍一记底鼓。House、Disco、Techno 的标志律动。</dd></div>
+      <div class="glossary-item"><dt>Gated Reverb / 门限混响</dt><dd>给混响加噪声门，让尾巴被突然切断。Phil Collins《In the Air Tonight》的标志军鼓声。</dd></div>
+      <div class="glossary-item"><dt>808 / 909</dt><dd>Roland 两款经典模拟鼓机。808 低频长、温；909 更冲、更硬，是 House/Techno 引擎。</dd></div>
+      <div class="glossary-item"><dt>Open / Closed Hat</dt><dd>踩镲张开(长、嘶)与闭合(短、紧)两种状态，是律动表情的关键。</dd></div>
+      <div class="glossary-item"><dt>Tone / Slap / Bass</dt><dd>徒手鼓(金贝、康加)的三种基本击法：音色音、扇击(亮脆)、低音(掌心闷击)。</dd></div>
+      <div class="glossary-item"><dt>锣鼓经</dt><dd>中国戏曲中由锣、钹、鼓组成的固定打击乐套子，用于配合身段与情绪。</dd></div>
+      <div class="glossary-item"><dt>Kumi-daiko / 组太鼓</dt><dd>多人多鼓的太鼓合奏形式，1951 年由小口大八确立，鼓童等团体推广至全球。</dd></div>
+    </dl>
+  </section>
+
+  <!-- ===================== 自测题 ===================== -->
+  <section id="quiz">
+    <h2>读完你应该能回答这 4 道题</h2>
+    <p class="muted">先自己想，再展开看答案。</p>
+    <div class="quiz">
+      <details class="quiz-item">
+        <summary>1. 808 和 909 都是 Roland 鼓机，性格有什么不同？</summary>
+        <div class="quiz-ans">808(1980)低频长、音色"温/圆"，底鼓能延音、可调音高，常被当贝斯用 —— 成了嘻哈/Trap 的标志。909(1983)是混合结构(采样镲片 + 模拟鼓声)，声音更"冲、硬、亮" —— 成了 House/Techno 的引擎。一个偏低频厚重，一个偏冲击力。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>2. 为什么 LinnDrum 在历史上很重要？</summary>
+        <div class="quiz-ans">它是首批广泛使用真实鼓"采样"(PCM 回放)的鼓机，而不是纯靠电路合成。这让电子化的节奏第一次有了干净、紧实的"原声鼓"质感，被 Prince、Human League 等大量使用，深刻塑造了 80 年代流行声。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>3. 为什么本页的叮叮镲、锣、塔布拉标了"合成近似"？</summary>
+        <div class="quiz-ans">因为它们的音色来自密集的<strong style="font-weight:500;">不和谐金属泛音</strong>或极复杂的膜振(可调音高)，无法用几个振荡器 + 噪声忠实重建。膜鼓类(底鼓、太鼓、康加)的音高包络结构简单，合成能贴近;金属与复杂膜振只能做教学性近似 —— 所以如实标注，不冒充真实采样。</div>
+      </details>
+      <details class="quiz-item">
+        <summary>4. 同样是"框鼓"，新疆达卜和爱尔兰 Bodhrán 有何不同？</summary>
+        <div class="quiz-ans">两者都是单面框鼓，但达卜框上嵌许多<strong style="font-weight:500;">小铁环</strong>，每次击打都伴随金属碎响，服务于维吾尔木卡姆的舞曲律动;Bodhrán 框上无铁环，用<strong style="font-weight:500;">双头鼓棒(tipper)</strong>敲击、背手按压改变音高，音色温暖,为爱尔兰吉格/里尔舞曲打底。一个靠"铁环亮响",一个靠"木棒 + 手压音高"。</div>
+      </details>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- 来源 -->
+  <section id="sources">
+    <h2>代表作品 / 史实来源</h2>
+    <p class="muted" style="font-size:0.82rem;line-height:1.9;">
+      本页橙色标注的曲目与史实均经核实，主要来源：<br>
+      · TR-808 与《Sexual Healing》《Planet Rock》(1982)、808s &amp; Heartbreak：<a href="https://en.wikipedia.org/wiki/Roland_TR-808" target="_blank" rel="noopener">Wikipedia: Roland TR-808</a><br>
+      · TR-909 与《Strings of Life》《Acid Trax》《Voodoo Ray》：<a href="https://en.wikipedia.org/wiki/Roland_TR-909" target="_blank" rel="noopener">Wikipedia: Roland TR-909</a><br>
+      · LinnDrum 与《Don't You Want Me》《1999》《When Doves Cry》：<a href="https://en.wikipedia.org/wiki/Linn_LM-1" target="_blank" rel="noopener">Wikipedia: Linn LM-1</a> · <a href="https://reverb.com/news/prince-and-the-linn-lm-1" target="_blank" rel="noopener">Reverb: Prince and the LM-1</a><br>
+      · 军鼓门限混响《In the Air Tonight》(1981)：<a href="https://en.wikipedia.org/wiki/In_the_Air_Tonight" target="_blank" rel="noopener">Wikipedia: In the Air Tonight</a><br>
+      · 木箱鼓 Paco de Lucía 1977：<a href="https://en.wikipedia.org/wiki/Caj%C3%B3n" target="_blank" rel="noopener">Wikipedia: Cajón</a><br>
+      · 西非金贝马里帝国起源：<a href="https://en.wikipedia.org/wiki/Djembe" target="_blank" rel="noopener">Wikipedia: Djembe</a><br>
+      · 塔布拉《Within You Without You》演奏者为 Amiya Dasgupta(非 Zakir Hussain)：<a href="https://en.wikipedia.org/wiki/Within_You_Without_You" target="_blank" rel="noopener">Wikipedia: Within You Without You</a><br>
+      · 康加古巴起源与 Son/萨尔萨：<a href="https://en.wikipedia.org/wiki/Conga" target="_blank" rel="noopener">Wikipedia: Conga</a><br>
+      · 和太鼓组太鼓与鼓童/鬼太鼓座：<a href="https://en.wikipedia.org/wiki/Taiko" target="_blank" rel="noopener">Wikipedia: Taiko</a> · <a href="https://en.wikipedia.org/wiki/Kod%C5%8D_(taiko_group)" target="_blank" rel="noopener">Kodō</a><br>
+      · 新疆达卜形制与历史：<a href="https://zh.wikipedia.org/zh-cn/%E8%BE%BE%E7%94%AB" target="_blank" rel="noopener">维基百科：达甫</a><br>
+      · 爱尔兰 Bodhrán 与 1960s 民谣复兴：<a href="https://en.wikipedia.org/wiki/Bodhr%C3%A1n" target="_blank" rel="noopener">Wikipedia: Bodhrán</a>
+    </p>
+  </section>
+
+  <hr class="divider">
+
+  <p class="muted" style="text-align:center;font-size:0.85rem;">
+    回到：<a href="../index.html" style="color:var(--ink-light);">首页</a> · <a href="../effects/index.html" style="color:var(--ink-light);">效果器</a> · <a href="../timbre/index.html" style="color:var(--ink-light);">音色</a>
+  </p>
+
+</div>
+
+<footer class="site-footer">
+  <p><a href="../index.html" style="color:var(--ink-light);text-decoration:none;">← 回到首页</a></p>
+</footer>
+
+<script src="../assets/js/drums.js?v=20260607a"></script>
+</body>
+</html>

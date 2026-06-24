@@ -1,0 +1,215 @@
+/* ============================================
+   桑巴 bateria · 页面专属样式
+   复用 drums.css 的卡片/网格/术语样式；
+   这里只补「合奏台」序列器与频率分色。
+   ============================================ */
+
+/* 频率分色左缘（复用 drum-card 结构） */
+.drum-card.low  { border-left: 3px solid var(--accent); }    /* 低音 暖橙 */
+.drum-card.mid  { border-left: 3px solid var(--accent-3); }  /* 中音 紫 */
+.drum-card.high { border-left: 3px solid var(--accent-2); }  /* 高音 青绿 */
+
+/* 频率标签（卡片标题旁） */
+.freq-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 100px;
+  font-weight: 500;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.freq-low  { background: var(--accent-soft); color: #993C1D; }
+.freq-mid  { background: #EEEDFE; color: #3C3489; }
+.freq-high { background: #E1F5EE; color: #085041; }
+
+/* ============================================
+   合奏台
+   ============================================ */
+.bateria-stage {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.2rem 1.3rem 1.3rem;
+  margin: 1.25rem 0 0;
+}
+
+.stage-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ensemble-btn {
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  border: 1.5px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: 10px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+.ensemble-btn:hover { background: var(--accent); color: #fff; }
+.ensemble-btn:active { transform: scale(0.97); }
+.ensemble-btn.on { background: var(--accent); color: #fff; }
+
+.tempo-ctl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--ink-light);
+}
+.tempo-ctl input[type="range"] {
+  width: 120px;
+  accent-color: var(--accent);
+}
+.tempo-ctl b { color: var(--ink); font-weight: 500; min-width: 26px; display: inline-block; text-align: right; }
+
+.stage-reset {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-left: auto;
+}
+.stage-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 节奏总谱（实时 playhead） */
+.score-wrap { overflow-x: auto; margin: 1rem 0 0.2rem; }
+.score {
+  display: grid;
+  grid-template-columns: 92px repeat(16, minmax(20px, 1fr));
+  gap: 3px;
+  min-width: 560px;
+  align-items: stretch;
+}
+.score-head {
+  font-size: 11px;
+  color: var(--ink-lighter);
+  text-align: center;
+  align-self: end;
+  padding-bottom: 3px;
+}
+.score-head.beat { color: var(--ink-light); font-weight: 700; }
+.score-rowlabel {
+  font-size: 12px;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 8px;
+  white-space: nowrap;
+}
+.score-rowlabel .rdot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex: 0 0 auto; background: currentColor;
+}
+.score-cell {
+  height: 24px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.06s;
+}
+.score-cell.beat { border-color: var(--line-strong); }
+
+/* 频率分色（markers 用 currentColor 继承） */
+.score-rowlabel.low,  .score-cell.low  { color: var(--accent); }
+.score-rowlabel.mid,  .score-cell.mid  { color: var(--accent-3); }
+.score-rowlabel.high, .score-cell.high { color: var(--accent-2); }
+
+/* 击点标记 */
+.mk { display: block; line-height: 1; }
+.mk.disc { border-radius: 50%; background: currentColor; }
+.mk.big   { width: 16px; height: 16px; }
+.mk.med   { width: 11px; height: 11px; }
+.mk.small { width: 7px;  height: 7px; }
+.mk.ring  { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; background: transparent; }
+.mk.char  { font-size: 13px; font-weight: 700; color: currentColor; }
+
+/* 当前列高亮：只换底色，不缩放、不移动 */
+.score-head.now, .score-cell.now { background: var(--paper-2); border-radius: 4px; }
+/* 命中：静态高亮 —— 暖底 + 同色内描边，格子保持原位不动 */
+.score-cell.fire { background: var(--accent-soft); box-shadow: inset 0 0 0 2px currentColor; }
+
+/* 静音的行变暗 */
+.score-cell.is-muted, .score-rowlabel.is-muted { opacity: 0.3; }
+
+@media (max-width: 600px) {
+  .score { grid-template-columns: 64px repeat(16, minmax(16px, 1fr)); min-width: 470px; }
+  .score-cell { height: 20px; }
+}
+
+.seq-caption {
+  font-size: 11px;
+  color: var(--ink-lighter);
+  margin: 0 0 0.9rem;
+}
+
+/* 声部开关行 */
+.mixer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.layer-chip {
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 100px;
+  padding: 6px 13px 6px 10px;
+  cursor: pointer;
+  transition: opacity 0.15s, border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.layer-chip .dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  flex: 0 0 auto;
+}
+.layer-chip.low-d  .dot { background: var(--accent); }
+.layer-chip.mid-d  .dot { background: var(--accent-3); }
+.layer-chip.high-d .dot { background: var(--accent-2); }
+.layer-chip:hover { border-color: var(--accent); }
+.layer-chip.muted {
+  opacity: 0.4;
+  background: var(--paper-3);
+  text-decoration: line-through;
+}
+.layer-chip .solo {
+  font-size: 10px;
+  color: var(--ink-lighter);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 5px;
+  margin-left: 2px;
+}
+.layer-chip .solo:hover { color: var(--accent); border-color: var(--accent); }
+
+.mixer-hint {
+  font-size: 11px;
+  color: var(--ink-light);
+  margin: 0.85rem 0 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .tempo-ctl input[type="range"] { width: 90px; }
+  .stage-reset { margin-left: 0; }
+}
