@@ -152,6 +152,37 @@
   .score-cell { height: 20px; }
 }
 
+/* ============================================
+   花园皮肤（水墨植物 + 暖光扫动）
+   ============================================ */
+.garden-wrap { overflow-x: auto; margin: 1rem 0 0.2rem; }
+.garden-svg { width: 100%; height: auto; display: block; min-width: 560px; border-radius: 12px; }
+
+/* 植物：常态略收，扫到的暖光下变亮（只变亮，不缩放、不抖） */
+.plant { opacity: 0.82; transition: opacity 0.12s ease, filter 0.12s ease; }
+.plant.lit { opacity: 1; filter: drop-shadow(0 0 2.5px #E7B85A); }
+.plant.is-muted { opacity: 0.16; }
+
+/* 暖光带平滑滑动 */
+#garden-sun { transition: transform 0.09s linear; }
+
+/* 皮肤切换按钮 */
+.skin-btn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  border: 1px solid var(--line-strong);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.skin-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 按皮肤显示其一 */
+#bateria-stage[data-skin="grid"]   .garden-wrap { display: none; }
+#bateria-stage[data-skin="garden"] .score-wrap  { display: none; }
+
 .seq-caption {
   font-size: 11px;
   color: var(--ink-lighter);

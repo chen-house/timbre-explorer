@@ -332,6 +332,7 @@ function _renderPlayhead(step) {
     c.classList.add('now');
     if (c.classList.contains('hit') && !_muted.has(c.dataset.row)) c.classList.add('fire');
   });
+  _gardenPlayhead(step);
   _prevStep = step;
 }
 
@@ -341,6 +342,92 @@ function _syncRowMute(name) {
   document.querySelectorAll('[data-row="' + name + '"]').forEach(el => el.classList.toggle('is-muted', on));
 }
 function _syncAllRowMute() { LAYERS.forEach(_syncRowMute); }
+
+/* ---------- 花园皮肤：水墨植物总谱 + 暖光扫动 ---------- */
+// 16 列的 x 坐标（viewBox 960 内）
+const COLX = [213, 259, 305, 351, 397, 443, 489, 535, 581, 627, 673, 719, 765, 811, 857, 903];
+// 逐行：声部 → 植物（用户逐行指定）
+const GROW = [
+  { row: 'surdo',     y: 96,  color: '#B5532A', g: { m: 'g-bud', o: 'g-bloom' }, w: { m: 26, o: 31 } },
+  { row: 'caixa',     y: 148, color: '#6E4A2B', g: { c: 'g-leaf', a: 'g-leaf' }, w: { c: 22, a: 30 } },
+  { row: 'repinique', y: 200, color: '#6E4A2B', g: { x: 'g-leaf' },              w: { x: 25 } },
+  { row: 'tamborim',  y: 252, color: '#5E8C4E', g: { x: 'g-sprout' },            w: { x: 27 } },
+  { row: 'chocalho',  y: 304, color: '#5E8C4E', g: { x: 'g-sprout' },            w: { x: 27 } },
+  { row: 'agogo',     y: 356, color: '#7DA05A', g: { h: 'g-tuft', l: 'g-tuft' }, w: { h: 23, l: 23 } },
+  { row: 'cuica',     y: 408, color: '#7DA05A', g: { u: 'g-tuft', d: 'g-tuft' }, w: { u: 23, d: 23 } },
+  { row: 'reco',      y: 460, color: '#7DA05A', g: { x: 'g-tuft' },              w: { x: 23 } },
+];
+
+const _GARDEN_DEFS = '<defs>' +
+  '<symbol id="g-bud" viewBox="0 0 24 24"><path d="M12 4 C 7 9,7 16,12 20 C 17 16,17 9,12 4 Z" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>' +
+  '<symbol id="g-bloom" viewBox="0 0 24 24"><path d="M12 3 C 15 5,15 11,12 12 C 9 11,9 5,12 3 Z M12 12 C 14 10,19 12,18 16 C 15 17,11 15,12 12 Z M12 12 C 10 10,5 12,6 16 C 9 17,13 15,12 12 Z" fill="currentColor"/></symbol>' +
+  '<symbol id="g-leaf" viewBox="0 0 24 24"><path d="M12 3 C 17 9,17 16,12 21 C 7 16,7 9,12 3 Z" fill="currentColor"/></symbol>' +
+  '<symbol id="g-sprout" viewBox="0 0 24 24"><path d="M12 23 V5 M12 9 L7 5 M12 9 L17 5 M12 13 L8 10 M12 13 L16 10 M12 17 L9 14 M12 17 L15 14" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></symbol>' +
+  '<symbol id="g-tuft" viewBox="0 0 24 24"><path d="M12 22 V12 M12 12 L6 6 M12 12 L18 6 M12 12 L4 12 M12 12 L20 12 M12 12 L7 18 M12 12 L17 18" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/></symbol>' +
+  '</defs>';
+
+const _GARDEN_ICONS =
+  '<g stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+  '<g stroke="#B5532A"><ellipse cx="46" cy="90" rx="9" ry="3"/><path d="M37 90 V100 M55 90 V100"/><ellipse cx="46" cy="100" rx="9" ry="3"/><line x1="30" y1="93" x2="40" y2="89"/></g>' +
+  '<g stroke="#6E4A2B"><ellipse cx="46" cy="143" rx="10" ry="3"/><path d="M36 143 V151 M56 143 V151"/><ellipse cx="46" cy="151" rx="10" ry="3"/><path d="M38 138 L55 154 M55 138 L38 154"/></g>' +
+  '<g stroke="#6E4A2B"><ellipse cx="46" cy="195" rx="8" ry="3"/><path d="M38 195 V205 M54 195 V205"/><ellipse cx="46" cy="205" rx="8" ry="3"/><line x1="58" y1="189" x2="49" y2="196"/></g>' +
+  '<g stroke="#5E8C4E"><circle cx="44" cy="252" r="9"/><circle cx="44" cy="252" r="5" opacity="0.5"/><line x1="62" y1="245" x2="51" y2="251"/></g>' +
+  '<g stroke="#5E8C4E"><rect x="38" y="296" width="16" height="15" rx="2"/><line x1="42" y1="301" x2="50" y2="301"/><line x1="42" y1="306" x2="50" y2="306"/></g>' +
+  '<g stroke="#7DA05A"><path d="M40 349 q4 -7 8 0"/><path d="M40 352 q-1 9 2 11 q4 -2 3 -11"/><path d="M50 352 q-1 8 2 10 q4 -2 3 -10"/></g>' +
+  '<g stroke="#7DA05A"><ellipse cx="46" cy="404" rx="8" ry="3"/><path d="M38 404 V413 M54 404 V413"/><ellipse cx="46" cy="413" rx="8" ry="3"/><line x1="46" y1="404" x2="46" y2="394"/></g>' +
+  '<g stroke="#7DA05A"><rect x="33" y="455" width="26" height="10" rx="5"/><line x1="40" y1="456" x2="40" y2="464"/><line x1="46" y1="456" x2="46" y2="464"/><line x1="52" y1="456" x2="52" y2="464"/><line x1="44" y1="449" x2="54" y2="469"/></g>' +
+  '</g>' +
+  '<g font-size="15" fill="#5E5036"><text x="66" y="100">surdo</text><text x="66" y="152">caixa</text><text x="66" y="204">repinique</text><text x="66" y="256">tamborim</text><text x="66" y="308">chocalho</text><text x="66" y="360">agogô</text><text x="66" y="412">cuíca</text><text x="66" y="464">reco</text></g>';
+
+function _buildGarden() {
+  const host = document.getElementById('garden');
+  if (!host) return;
+  let plants = '';
+  GROW.forEach(cfg => {
+    const pat = PATTERN[cfg.row];
+    Object.keys(pat).forEach(stepStr => {
+      const step = +stepStr;
+      const sym = cfg.g[pat[step]];
+      if (!sym) return;
+      const w = cfg.w[pat[step]] || 18;
+      const x = COLX[step] - w / 2;
+      const y = cfg.y - w + 3;
+      plants += '<use href="#' + sym + '" class="plant" data-step="' + step + '" data-row="' + cfg.row +
+        '" x="' + x + '" y="' + y + '" width="' + w + '" height="' + w + '" style="color:' + cfg.color + '"/>';
+    });
+  });
+  let vines = '<g fill="none" stroke="#9A7B57" stroke-width="1.6" opacity="0.5" stroke-linecap="round">';
+  GROW.forEach(cfg => { const y = cfg.y; vines += '<path d="M150 ' + y + ' C 360 ' + (y - 6) + ', 560 ' + (y + 6) + ', 930 ' + (y - 2) + '"/>'; });
+  vines += '</g>';
+  let guides = '<g stroke="#9A7B57" stroke-width="1" opacity="0.13">';
+  [0, 4, 8, 12].forEach(i => { guides += '<line x1="' + COLX[i] + '" y1="66" x2="' + COLX[i] + '" y2="474"/>'; });
+  guides += '</g>';
+  const sun = '<g id="garden-sun"><rect x="' + (COLX[0] - 23) + '" y="64" width="46" height="410" rx="16" fill="#E7B85A" opacity="0.14"/><circle cx="' + COLX[0] + '" cy="76" r="8" fill="#E7B85A"/></g>';
+  host.innerHTML = '<svg class="garden-svg" viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="水墨植物总谱">' +
+    _GARDEN_DEFS + '<rect x="0" y="0" width="960" height="500" fill="#F4ECDD"/>' +
+    guides + sun + vines + _GARDEN_ICONS + plants + '</svg>';
+}
+
+function _gardenPlayhead(step) {
+  const sun = document.getElementById('garden-sun');
+  if (sun) sun.setAttribute('transform', 'translate(' + (COLX[step] - COLX[0]) + ',0)');
+  document.querySelectorAll('#garden .plant.lit').forEach(p => p.classList.remove('lit'));
+  document.querySelectorAll('#garden .plant[data-step="' + step + '"]').forEach(p => { if (!_muted.has(p.dataset.row)) p.classList.add('lit'); });
+}
+
+function _gardenReset() {
+  const sun = document.getElementById('garden-sun');
+  if (sun) sun.setAttribute('transform', 'translate(0,0)');
+  document.querySelectorAll('#garden .plant.lit').forEach(p => p.classList.remove('lit'));
+}
+
+// 皮肤切换：花园 <-> 几何谱面
+function toggleSkin(btn) {
+  const st = document.getElementById('bateria-stage');
+  const isGarden = st.getAttribute('data-skin') !== 'grid';
+  st.setAttribute('data-skin', isGarden ? 'grid' : 'garden');
+  if (btn) btn.textContent = isGarden ? '🌿 切到花园' : '▦ 切到谱面';
+}
 
 function toggleEnsemble(btn) {
   const ctx = ac();
@@ -360,9 +447,10 @@ function stopEnsemble() {
   _timers.forEach(clearTimeout);
   _timers.length = 0;
   _cellsByStep.forEach(col => col.forEach(c => c.classList.remove('now', 'fire')));
+  _gardenReset();
   _prevStep = -1;
   const btn = document.getElementById('ensemble-toggle');
-  if (btn) { btn.textContent = '▶ 整队进场'; btn.classList.remove('on'); }
+  if (btn) { btn.textContent = '▶ 桑巴乐队 Bateria'; btn.classList.remove('on'); }
   const stage = document.getElementById('bateria-stage');
   if (stage) stage.classList.remove('running');
 }
@@ -424,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
       list.appendChild(li);
     });
   }
-  // 生成节奏总谱（含实时 playhead）
+  // 生成节奏总谱（几何皮肤）与水墨植物总谱（花园皮肤）
   _buildScore();
+  _buildGarden();
 });

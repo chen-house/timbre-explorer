@@ -7,7 +7,7 @@
 <meta name="description" content="桑巴打击乐团(bateria)的 8 件主力：surdo / caixa / repinique / tamborim / chocalho / agogô / cuíca / reco-reco。每件含手绘外观、Web Audio 实时合成试听，并有一个可逐层开关的「合奏台」，亲耳听低/中/高如何叠成一支桑巴。">
 <link rel="stylesheet" href="../assets/css/main.css">
 <link rel="stylesheet" href="../assets/css/drums.css">
-<link rel="stylesheet" href="../assets/css/samba.css?v=20260624b">
+<link rel="stylesheet" href="../assets/css/samba.css?v=20260624c">
 </head>
 <body>
 
@@ -58,20 +58,23 @@
     <h2>合奏台 — 听它们怎么叠起来</h2>
     <p class="muted" style="font-size:0.88rem;">一小节 4/4 = 16 格的循环。点"整队进场"开始，再点声部上的胶囊可单独静音/打开；"独奏"= 只听这一层。</p>
 
-    <div class="bateria-stage" id="bateria-stage">
+    <div class="bateria-stage" id="bateria-stage" data-skin="garden">
       <div class="stage-top">
-        <button class="ensemble-btn" id="ensemble-toggle" onclick="toggleEnsemble(this)">▶ 整队进场</button>
+        <button class="ensemble-btn" id="ensemble-toggle" onclick="toggleEnsemble(this)">▶ 桑巴乐队 Bateria</button>
         <label class="tempo-ctl">速度
           <input type="range" min="70" max="130" value="100" oninput="setTempo(this.value)" aria-label="速度 BPM">
           <b id="bpm-val">100</b> BPM
         </label>
+        <button class="skin-btn" onclick="toggleSkin(this)">▦ 切到谱面</button>
         <button class="stage-reset" onclick="allLayersOn()">全部开</button>
       </div>
 
-      <div class="score-wrap">
-        <div class="score" id="score"><!-- JS 按 samba.js 的 PATTERN 生成总谱 --></div>
+      <div class="garden-wrap">
+        <div id="garden"><!-- JS 按 PATTERN 生成水墨植物总谱 --></div>
       </div>
-      <p class="seq-caption">每行一件乐器、每列一个 16 分音符（深列 = 每拍的“1”）。播放时高亮列随节拍移动，<strong style="font-weight:500;">正好打到的声部格子会跟着亮</strong>；关掉某层，它整行会变暗。</p>
+      <div class="score-wrap">
+        <div class="score" id="score"><!-- JS 按 PATTERN 生成几何总谱 --></div>
+      </div>
 
       <div class="mixer">
         <button class="layer-chip low-d"  data-layer="surdo"     onclick="toggleLayer('surdo', this)"><span class="dot"></span>surdo 大鼓<span class="solo" onclick="event.stopPropagation();soloLayer('surdo')">独奏</span></button>
@@ -391,6 +394,6 @@
   <p><a href="index.html" style="color:var(--ink-light);text-decoration:none;">← 回到「鼓」</a></p>
 </footer>
 
-<script src="../assets/js/samba.js?v=20260624b"></script>
+<script src="../assets/js/samba.js?v=20260624d"></script>
 </body>
 </html>
